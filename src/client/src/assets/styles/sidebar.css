@@ -1,0 +1,84 @@
+.sidebar{
+    position: fixed;
+    top:0;
+    left:-100%;
+    right:0;
+    bottom:0;
+    width:85%;
+    height:100%;
+    border-right: 2px solid #dddddd;
+    transition: left 0.3s ease;
+    z-index: 100;
+}
+
+.sidebar .nav-item{
+    margin:3px 0;
+    border-radius: 7px;
+    transition: all 0.3s ease;
+}
+
+.sidebar .nav-item a{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.sidebar .nav-item p{
+    padding: 0;
+    margin: 0;
+    margin-left: 10px;
+}
+
+.sidebar .nav-item svg{
+    width: 20px;
+}
+
+.sidebar .nav-item:hover{
+    background-color: #dfdfdf;
+}
+
+.sidebar .dropdown-menu{
+    position: absolute;
+    bottom: 50px;
+    left: 90px;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    z-index: -1000;
+    transition: all 0.3s ease;
+}
+
+.sidebar .dropdown-menu-show{
+    opacity: 1;
+    z-index: 1000;
+}
+
+.button-sidebar{
+    position: fixed;
+    top: 5px;
+    left: 10px;
+    width: 60px;
+    height: 60px;
+    background: none;
+    border: 2px solid #cdcdcd;
+    border-radius: 2px;
+}
+
+@media(max-width:1024px){
+    .sidebar-active{
+        left:0;
+    }
+}
+
+@media(min-width:1024px){
+    .sidebar{
+        position: relative;
+        width:280px;
+        height:100vh;
+        left:0;
+    }
+
+    .sidebar .button-exit{
+        display: none;
+    }
+}

@@ -1,0 +1,15 @@
+.container-dashboard .list-group .list-group-item {
+    display: flex;
+}
+.container-dashboard .list-group .list-group-item a{
+    display: block;
+    width: 100%;
+    padding: 10px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color:#212529;
+}
+
+.container-dashboard .list-group .list-group-item a:hover{
+    background-color:#ededed;
+}

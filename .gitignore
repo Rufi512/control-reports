@@ -1,0 +1,13 @@
+node_modules
+build
+npm-debug.log
+public
+contents
+.env
+.DS_Store
+*.db
+# Logs
+logs
+*.log
+npm-debug.log*
+!src/client/public
