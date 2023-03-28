@@ -1,0 +1,41 @@
+.form-equipment label{
+    font-weight: bold;
+}
+
+.form-equipment .fields-container{
+    margin:10px 0;
+}
+
+.form-equipment .form-group{
+    padding: 0;
+}
+
+.form-equipment .form-group input{
+    margin-top: 5px;
+}
+
+.table-equipments tbody td, .table-equipments tbody th{
+    padding:0
+}
+
+.table-equipments tbody tr{
+    transition: background-color 0.5s ease ;
+}
+
+.table-equipments tbody tr:hover{
+    background-color: #e9e9e9;
+}
+
+.table-equipments tbody td a, .table-equipments tbody th a  {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: #242424;
+}
+
+@media(min-width:1024px){
+    .form-equipment .form-group:nth-child(1){
+        padding-right: 5px;
+    }
+
+}

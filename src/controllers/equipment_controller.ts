@@ -34,7 +34,6 @@ export const registerEquipment = async (
 ): Promise<any> => {
   try {
     const {
-      title,
       description,
       asset_number,
       model,
@@ -65,7 +64,6 @@ export const registerEquipment = async (
 
     const registerEquipment = new equipment({
       id: req["id"] || "",
-      title,
       description,
       asset_number,
       model,
@@ -90,7 +88,6 @@ export const registerEquipment = async (
 export const updateEquipment = async (req: Request, res: Response) => {
   try {
     const {
-      title,
       description,
       asset_number,
       model,
@@ -153,7 +150,6 @@ export const updateEquipment = async (req: Request, res: Response) => {
       { id: req.params.id },
       {
         $set: {
-          title,
           description,
           asset_number,
           model,
@@ -197,13 +193,18 @@ export const list = async (req: Request, res: Response) => {
       limit: req.query && Number(req.query.limit) ? Number(req.query.limit) : 10,
       page: req.query && Number(req.query.page) ? Number(req.query.page) : 1,
     };
-  
-    const equipments = await equipment.paginate(
-      date ? {
-        $and: [{ 'register_date.year': {$in: [Number(date[0])]}, 'register_date.month':{$in:[Number(date[1])]} }],
-      } : {},
-      optionsPagination
-    );
+    console.log(date,optionsPagination)
+    const search = req.query.search || ''
+    const equipments = await equipment.paginate({
+      $or: [
+          { brand: new RegExp(String(search), "gi") },
+          { model: new RegExp(String(search), "gi") },
+          { serial: new RegExp(String(search), "gi") },
+          { asset_number: new RegExp(String(search), "gi") },
+      ],
+      $and: [date ? { 'register_date.year': {$in: [Number(date[0])]}, 'register_date.month':{$in:[Number(date[1])]} } : {}],
+  },
+  optionsPagination);
   
     if (equipments.totalDocs < 0) {
       return res.status(404).json({ message: "Registros no encontrados" });

@@ -48,20 +48,38 @@
     transition: all 0.3s ease;
 }
 
+.sidebar .dropdown-menu:after{
+    content: "";
+    position: absolute;
+    width: 100%;
+    display: flex;
+    height: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 1;
+    background-color: #ffffff00;
+    z-index: 1000000000;
+}
+
 .sidebar .dropdown-menu-show{
     opacity: 1;
     z-index: 1000;
 }
 
+.sidebar .dropdown-menu-show:after{
+    z-index: -100000000000;
+}
+
 .button-sidebar{
     position: fixed;
-    top: 5px;
+    top: 2px;
     left: 10px;
     width: 60px;
     height: 60px;
     background: none;
-    border: 2px solid #cdcdcd;
-    border-radius: 2px;
+    border: none;
 }
 
 @media(max-width:1024px){

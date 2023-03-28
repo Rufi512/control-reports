@@ -20,9 +20,9 @@ const storage = multer.diskStorage({
 });
 
 const filter = function (req: any, file:any, cb:any) {
-    const {title,description,model,asset_number, register_date, brand, serial} = req.body as IEquipment
+    const {description,model,asset_number, register_date, brand, serial} = req.body as IEquipment
     // Check req.body
-    if(!title|| !description || !model || !asset_number || !register_date || !brand || !serial){
+    if(!description || !model || !asset_number || !register_date || !brand || !serial){
         return cb(new Error('Los campos no fueron completados!'))
     }
 

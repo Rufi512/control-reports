@@ -3,7 +3,11 @@ import { faBars, faDesktop, faHouse, faUser, faXmark } from '@fortawesome/free-s
 import logo from '../assets/images/mp.png'
 import '../assets/styles/sidebar.css'
 import { useEffect, useRef, useState } from 'react'
-export const Sidebar = () => {
+import { Link } from 'react-router-dom'
+type Props ={
+  page:string
+}
+export const Sidebar = (props:Props) => {
   const ref = useRef(window);
   const [dropdown, setDropdown] = useState(false);
   const [mobileSidebar,setMobileSidebar] = useState(false)
@@ -11,7 +15,6 @@ export const Sidebar = () => {
    
     //listen click outside in class dropdown and class sidebar
   const handleClickOutside = (event:any) => {
-    console.log(event.target.closest('.sidebar'))
     if (dropdown && !event.target.closest('.dropdown')) {
       setDropdown(false);
     }
@@ -32,7 +35,6 @@ export const Sidebar = () => {
   
   //change visibility dropdown
   const handleDropdown = (event:any) => {
-    console.log(dropdown)
     if(dropdown) return setDropdown(false);
     return setDropdown(true)
     
@@ -64,16 +66,16 @@ export const Sidebar = () => {
     <hr />
     <ul className="nav nav-pills flex-column mb-auto">
       <li className="nav-item">
-        <a href="#" className="nav-link active" aria-current="page">
+        <Link to="/dashboard" className={`nav-link ${props.page === 'dashboard' ? 'active' : 'link-dark'}`} aria-current="page">
         <FontAwesomeIcon icon={faHouse}/>
           <p>Inicio</p>
-        </a>
+        </Link>
       </li>
       <li className="nav-item">
-        <a href="#" className="nav-link link-dark">
+        <Link to="/equipment/list" className={`nav-link ${props.page === 'equipments' ? 'active' : 'link-dark'}`}>
         <FontAwesomeIcon icon={faDesktop}/>
           <p>Lista de equipos</p>
-        </a>
+        </Link>
       </li>
       <li className="nav-item">
         <a href="#" className="nav-link link-dark">

@@ -6,16 +6,10 @@ import '../assets/styles/pages/home.css'
 const Home = () => {
   return (
     <div className="container-fluid d-flex flex-row p-0">
-      <Sidebar />
-      <div className="container-fluid container-dashboard" style={{overflowY:'auto', height:'100vh'}}>
-        <div>
-          <h2 style={{ textAlign: "right" }}>Buenos dias usuario</h2>
-          <h3 style={{ textAlign: "right" }}>John Doe</h3>
-          <hr />
-        </div>
-
+      <Sidebar page='dashboard' />
+      <div className="container-fluid container-dashboard container-page">
         <div
-          className="flex row flex-wrap "
+          className="flex row flex-wrap"
           style={{ padding: "5px 12px", justifyContent: "space-around" }}
         >
           <a

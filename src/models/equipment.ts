@@ -2,19 +2,11 @@ import mongoose, {Schema, model} from 'mongoose'
 import mongoosePaginate from 'mongoose-paginate-v2'
 import { IEquipment } from '../types/types'
 
-
-
 const equipmentSchema = new Schema({
   id:{
     type: String,
     unique: true
   },
-
-  title:{
-     type: String,
-     required:true
-  },
-
   description:{
     type: String,
     required:true
