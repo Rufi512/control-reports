@@ -17,6 +17,6 @@ router.put('/update/:id',[getExistingFolder,multer.array('evidences')],updateEqu
 
 router.delete('/delete/:id',deleteEquipment)
 
-router.delete('/delete/evidences/:id',deleteEvidences)
+router.post('/delete/evidences/:id',deleteEvidences)
 
 export default router

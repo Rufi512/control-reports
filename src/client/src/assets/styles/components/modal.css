@@ -1,0 +1,12 @@
+.modal{
+    display: flex;
+    background: #00000059;
+}
+
+.modal .modal-dialog{
+    margin: auto;
+}
+
+.modal .modal-content{
+    min-width:250px;
+}

@@ -10,10 +10,10 @@ const app = express()
 app.set('PORT',3000 || process.env.PORT)
 
 //middlewares
-app.use(express.json()) //req.body to json
-app.use(morgan('dev'))
-app.use(cors())
-
+app.use(morgan("dev"));
+app.use(cors());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 //Routes
 app.use('/api/equipments',equipments)
 

@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 //Generate mongoose id from folder and id
 
 export const getIdFolder = (req:MongooseId,_res:any,next:NextFunction) =>{
+    console.log(req.body)
     let id = new mongoose.Types.ObjectId()
     let pathFolder = `public/contents/evidences/${id}`;
     req["path_folder"] = pathFolder

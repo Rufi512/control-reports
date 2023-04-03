@@ -6,6 +6,7 @@ export interface MongooseId extends Request {
 }
 
 export interface IEquipment{
+    [key: string]: any
     description:string,
     asset_number:string,
     model:string,
@@ -17,6 +18,7 @@ export interface IEquipment{
     evidences_description_new?:string[] | string,
     evidences_description_old?:string[] | string,
     delete_images?:number[],
+    record_type?:string,
     files:Express.Multer.File[],
     path_folder?: string,
     id?:mongoose.Types.ObjectId

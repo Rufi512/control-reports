@@ -51,8 +51,9 @@ const SearchBar = (props:Props) => {
               id="select-elements"
               className="custom-select w-full form-control"
               onChange={props.searchParams.limitHandle}
+              defaultValue={10}
             >
-              <option defaultValue={10}>10</option>
+              <option value={10}>10</option>
               <option value={15}>15</option>
               <option value={20}>20</option>
               <option value={30}>30</option>
@@ -68,12 +69,14 @@ const SearchBar = (props:Props) => {
               id="select-elements"
               className="custom-select w-full form-control"
               onChange={props.searchParams.pagesHandle}
+              value={Number(props.searchParams.page)}
             >
-              {[...Array(props.totalPages)].map((_el,i)=>{
+              {props.totalPages > 0 ? [...Array(props.totalPages)].map((_el,i)=>{
                 return (
                   <option key={i} value={i + 1}>{i + 1}</option> 
                 )
-              })}
+              }) : <option value={0}>0</option> }
+
             </select>
           </div>
 

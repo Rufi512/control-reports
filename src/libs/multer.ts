@@ -1,9 +1,8 @@
 import multer from 'multer'
 import path from 'path'
 import fs from 'fs'
-import moment from 'moment'
-import { IEquipment } from '../types/types'
 import mongoose from 'mongoose'
+import { verifyEquipment } from '../middlewares/verifyForms'
 
 const storage = multer.diskStorage({
     destination:(req:any,_file,cb)=>{
@@ -15,27 +14,18 @@ const storage = multer.diskStorage({
         cb(null, directory);
     },
     filename: (_, file, cb,) => {
+        console.log(file)
         cb(null, new mongoose.Types.ObjectId() + path.extname(file.originalname));
     }
 });
 
-const filter = function (req: any, file:any, cb:any) {
-    const {description,model,asset_number, register_date, brand, serial} = req.body as IEquipment
-    // Check req.body
-    if(!description || !model || !asset_number || !register_date || !brand || !serial){
-        return cb(new Error('Los campos no fueron completados!'))
-    }
+const filter = async function (req: any, file:any, cb:any) {
+    const validation = await verifyEquipment(req.body)
 
-    // Check register_date
-    const date = register_date.split('-').join('/')
-
-    const isValidTime = moment(date, 'YYYY/MM/DD',true).isValid()
-
-    if(!isValidTime) return cb(new Error('Fecha de registro invalido'))
+    if(validation !== '') return cb(new Error(validation))
 
     if (
-        !file.originalname.match(/\.(jpg|png|jpeg|mp3|mp4|ogg|pdf|doc|docx)$/) 
-        //|| !file.mimmetype.match(/image:\/(jpg|png|jpeg|mp3|mp4|ogg|pdf|doc|docx)$/)
+        !file.originalname.match(/\.(jpg|png|jpeg|mp3|mp4|ogg|pdf|doc|docx|webp)$/) 
         ) {
         return cb(new Error("Only aceppt format jpg, png, jpeg, mp3,mp4, ogg, pdf, doc, docx"));
     }

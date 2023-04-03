@@ -5,6 +5,7 @@ import { IEquipment } from "../types/types";
 import { unlink } from "fs/promises";
 import fs from "fs";
 import mongoose from "mongoose";
+import { verifyEquipment } from "../middlewares/verifyForms";
 
 export const getEquipment = async (req: Request, res: Response) => {
   //Get the equipemnt from the id
@@ -19,12 +20,10 @@ export const getEquipment = async (req: Request, res: Response) => {
         message: "Equipment not found",
       });
     }
-    return res.status(200).json({
-      data: equipmentFound,
-    });
+    return res.status(200).json(equipmentFound);
   } catch (err) {
     console.log(err);
-    return res.status(404).json({ message: "No se encontro equipamiento" });
+    return res.status(404).json({ message: "No se encontro equipo" });
   }
 };
 
@@ -36,14 +35,18 @@ export const registerEquipment = async (
     const {
       description,
       asset_number,
+      record_type,
       model,
       evidences_description,
       serial,
       brand,
       register_date,
     } = req.body as unknown as IEquipment;
-
+    const validation = await verifyEquipment(req.body)
+    console.log(validation)
+    if(validation !== '') return res.status(400).json({message:validation})
     const evidences = req.files as Express.Multer.File[];
+
     const descriptionsArray = Array.isArray(evidences_description)
       ? evidences_description
       : "";
@@ -70,6 +73,7 @@ export const registerEquipment = async (
       evidences: evidences_format,
       serial,
       brand,
+      record_type,
       register_date: Object({
         day: dateSplit[2],
         month: dateSplit[1],
@@ -78,10 +82,10 @@ export const registerEquipment = async (
     });
 
     await registerEquipment.save();
-    res.json({ message: "Registered!", data: registerEquipment });
+    res.json({ message: "Equipo registrado!", data: registerEquipment });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Error to register equipment" });
+    res.status(500).json({ message: "Error al registrar el equipo" });
   }
 };
 
@@ -91,12 +95,16 @@ export const updateEquipment = async (req: Request, res: Response) => {
       description,
       asset_number,
       model,
-      evidences_description_new,
+      evidences_description,
       evidences_description_old,
       register_date,
       serial,
+      record_type,
       brand,
     } = req.body as unknown as IEquipment;
+    const validation = await verifyEquipment(req.body)
+
+    if(validation !== '') return res.status(400).json({message:validation})
 
     const equipmentFound = await equipment.findOne({ id: req.params.id });
 
@@ -104,11 +112,11 @@ export const updateEquipment = async (req: Request, res: Response) => {
 
     //Validate the body and update fields from Equipment
     if (!equipmentFound)
-      return res.status(404).json({ message: "Not found equipment" });
+      return res.status(404).json({ message: "No se encontro el equipo" });
 
     const dateSplit = register_date.split("-").map((el: string) => Number(el));
 
-    let evidencesUpdate;
+    let evidencesUpdate = [];
     //Update the equipmentData evidences old
     if (evidences_description_old) {
       const descriptionsArray = Array.isArray(evidences_description_old)
@@ -129,8 +137,9 @@ export const updateEquipment = async (req: Request, res: Response) => {
 
     //update the equiment evidences new
     if (evidences) {
-      const descriptionsArray = Array.isArray(evidences_description_new)
-        ? evidences_description_new
+      console.log(evidences)
+      const descriptionsArray = Array.isArray(evidences_description)
+        ? evidences_description
         : "";
       evidences.forEach((el: any, i: number) => {
         return evidencesUpdate.push({
@@ -139,7 +148,7 @@ export const updateEquipment = async (req: Request, res: Response) => {
             (descriptionsArray
               ? descriptionsArray[i]
               : i < 1
-              ? evidences_description_new
+              ? evidences_description
               : "") ?? "",
         });
       });
@@ -155,11 +164,13 @@ export const updateEquipment = async (req: Request, res: Response) => {
           model,
           serial,
           brand,
+          record_type,
           register_date: Object({
             day: dateSplit[2],
             month: dateSplit[1],
             year: dateSplit[0],
           }),
+          updated_at:new Date(),
           evidences: evidencesUpdate,
         },
       }
@@ -171,7 +182,7 @@ export const updateEquipment = async (req: Request, res: Response) => {
     });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ message: "Error to update equipment" });
+    return res.status(500).json({ message: "Error al actualizar el equipo" });
   }
 };
 
@@ -277,7 +288,7 @@ export const deleteEvidences = async (req: Request, res: Response) => {
 
 export const deleteEquipment = async (req: Request, res: Response) => {
   const id = req.params.id;
-  const equipmentFound = await equipment.findById(id);
+  const equipmentFound = await equipment.findOne({id});
   if (!equipmentFound)
     return res.status(404).json({
       message: "Equipo no encontrado",
@@ -289,7 +300,7 @@ export const deleteEquipment = async (req: Request, res: Response) => {
     fs.rmSync(dir, { recursive: true, force: true });
   }
 
-  await equipment.findByIdAndDelete(id);
+  await equipment.findOneAndDelete({id});
 
   return res.status(200).json({ message: "Registro eliminado!" });
 };

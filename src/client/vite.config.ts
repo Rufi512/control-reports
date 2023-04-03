@@ -8,7 +8,11 @@ export default defineConfig({
     proxy:{
       '/api': {
         target: 'http://localhost:3000',
-        changeOrigin: true
+        changeOrigin: false
+      },
+      '/public/contents/evidences': {
+        target: 'http://localhost:3000',
+        changeOrigin: false
       },
     }
   }
