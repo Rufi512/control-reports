@@ -1,16 +1,10 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { Sidebar } from "../../components/Sidebar";
+import React from 'react'
+import { Sidebar } from '../../components/Sidebar'
+import EquipmentForm from '../../components/equipments/EquipmentForm'
 
-import "../../assets/styles/pages/equipment.css";
-import { fieldTest } from "../../components/SomeFunctions";
-import { registerEquipment } from "../../Api/EquipmentsApi";
-import { toast } from "react-toastify";
-import { EquipmentForm } from "../../components/equipments/EquipmentForm";
 const EquipmentRegister = () => {
-  
-
-  return (
-    <div className="container-fluid d-flex flex-row p-0 evidences-form">
+	return (
+		 <div className="container-fluid d-flex flex-row p-0 evidences-form">
       <Sidebar page={"equipments"} />
       <div className="container-fluid d-flex flex-column container-page">
         <div className="d-flex flex-column justify-content-between p-3">
@@ -20,7 +14,7 @@ const EquipmentRegister = () => {
         <EquipmentForm create={true} edit={false}/>
       </div>
     </div>
-  );
-};
+	)
+}
 
-export default EquipmentRegister;
+export default EquipmentRegister

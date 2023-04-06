@@ -2,7 +2,7 @@ import multer from 'multer'
 import path from 'path'
 import fs from 'fs'
 import mongoose from 'mongoose'
-import { verifyEquipment } from '../middlewares/verifyForms'
+import { verifyReport } from '../middlewares/verifyForms';
 
 const storage = multer.diskStorage({
     destination:(req:any,_file,cb)=>{
@@ -20,9 +20,9 @@ const storage = multer.diskStorage({
 });
 
 const filter = async function (req: any, file:any, cb:any) {
-    const validation = await verifyEquipment(req.body)
+   const validation = await verifyReport(req.body)
 
-    if(validation !== '') return cb(new Error(validation))
+   if(validation !== '') return cb(new Error(validation))
 
     if (
         !file.originalname.match(/\.(jpg|png|jpeg|mp3|mp4|ogg|pdf|doc|docx|webp)$/) 

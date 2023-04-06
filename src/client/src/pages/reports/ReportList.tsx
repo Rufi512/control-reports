@@ -1,14 +1,14 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { Sidebar } from '../../components/Sidebar';
-import SearchBar from '../../components/SearchBar';
-import { Link, useSearchParams } from 'react-router-dom';
-import { Equipment } from '../../types/equipment';
-import { getEquipments } from '../../Api/EquipmentsApi';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { Sidebar } from "../../components/Sidebar";
+import { reportsApi } from "../../Api";
+import SearchBar from "../../components/SearchBar";
+import { Link, useSearchParams } from "react-router-dom";
 import "../../assets/styles/pages/equipment.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { Report } from "../../types/report";
 const EquipmentList = () => {
-	 const ref = useRef(window);
+  const ref = useRef(window);
   const [width, setWidth] = useState(window.innerWidth);
   const [searchBarParams] = useSearchParams();
   const [searchParams, setSearchParams] = useState({
@@ -28,38 +28,33 @@ const EquipmentList = () => {
     totalPages: 0,
     totalDocs: 0,
   });
-  const [equipments, setEquipments] = useState<Equipment[]>([]);
+  const [reports, setReports] = useState<Report[]>([]);
 
-  //Handle window width
   const handleResize = () => {
     const actualWidth = window.innerWidth;
     setWidth(actualWidth);
   };
-  
-  //Update the search value
+
   const searchHandle = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setSearchParams({ ...searchParams, search: value });
   };
 
-  //Update the search date
   const dateHandle = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setSearchParams({ ...searchParams, date: value });
   };
-  //Update search by date
+
   const searchDateHandle = (value: boolean) => {
     setSearchParams({ ...searchParams, searchForDate: value });
   };
 
-  //Update the limit of results
   const limitHandle = (event: ChangeEvent<HTMLSelectElement>) => {
     const { value } = event.target;
     if (!Number(value)) return;
     setSearchParams({ ...searchParams, limit: Number(value) });
   };
-  
-  //Refresh the current page
+
   const pagesHandle = (event: ChangeEvent<HTMLSelectElement>) => {
     const { value } = event.target;
     if (Number(value) > requestParams.totalPages) return;
@@ -80,10 +75,10 @@ const EquipmentList = () => {
   // Request Equipment
   const request = async () => {
     try {
-      const res = await getEquipments(searchParams);
+      const res = await reportsApi.getReports(searchParams);
       if (!res) return;
       if (res.status >= 400) return;
-      setEquipments(res.data.docs);
+      setReports(res.data.docs);
       setRequestParams({
         hasPrevPage: res.data.hasPrevPage,
         hasNextPage: res.data.hasNextPage,
@@ -100,13 +95,13 @@ const EquipmentList = () => {
     request();
   }, [searchParams]);
 
-	return (
-		  <div className="container-fluid d-flex flex-row p-0">
-      <Sidebar page={'equipments'}/>
+  return (
+    <div className="container-fluid d-flex flex-row p-0">
+      <Sidebar page={'reports'}/>
       <div className="container-fluid d-flex flex-column container-page container-list">
         <div>
           <h2 style={{ textAlign: "right", marginTop: "10px" }}>
-            Lista de equipos
+            Lista de reportes
           </h2>
           <hr />
         </div>
@@ -123,52 +118,45 @@ const EquipmentList = () => {
               pagesHandle,
               searchDateHandle,
             }}
-            placeholder="Numero de bien | serial | marca | modelo"
+            placeholder="Tipo de reporte"
             totalPages={requestParams.totalPages}
             totalDocs={requestParams.totalDocs}
             request={request}
           />
           <div className="container-links" style={{margin:'10px 0', display:'flex', justifyContent:'flex-end'}}>
-            <Link to={'/equipment/register'} className="btn btn-primary">
+            <Link to={'/report/register'} className="btn btn-primary">
             <FontAwesomeIcon icon={faPlus} />
-              <span>Agregar Equipo</span>
+              <span>Agregar reporte</span>
               </Link>
           </div>
           {width > 1024 ? (
             <table className="table table-bordered table-equipments">
               <thead>
                 <tr>
-                  <th scope="col">Numero de bien</th>
-                  <th scope="col">Marca</th>
-                  <th scope="col">Modelo</th>
-                  <th scope="col">Serial</th>
+                  <th scope="col">Tipo de registro</th>
                   <th scope="col">Fecha de registro</th>
+                  <th scope="col">Equipos reportados</th>
+                  <th scope="col">Ultima modificacion</th>
                 </tr>
               </thead>
               <tbody>
-                {equipments.length > 0 ? (
-                  equipments.map((el: Equipment, i: number) => {
+                {reports.length > 0 ? (
+                  reports.map((el: Report, i: number) => {
                     return (
                       <tr key={i}>
                         <th scope="row">
-                          <Link to={`/equipment/detail/${el._id}`}>{el.asset_number.toUpperCase()}</Link>
+                          <Link to={`/report/detail/${el.id}`}>{el.record_type?.toUpperCase()}</Link>
                         </th>
                         <td>
-                          <Link to={`/equipment/detail/${el._id}`}>{el.brand.toUpperCase()}</Link>
+                          <Link to={`/report/detail/${el.id}`}>{el.register_date.day}/{el.register_date.month}/{el.register_date.year}</Link>
+
                         </td>
                         <td>
-                          <Link to={`/equipment/detail/${el._id}`}>{el.model.toUpperCase()}</Link>
+                          <Link to={`/report/detail/${el.id}`}>{el.equipments.length}</Link>
                         </td>
                         <td>
-                          <Link to={`/equipment/detail/${el._id}`}>{el.serial.toUpperCase()}</Link>
+                          <Link to={`/report/detail/${el.id}`}>{`${el.updated_at}`}</Link>
                         </td>
-                        {el.register_date ? <td>
-                          <Link to={`/equipment/detail/${el.id}`}>
-                            {el.register_date.day}/{el.register_date.month}/
-                            {el.register_date.year}
-                          </Link>
-                        </td> : ''}
-                        
                       </tr>
                     );
                   })
@@ -190,32 +178,25 @@ const EquipmentList = () => {
             </table>
           ) : (
             <div className="list-group">
-              {equipments.length > 0 ? (
-                equipments.map((el: Equipment, i: number) => {
+              {reports.length > 0 ? (
+                reports.map((el: Report, i: number) => {
                   return (
                     <Link
-                      to={`/equipment/detail/${el._id}`}
+                      to={`/report/detail/${el._id}`}
                       className="list-group-item list-group-item-action flex-column align-items-start"
                       key={i}
                     >
                       <div className="d-flex w-100 justify-content-between">
                         <h5 className="mb-1">
-                          {el.asset_number.toUpperCase()}
+                          {el.record_type?.toUpperCase()}
                         </h5>
-                        {el.register_date ? <td>
-                          <small>
-                            {el.register_date.day}/{el.register_date.month}/
-                            {el.register_date.year}
-                          </small>
-                        </td> : ''}
+                        <small>
+                          {el.register_date.day}/{el.register_date.month}/
+                          {el.register_date.year}
+                        </small>
                       </div>
                       <small>
-                        {el.brand.toUpperCase()} - {el.model.toUpperCase()}
-                      </small>
-                      <br />
-                      <small>
-                        <span style={{ fontWeight: "600" }}>Serial:</span>
-                        {el.serial.toUpperCase()}
+                        Equipos registrados: {el.equipments.length}
                       </small>
                     </Link>
                   );
@@ -266,8 +247,7 @@ const EquipmentList = () => {
         </div>
       </div>
     </div>
-	)
-}
+  );
+};
 
-
-export default EquipmentList
+export default EquipmentList;

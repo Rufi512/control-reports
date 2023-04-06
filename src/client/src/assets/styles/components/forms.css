@@ -1,0 +1,38 @@
+.fields-container .form-group {
+	margin: 5px 0;
+}
+
+.evidences-container .form-group{
+	margin: 0;
+} 
+
+.fields-container label{
+	color: black;
+	font-weight: 600;
+	margin-bottom: 5px;
+}
+
+.form-container .container-buttons button{
+	margin:10px 5px;
+}
+
+.equipment-detail .form-group label, .equipment-detail .form-group p{
+    padding: 2px 5px;
+}
+.equipment-detail label{
+	margin-bottom:1px;
+}
+
+.equipment-detail .form-group label{
+    width: 100%;
+    border-radius: 3px;
+    background: #175397;
+    color: white;
+}
+
+
+@media(min-width:768px){
+	.form-container .container-buttons button{
+		margin:0px 5px;
+	}
+}

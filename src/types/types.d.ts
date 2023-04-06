@@ -12,16 +12,24 @@ export interface IEquipment{
     model:string,
     serial:string,
     brand:string,
+}
+
+export interface ReportModel{
+    [key: string]: any
+    description:string
+    equipments:[]
     register_date:string,
     evidences_description:string[] | string,
     evidences?:Express.Multer.File[],
     evidences_description_new?:string[] | string,
     evidences_description_old?:string[] | string,
     delete_images?:number[],
-    record_type?:string,
+    record_type:string,
     files:Express.Multer.File[],
     path_folder?: string,
     id?:mongoose.Types.ObjectId
+    note?:string
+
 }
 
 export interface IUser{

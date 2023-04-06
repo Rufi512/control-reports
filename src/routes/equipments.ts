@@ -1,9 +1,5 @@
 import { Router } from "express";
-import { registerEquipment, list, getEquipment, updateEquipment, deleteEvidences, deleteEquipment } from "../controllers/equipment_controller";
-import multer from '../libs/multer'
-import { getExistingFolder, getIdFolder } from "../libs/mongooseId";
-
-//Generate UUID from folder and id
+import { registerEquipment, getEquipment, updateEquipment, deleteEquipment, list, listSelect } from "../controllers/equipment_controller";
 
 const router = Router()
 
@@ -11,12 +7,12 @@ router.get('/info/:id',getEquipment)
 
 router.get('/list',list)
 
-router.post('/register',[getIdFolder,multer.array('evidences')],registerEquipment)
+router.get('/select/list',listSelect)
 
-router.put('/update/:id',[getExistingFolder,multer.array('evidences')],updateEquipment)
+router.post('/register',registerEquipment)
+
+router.put('/update/:id',updateEquipment)
 
 router.delete('/delete/:id',deleteEquipment)
-
-router.post('/delete/evidences/:id',deleteEvidences)
 
 export default router

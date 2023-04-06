@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars, faDesktop, faHouse, faUser, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faDesktop, faFlag, faHouse, faUser, faXmark } from '@fortawesome/free-solid-svg-icons'
 import logo from '../assets/images/mp.png'
 import '../assets/styles/sidebar.css'
 import { useEffect, useRef, useState } from 'react'
@@ -75,6 +75,12 @@ export const Sidebar = (props:Props) => {
         <Link to="/equipment/list" className={`nav-link ${props.page === 'equipments' ? 'active' : 'link-dark'}`}>
         <FontAwesomeIcon icon={faDesktop}/>
           <p>Lista de equipos</p>
+        </Link>
+      </li>
+      <li className="nav-item">
+        <Link to="/report/list" className={`nav-link ${props.page === 'reports' ? 'active' : 'link-dark'}`}>
+        <FontAwesomeIcon icon={faFlag} />
+          <p>Lista de reportes</p>
         </Link>
       </li>
       <li className="nav-item">

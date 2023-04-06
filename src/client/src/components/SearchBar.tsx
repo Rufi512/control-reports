@@ -11,6 +11,7 @@ type Props = {
     pagesHandle:(event:ChangeEvent<HTMLSelectElement>)=> void
     searchDateHandle:(value:boolean)=> void,
   }
+  placeholder: string;
   totalDocs:number
   totalPages:number
   request:()=>void
@@ -28,7 +29,7 @@ const SearchBar = (props:Props) => {
         <input
           type="text"
           className="form-control"
-          placeholder="Numero de bien | Serial | Marca | Modelo"
+          placeholder={props.placeholder || ''}
           aria-describedby="basic-addon2"
           onChange={props.searchParams.searchHandle}
           value={props.searchParams.searchValue}

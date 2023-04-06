@@ -1,5 +1,7 @@
 import moment from "moment";
-import { IEquipment } from "../types/types";
+import { IEquipment, ReportModel } from "../types/types";
+import mongoose from "mongoose";
+import equipment from "../models/equipment";
 
 export const validateEmail = (mail: string) => {
     if (
@@ -24,11 +26,37 @@ export const validateDate = async (date: string) => {
 
 export const validateFieldEquipment = async (field: string, value: string) => {
     if (!/^[a-zA-Z0-9áéíóúñ]+$/.test(value) || value.length > 30) {
-        if(field === 'record_type' && value.length <= 30) return ''
         return `El campo ${field} es invalido: (debe tener 30 caracteres maximo y sin espacios)`;
     }
     return "";
 };
+
+export const validateFieldReport = async (field: string, value: string) =>{
+     if (!/^[a-zA-Z0-9áéíóúñ ]+$/.test(value) || value.length > 30) {
+        return `El campo ${field} es invalido: (debe tener 30 caracteres maximo y sin espacios)`;
+    }
+    return "";
+}
+
+export const validateEquipments = async (equipments:string[]) =>{
+     let arrayEquipments: string[] = [];
+
+    if (!Array.isArray(equipments)) {
+      arrayEquipments.push(equipments);
+    } else {
+      arrayEquipments = equipments;
+    }
+    console.log(arrayEquipments)
+    for (const elm in arrayEquipments) {
+      const validId = mongoose.Types.ObjectId.isValid(arrayEquipments[elm]);
+      console.log(arrayEquipments[elm], validId)
+      if (!validId) return "Un equipo no es valido";
+      const equipmentFound = await equipment.findById(arrayEquipments[elm]);
+      if (!equipmentFound) return "Un equipo no esta registrado";
+    }
+
+    return ''
+}
 
 export const validateDescriptions = async (value:any) =>{
     let error = ''
@@ -91,33 +119,15 @@ export const verifyCreateUser = async (data: any) => {
 
 export const verifyEquipment = async (data: IEquipment) => {
     let error = "";
-    const {description,model,asset_number, register_date, brand, serial , record_type} = data 
-    console.log(data)
-    if(!description || !model || !asset_number || !register_date || !brand || !serial || !record_type){
-        error = 'Los campos necesarios no fueron completados!'
-        return error
-    }
 
     for (const key in data) {
         let validation;
         const value = data[key];
-        if (
-            key === "description" ||
-            key === "evidences" ||
-            key === "register_date_format"
-        )
-            continue;
+        if (key === "description") continue;
         if (key === "asset_number") {
             validation = await validateOnlyNumber(value);
-        } else if (key === "register_date") {
-            validation = await validateDate(value);
-        } else if(key === "evidences_description" ||
-            key === "evidences_description_old" ||
-            key === "evidences_description_new"){
-            validation = await validateDescriptions(value);
         }else{
             validation = await validateFieldEquipment(key, value);
-
         }
         if (validation) {
             error = validation;
@@ -127,3 +137,30 @@ export const verifyEquipment = async (data: IEquipment) => {
 
     return error;
 };
+
+export const verifyReport = async (data:ReportModel) =>{
+    let error = ''
+    const {description,register_date,equipments} = data
+    if(!description || !register_date || !equipments){ 
+        error = 'Complete los campos requeridos'
+        return error
+    }
+
+    for (const key in data) {
+        let validation;
+        const value = data[key];
+        validation = await validateFieldReport(key, value);
+        if (key === "description" || key === "note") continue;
+        if(key === "evidences_description" || key === "evidences_description_old") validation = await validateDescriptions(data[key])
+        if(key === "register_date") validation = await validateDate(data[key])
+        if(key === "equipments") validation = await validateEquipments(data[key])
+        
+
+        if (validation) {
+            error = validation;
+            break;
+        }
+    }
+
+    return error;
+}

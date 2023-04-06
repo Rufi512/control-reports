@@ -3,13 +3,10 @@ import mongoosePaginate from 'mongoose-paginate-v2'
 import { IEquipment } from '../types/types'
 
 const equipmentSchema = new Schema({
-  id:{
-    type: String,
-    unique: true
-  },
   description:{
     type: String,
-    required:true
+    required:false,
+    default:''
   },
   created_at:{
     type: Date,
@@ -19,41 +16,32 @@ const equipmentSchema = new Schema({
     type: Date,
     default:new Date()
   },
-  register_date:{
-    type:Object,
-    required:true
-  },
   asset_number:{
     type: String,
     required:true,
-    maxLength: 30
+    maxLength: 30,
+    unique:true
   },
   model:{
     type: String,
     required:true,
     maxLength: 30
   },
-  record_type:{
-    type:String,
-    required:true,
-    default:'informe',
-    maxLength: 30
-  },
   brand:{
     type: String,
     required:true
   },
-
   serial:{
     type: String,
     required:true,
-    maxLength: 30
+    maxLength: 30,
+    unique:true
   },
-  evidences:{
-    type:Array,
+  register_date:{
+    type:Object,
     required:false,
-    default:[]  
-}
+  default:{ day:new Date().getUTCDate(), month:new Date().getUTCMonth() + 1, year:new Date().getFullYear()}
+  }, 
 },{
   versionKey:false
 })

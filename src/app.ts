@@ -3,6 +3,7 @@ import morgan from 'morgan'
 import cors from 'cors';
 import path from 'path'
 import equipments from './routes/equipments'
+import reports from './routes/reports'
 import { Request, Response } from 'express';
 const app = express()
 
@@ -14,9 +15,9 @@ app.use(morgan("dev"));
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-//Routes
+//Routes Api
 app.use('/api/equipments',equipments)
-
+app.use('/api/reports',reports)
 //Store public documents
 app.use('/public/contents/evidences',express.static(path.resolve('public/contents/evidences')))
 
