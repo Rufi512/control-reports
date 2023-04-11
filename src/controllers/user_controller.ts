@@ -1,15 +1,15 @@
-import {Request, Response} from 'express'
+import { Request, Response } from "express";
 import user from "../models/user";
 import log from "../models/log";
 import role from "../models/role";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import {verifyCreateUser} from '../middlewares/verifyForms'
-import { verifySignup } from "../middlewares";
+import { verifyCreateUser, verifyQuestions } from "../middlewares/verifyForms";
+import fs from "fs";
+import quest from "../models/quest";
 dotenv.config();
 
-
-export const getUsers = async (req:Request, res:Response) => {
+export const getUsers = async (req: Request, res: Response) => {
     if (req.query) {
         const { limit, page, users } = req.query;
         if (limit && !Number(limit))
@@ -26,17 +26,34 @@ export const getUsers = async (req:Request, res:Response) => {
                 .json({ message: "La búsqueda no es una cadena!" });
     }
 
+    const search = req.query.search || "";
+
     let optionsPagination = {
         lean: false,
-        limit: req.query && Number(req.query.limit) ? Number(req.query.limit) : 10,
+        limit:
+            req.query && Number(req.query.limit) ? Number(req.query.limit) : 10,
         page: req.query && Number(req.query.page) ? Number(req.query.page) : 1,
         select: { password: 0 },
         populate: { path: "rol", select: { name: 1 } },
     };
 
-    const users = await user.paginate({}, optionsPagination);
+    const users = await user.paginate(
+        {
+            $or: [
+                {
+                    firstname: new RegExp(String(search), "gi"),
+                },
+                {
+                    lastname: new RegExp(String(search), "gi"),
+                },
+                {
+                    ci: new RegExp(String(search), "gi"),
+                },
+            ],
+        },
+        optionsPagination
+    );
 
-    console.log(users);
     if (users.length === 1) {
         return res.status(404).json({ message: "Usuarios no encontrados" });
     }
@@ -44,52 +61,76 @@ export const getUsers = async (req:Request, res:Response) => {
     return res.json(users);
 };
 
-export const getLogs = async (req:Request, res:Response) => {
-    try{
-    if (req.query) {
-        const { limit, page, reqLogs } = req.query;
-        if (limit && !Number(limit))
+export const getLogs = async (req: Request, res: Response) => {
+    try {
+        if (req.query) {
+            const { limit, page, reqLogs } = req.query;
+            if (limit && !Number(limit))
+                return res.status(400).json({
+                    message: "El limite de elementos no es un numero!",
+                });
+            if (page && !Number(page))
+                return res
+                    .status(400)
+                    .json({ message: "El limite de paginas no es un numero!" });
+            if (Number(reqLogs))
+                return res
+                    .status(400)
+                    .json({ message: "La búsqueda no es una cadena!" });
+        }
+
+        let optionsPagination = {
+            lean: false,
+            limit:
+                req.query && Number(req.query.limit)
+                    ? Number(req.query.limit)
+                    : 10,
+            page:
+                req.query && Number(req.query.page)
+                    ? Number(req.query.page)
+                    : 1,
+            sort: { _id: "desc" },
+        };
+
+        const logs = await log.paginate({}, optionsPagination);
+
+        if (logs.length === 0) {
             return res
-                .status(400)
-                .json({ message: "El limite de elementos no es un numero!" });
-        if (page && !Number(page))
-            return res
-                .status(400)
-                .json({ message: "El limite de paginas no es un numero!" });
-        if (Number(reqLogs))
-            return res
-                .status(400)
-                .json({ message: "La búsqueda no es una cadena!" });
+                .status(404)
+                .json({ message: "No hay información registrada" });
+        }
+
+        return res.json(logs);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({ message: "Error en el servidor" });
     }
-
-    let optionsPagination = {
-        lean: false,
-        limit: req.query && Number(req.query.limit) ? Number(req.query.limit) : 10,
-        page: req.query && Number(req.query.page) ? Number(req.query.page) : 1,
-        sort:{ _id: 'desc'}
-    };
-
-    const logs = await log.paginate({}, optionsPagination);
-
-    if (logs.length === 0) {
-        return res.status(404).json({ message: "No hay información registrada" });
-    }
-
-    return res.json(logs);
-}catch(e){
-    console.log(e)
-    return res.status(500).json({message:'Error en el servidor'})
-}
 };
 
-
-export const createUser = async (req:any, res:Response) => {
+export const createUser = async (req: any, res: Response) => {
     try {
-        const { ci, firstname, lastname, email, password, rol } = req.body;
-        const checkRegister = await verifyCreateUser(req.body)
-        console.log(checkRegister)
-         if (checkRegister)
+        const { ci, firstname, lastname, email, password, rol, position } =
+            req.body;
+        const checkRegister = await verifyCreateUser(req.body, false, "");
+
+        if (checkRegister)
             return res.status(400).json({ message: checkRegister.message });
+
+        //verify ci
+        const foundCi = await user.findOne({ ci: ci });
+
+        if (foundCi)
+            return res
+                .status(401)
+                .json({ message: "La cedula ya pertenece a otra persona" });
+
+        //Verify Email exits
+        const foundEmail = await user.findOne({ email: email });
+
+        if (foundEmail)
+            return res
+                .status(401)
+                .json({ message: "El email ya pertenece a un usuario" });
 
         if (!password)
             return res.status(400).json({
@@ -101,6 +142,7 @@ export const createUser = async (req:any, res:Response) => {
             firstname,
             lastname,
             email,
+            position,
             password: await user.encryptPassword(password),
             rol,
         });
@@ -113,43 +155,149 @@ export const createUser = async (req:any, res:Response) => {
 
         if (rol === "") {
             const rolFind = await role.findOne({ name: "user" });
-            if(!rolFind) return res.status(404).json({message:'No se puede asignar el rol'})
+            if (!rolFind)
+                return res
+                    .status(404)
+                    .json({ message: "No se puede asignar el rol" });
             newUser.rol = rolFind._id;
         }
 
         const savedUser = await newUser.save();
-        await verifySignup.registerLog(req,`Registro al usuario: ${savedUser.firstname} ${savedUser.lastname} - cedula: ${savedUser.ci}`)
-        return res.json({ message: "Usuario Registrado", user:savedUser });
+
+        //await verifySignup.registerLog(req,`Registro al usuario: ${savedUser.firstname} ${savedUser.lastname} - cedula: ${savedUser.ci}`);
+
+        return res.json({ message: "Usuario Registrado", user: savedUser });
     } catch (err) {
         console.log(err);
-        return res.status(500).json({ message: "Error fatal en el servidor" });
+        return res
+            .status(500)
+            .json({ message: "No se ha podido registrar el usuario" });
+    }
+};
+
+export const infoUser = async (req: Request, res: Response) => {
+    try {
+        console.log(req.params);
+
+        const userFind = await user.findById(req.params.id).populate("rol");
+        if (!userFind)
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        return res.json(userFind);
+    } catch (err) {
+        console.log(err);
+        return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+};
+
+export const validateUser = async (req: any, res: Response) => {
+    try {
+        const {
+            ci,
+            firstname,
+            lastname,
+            email,
+            password,
+            position,
+            questions,
+            answers,
+        } = req.body;
+
+        const checkRegister = await verifyCreateUser(
+            req.body,
+            true,
+            req.userId
+        );
+
+        const checkQuestions = await verifyQuestions(questions, answers);
+        
+        if (checkQuestions !== "") {
+            if(req.file && req.file.path)fs.unlinkSync(req.file.path || "");
+            return res.status(400).json({ message: checkQuestions });
+        }
+
+        if (checkRegister) {
+            if(req.file && req.file.path)fs.unlinkSync(req.file.path || "");
+            return res.status(400).json({ message: checkRegister.message });
+        }
+
+
+        const questionsUser = questions.map(async (el: string, i: number) => {
+            return {
+                question: el,
+                answer: await quest.encryptAnswer(answers[i]),
+            };
+        });
+
+        for (const elm of questionsUser) {
+            const quests = await quest.find({ user: req.userId }, { answer: 0 });
+            if(quests.length >= 4) continue
+            const newQuestion = new quest({
+                user: req.userId,
+                question: (await elm).question,
+                answer: (await elm).answer,
+            });
+
+            await newQuestion.save();
+        }
+
+        await user.updateOne(
+            { _id: req.params.id },
+            {
+                $set: {
+                    ci,
+                    firstname,
+                    lastname,
+                    email,
+                    password: await user.encryptPassword(password),
+                    position,
+                    first_login: false,
+                    avatar: req.file?.path || "",
+                    updated_at: new Date(),
+                },
+            }
+        );
+
+        return res.json({ message: "Usuario Verificdo" });
+    } catch (err) {
+        console.log(err);
+        return res
+            .status(500)
+            .json({ message: "No se pudo validar al usuario" });
     }
 };
 
 //Actualiza la información de usuario
 
-export const updateUser = async (req:any, res:Response) => {
+export const updateUser = async (req: any, res: Response) => {
     try {
         const validId = mongoose.Types.ObjectId.isValid(
             req.params.id || req.userId
         );
+        const avatar = req.file?.path || ''
 
         if (!validId) {
             return res.status(404).json({ message: "ID invalido" });
         }
 
-        const checkRegister = await verifyCreateUser(req.body)
-         if (checkRegister)
+        const checkRegister = await verifyCreateUser(
+            req.body,
+            req.body.allowPassword || false,
+            req.userId
+        );
+        if (checkRegister)
             return res.status(400).json({ message: checkRegister.message });
 
         const foundUser = await user.findById(req.params.id || req.userId);
-        
+
         //Request the info from user what make the modification
         const userRequestFind = await user.findById(req.userId);
 
         const rolFind = await role.findOne({ name: { $in: req.body.rol } });
 
-        if(!rolFind) return res.status(404).json({message:'No se puede asignar el rol'})
+        if (!rolFind)
+            return res
+                .status(404)
+                .json({ message: "No se puede asignar el rol" });
 
         if (req.rolUser) {
             if (req.params.id && req.rolUser !== "Admin") {
@@ -158,7 +306,10 @@ export const updateUser = async (req:any, res:Response) => {
                     .json({ message: "No se ha encontrado al usuario" });
             }
 
-            if(rolFind._id !== userRequestFind?.rol && req.rolUser !== "Admin"){
+            if (
+                rolFind._id !== userRequestFind?.rol &&
+                req.rolUser !== "Admin"
+            ) {
                 return res
                     .status(400)
                     .json({ message: "No puedes modificar el rol" });
@@ -168,8 +319,6 @@ export const updateUser = async (req:any, res:Response) => {
         const userFind = await user.findOne({
             $or: [{ email: req.body.email }, { ci: req.body.ci }],
         });
-
-        
 
         const rolUserRequest = await role.find({
             _id: { $in: userRequestFind?.rol },
@@ -192,7 +341,6 @@ export const updateUser = async (req:any, res:Response) => {
             });
         }
 
-
         if (!rolFind) return res.status(400).json({ message: "Rol no existe" });
         //Verify if the user is admin or is the same
         if (rolUserRequest[0].name != "Admin") {
@@ -203,9 +351,12 @@ export const updateUser = async (req:any, res:Response) => {
             }
         }
 
+        if(avatar !== '' && foundUser.avatar){
+            fs.unlinkSync(foundUser.avatar || "")
+        }
+
         //Allow modification
 
-        if (req.body.password && req.body.allowPassword) {
             await user.updateOne(
                 { _id: req.params.id || req.userId },
                 {
@@ -214,29 +365,62 @@ export const updateUser = async (req:any, res:Response) => {
                         firstname: req.body.firstname,
                         lastname: req.body.lastname,
                         email: req.body.email,
-                        password: await user.encryptPassword(req.body.password),
+                        password: req.body.allowPassword ? await user.encryptPassword(req.body.password) : foundUser.password,
                         rol: rolFind._id,
+                        avatar:avatar || foundUser.avatar,
+                        position:req.body.position
                     },
                 }
             );
-        } else {
-            await user.updateOne(
-                { _id: req.params.id || req.userId },
-                {
-                    $set: {
-                        ci: req.body.ci,
-                        firstname: req.body.firstname,
-                        lastname: req.body.lastname,
-                        email: req.body.email,
-                        rol: rolFind._id,
-                    },
-                }
-            );
-        }
-        await verifySignup.registerLog(req,`Modifico usuario: ${foundUser.firstname} ${foundUser.lastname} - cedula: ${foundUser.ci}`)
+       
+        //await verifySignup.registerLog(req,`Modifico usuario: ${foundUser.firstname} ${foundUser.lastname} - cedula: ${foundUser.ci}`);
+
         return res.json({ message: "Usuario modificado" });
     } catch (err) {
         console.log(err);
         return res.status(500).json({ message: "Error fatal en el servidor" });
+    }
+};
+
+export const deleteUser = async (req: Request, res: Response) => {
+    try {
+        const userFind = await user.findById(req.params.id);
+        const listUsers = await user.paginate({}, {});
+        const userAdmin = listUsers.docs[0];
+        
+        if (!userFind) return res.status(404).json({ message: "Usuario no encontrado" });
+        
+        if (userAdmin.id === userFind.id)
+            return res
+                .status(400)
+                .json({ message: "No esta permitido borrar al usuario" });
+        
+        const dir = `${userFind.avatar || ''}`;
+        if (fs.existsSync(dir)) {
+            fs.unlinkSync(dir);
+        }
+
+        await quest.deleteMany({user:req.params.id})
+        await user.findByIdAndDelete(req.params.id);
+
+        return res.json({ message: "Usuario eliminado" });
+    } catch (err) {
+        console.log(err);
+        return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+};
+
+export const deleteAvatar = async (req: Request, res: Response) => {
+    try {
+        const userFind = await user.findById(req.params.id);
+        if (!userFind) return res.status(404).json({ message: "Usuario no encontrado" });
+        const dir = `${userFind.avatar || ''}`;
+        if (fs.existsSync(dir)) {
+            fs.unlinkSync(dir);
+        }
+        return res.json({message:'Avatar eliminado'})
+    } catch (err) {
+        console.log(err);
+        return res.status(404).json({ message: "No se ha borrado el avatar" });
     }
 };

@@ -3,7 +3,7 @@ import {Navigate} from "react-router-dom"
 //import {verifyToken} from '../API'
 
 const CheckLogin = ({children}:any) => {
-   const [isLogin,setIsLogin] = useState(true)
+   const [isLogin,setIsLogin] = useState(false)
    const [isLoad,setIsLoad] = useState(true)
    useEffect(() => {
     /*

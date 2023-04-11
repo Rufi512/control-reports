@@ -4,7 +4,11 @@ import cors from 'cors';
 import path from 'path'
 import equipments from './routes/equipments'
 import reports from './routes/reports'
+import auth from './routes/auth';
+import users from './routes/users';
 import { Request, Response } from 'express';
+import { initialSetup } from './libs/initalSetup';
+//import { initialSetup } from './libs/initalSetup';
 const app = express()
 
 //Settings
@@ -18,8 +22,13 @@ app.use(express.json());
 //Routes Api
 app.use('/api/equipments',equipments)
 app.use('/api/reports',reports)
+app.use('/api/users',users)
+app.use('/api/auth',auth)
 //Store public documents
 app.use('/public/contents/evidences',express.static(path.resolve('public/contents/evidences')))
+
+//Initial Setup
+initialSetup()
 
 //Client
 const client = path.join(__dirname, "client");

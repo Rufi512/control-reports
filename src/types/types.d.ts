@@ -32,15 +32,26 @@ export interface ReportModel{
 
 }
 
-export interface IUser{
+export interface UserModel{
     ci:string,
     firstname:string
     lastname:string
     email:string
     password:string
+    security_questions:mongoose.Types.ObjectId
+    first_login:boolean
+    position:string
     rol:mongoose.Types.ObjectId
     block_count:number
+    updated_at:date
+    avatar?:string
     userId?:string
+}
+
+export interface QuestModel{
+    user:mongoose.Types.ObjectId
+    question:string,
+    answer:string
 }
 
 export interface LogModel{

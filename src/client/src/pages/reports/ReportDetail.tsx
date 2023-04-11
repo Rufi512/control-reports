@@ -12,6 +12,9 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { toast } from "react-toastify";
 import { Report } from "../../types/report";
 import { ReportForm } from "../../components/reports/ReportForm";
+import ReportPdf from "../../components/reports/ReportPdf";
+import { pdf } from "@react-pdf/renderer";
+
 const EquipmentDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -88,7 +91,6 @@ const EquipmentDetail = () => {
 
   const handleResize = () => {
     const actualWidth = window.innerWidth;
-    console.log(actualWidth);
     setWidth(actualWidth);
   };
 
@@ -131,6 +133,16 @@ const EquipmentDetail = () => {
       console.log(err);
       toast.error("No se pudo eliminar la evidencia");
     }
+  };
+
+  const exportPdf = () => {
+    const generatePdfDocument = async () => {
+      const blob = await pdf(<ReportPdf data={report} equipments={equipmentsRead}/>).toBlob();
+      const fileURL = URL.createObjectURL(blob);
+      window.open(fileURL);
+    };
+
+    generatePdfDocument();
   };
 
   useEffect(() => {
@@ -185,7 +197,7 @@ const EquipmentDetail = () => {
               className="d-flex flex-row align-items-center flex-wrap"
               style={{ padding: "0 12px", height: "54px" }}
             >
-              <button className="btn btn-dark">
+              <button className="btn btn-dark" onClick={exportPdf}>
                 <FontAwesomeIcon icon={faFilePdf} /> <span>Exportar a pdf</span>
               </button>
               <button
@@ -204,7 +216,13 @@ const EquipmentDetail = () => {
               </button>
               <div
                 className="form-check form-switch"
-                style={{ width: "max-content", marginLeft: "auto" }}
+                style={{
+                  width: "max-content",
+                  marginLeft: "auto",
+                  height: "inherit",
+                  display: "flex",
+                  alignItems: "center",
+                }}
               >
                 <input
                   className="form-check-input"
@@ -215,7 +233,11 @@ const EquipmentDetail = () => {
                   }}
                   checked={edit}
                 />
-                <label className="form-check-label" htmlFor="switch-edit">
+                <label
+                  className="form-check-label"
+                  htmlFor="switch-edit"
+                  style={{ marginTop: "4px", marginLeft: "5px" }}
+                >
                   Editar reporte
                 </label>
               </div>
@@ -379,18 +401,24 @@ const EquipmentDetail = () => {
                   editor={ClassicEditor}
                   disabled={true}
                   config={{
-                    toolbar: [
-                      "heading",
-                      "|",
-                      "bold",
-                      "italic",
-                      "link",
-                      "numberedList",
-                      "bulletedList",
-                      "|",
-                      "undo",
-                      "redo",
-                    ],
+                    toolbar: {
+                      items: [
+                        "heading",
+                        "blockQuote",
+                        "bold",
+                        "italic",
+                        "link",
+                        "|",
+                        "indent",
+                        "outdent",
+                        "|",
+                        "numberedList",
+                        "bulletedList",
+                        "|",
+                        "undo",
+                        "redo",
+                      ],
+                    },
                   }}
                   data={report.description}
                 />
@@ -403,18 +431,24 @@ const EquipmentDetail = () => {
                   editor={ClassicEditor}
                   disabled={true}
                   config={{
-                    toolbar: [
-                      "heading",
-                      "|",
-                      "bold",
-                      "italic",
-                      "link",
-                      "numberedList",
-                      "bulletedList",
-                      "|",
-                      "undo",
-                      "redo",
-                    ],
+                    toolbar: {
+                      items: [
+                        "heading",
+                        "blockQuote",
+                        "bold",
+                        "italic",
+                        "link",
+                        "|",
+                        "indent",
+                        "outdent",
+                        "|",
+                        "numberedList",
+                        "bulletedList",
+                        "|",
+                        "undo",
+                        "redo",
+                      ],
+                    },
                   }}
                   data={report.note}
                 />

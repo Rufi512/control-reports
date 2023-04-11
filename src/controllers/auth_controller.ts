@@ -2,20 +2,25 @@ import user from "../models/user";
 import role from "../models/role";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { Request,Response } from "express";
+import { Request, Response } from "express";
 import { verifySignup, authJwt } from "../middlewares";
-import { IUser, RoleModel } from "../types/types";
+import { RoleModel } from "../types/types";
 dotenv.config();
 
 const secret = process.env.SECRET ? process.env.SECRET : "secretWord";
 
-interface RequestUser extends IUser,Request{}
-interface RequestRole extends RoleModel,Request{}
+interface RequestUser extends Request {
+    userId?: string;
+}
+interface RequestRole extends RoleModel, Request {}
 
-export const signIn = async (req:RequestUser, res:Response) => {
+export const signIn = async (req: RequestUser, res: Response) => {
     try {
         //Confirmamos si existe el usuario por medio de email o cedula
-        if(!req.body.user) return res.status(404).json({message:'Llene los campos necesarios'})
+        if (!req.body.user)
+            return res
+                .status(404)
+                .json({ message: "Llene los campos necesarios" });
         const userFound = await user.findOne({
             $or: [{ email: req.body.user }, { ci: req.body.user }],
         });
@@ -29,12 +34,10 @@ export const signIn = async (req:RequestUser, res:Response) => {
         }
 
         if (userFound.block_count >= 3)
-            return res
-                .status(400)
-                .json({
-                    message:
-                        "El usuario esta bloqueado, desbloquee su usuario en: desbloquear usuario",
-                });
+            return res.status(400).json({
+                message:
+                    "El usuario esta bloqueado, desbloquee su usuario en: desbloquear usuario",
+            });
 
         req.userId = userFound.id;
 
@@ -44,23 +47,42 @@ export const signIn = async (req:RequestUser, res:Response) => {
             userFound.password
         );
 
+        console.log(matchPassword)
+
         if (!matchPassword) {
-            if (userFound.id !== userAdmin.id) {
-                await authJwt.blockUser(req,false);
+            if (userFound.id !== userAdmin.id && userFound.first_login !== true) {
+                await authJwt.blockUser(req.userId || "", false);
             }
             return res.status(401).json({ message: "Contraseña invalida" });
         }
 
-        //Generamos el token
-        const token = jwt.sign({ id: userFound.id }, secret, {
-            expiresIn: 86400, //24 hours
-        });
+        //Generate token
+        let token;
+        if (userFound.first_login) {
+            token = jwt.sign(
+                { id: userFound.id },
+                secret + userFound.password,
+                {
+                    expiresIn: "1h",
+                }
+            );
+        } else {
+            token = jwt.sign({ id: userFound.id }, secret, {
+                expiresIn: 86400, //24 hours
+            });
+        }
 
         const rolFind = await role.findOne({ _id: { $in: userFound.rol } });
-        if(!rolFind) return res.status(404).json({message:"Error al ingresar"})
-        await verifySignup.registerLog(req, "Ingreso de sesión");
-        await authJwt.blockUser(req, true);
+        if (!rolFind)
+            return res.status(404).json({ message: "Error al ingresar" });
+
+        await verifySignup.registerLog(req.userId || "", "Ingreso de sesión");
+
+        await authJwt.blockUser(req.userId || "", true);
+
         return res.json({
+            user:userFound.id,
+            first_login:userFound.first_login,
             token,
             rol: rolFind.name,
         });
@@ -70,7 +92,7 @@ export const signIn = async (req:RequestUser, res:Response) => {
     }
 };
 
-export const verifyTokenConfirm = (req:RequestRole, res:Response) => {
+export const verifyTokenConfirm = (req: RequestRole, res: Response) => {
     console.log(req.rolUser);
     return res.json({ rol: req.rolUser, message: "Token valido" });
 };

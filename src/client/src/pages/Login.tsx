@@ -1,14 +1,21 @@
 import React, { useState, useRef, FormEvent, ChangeEvent } from "react";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
-import { faEye, faEyeSlash, faLock, faUser } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEye,
+  faEyeSlash,
+  faLock,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import logo from '../assets/images/mp.png'
+import '../assets/styles/pages/login.css'
 //import Cookies from "js-cookie";
 //import { loginUser } from "../API";
 const Login = () => {
   const recaptchaRef = useRef(null);
   const navigate = useNavigate();
-  const [user, setUser] = useState({user:'',password:'',recaptcha:''});
+  const [user, setUser] = useState({ user: "", password: "", recaptcha: "" });
   const [showPass, setShowPass] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
 
@@ -20,7 +27,7 @@ const Login = () => {
     }
   };
 
-  const onCaptcha = async (value:string) => {
+  const onCaptcha = async (value: string) => {
     if (value) {
       console.log("No es el xocas");
       setUser({ ...user, recaptcha: value });
@@ -29,19 +36,20 @@ const Login = () => {
     }
   };
 
-  const handleChanges = (event:ChangeEvent<HTMLInputElement>) =>{
-    const {name,value} = event.target
-    setUser({ ...user, [name]:value })
-  }
+  const handleChanges = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setUser({ ...user, [name]: value });
+  };
 
-  const handleSubmit = async (e:FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (isSubmit) return;
     setIsSubmit(true);
     const toastId = toast.loading("Verificando datos...", {
       closeOnClick: true,
     });
-    try {/*
+    try {
+      /*
       const res = await loginUser(user);
       recaptchaRef.current.reset();
       setIsSubmit(false);
@@ -57,7 +65,7 @@ const Login = () => {
 */
       //Cookies.set("token", res.data.token);
       //Cookies.set("rol", res.data.rol);
-/*
+      /*
       toast.update(toastId, {
         render: "Ingreso Correcto",
         type: "success",
@@ -82,73 +90,41 @@ const Login = () => {
 
   return (
     <React.Fragment>
-      <div className="container-login">
-        <h1>Sistema de registro juan bosco</h1>
-        <form className="form" onSubmit={handleSubmit}>
-          <label className="field">
-            <p>Cedula o Correo electronico</p>
-            <div className="field-content">
-              <div className="icon">
-                <FontAwesomeIcon icon={faUser} />
-              </div>
-              <input
-                type="text"
-                placeholder="Introduce tu cedula o correo"
-                name="user"
-                onInput={(e) => {handleChanges}}
-                value={user.user}
-              />
-            </div>
-          </label>
-          <label className="field">
-            <p>Contraseña</p>
-            <div className="field-content">
-              <div className="icon">
-                <FontAwesomeIcon icon={faLock} />
-              </div>
-              <input
-                type={showPass ? "text" : "password"}
-                placeholder="Introduzca su contraseña"
-                name="password"
-                onInput={(e) => {
-                  handleChanges
-                }}
-                value={user.password}
-              />
-              <div
-                className="button"
-                onClick={(e) => {
-                  hiddenPass();
-                }}
-              >
-                {showPass ? (
-                  <FontAwesomeIcon icon={faEye} />
-                ) : (
-                  <FontAwesomeIcon icon={faEyeSlash} />
-
-                )}
-              </div>
-            </div>
-          </label>
-
-          <div className="links-users">
-            <Link to="/unblocked/user/" className="forgot">
-              Desbloqueo de usuario
-            </Link>
-
-            <Link to="/forgot-password" className="forgot">
-              Olvidaste tu contraseña?
-            </Link>
+      <div
+        className="container-sm d-flex align-items-center m-auto container-login"
+        style={{ height: "100vh" }}
+      >
+        <form className="form m-auto" onSubmit={handleSubmit}>
+          <div className="d-flex flex-column align-items-center mb-3">
+          <img src={logo} alt="logo" className="mb-3" style={{width:'70px'}}/>
+          <h3>Sistema de registro</h3>
           </div>
-          
-          <div className="captcha_container">
-            <ReCAPTCHA
-              ref={recaptchaRef}
-              sitekey="6Lf0i_seAAAAADa-22kcxr_u8f2AXw3zIP_vf-aa"
-              onChange={onCaptcha}
+          <div className="form-group mb-3">
+            <input
+              type="email"
+              className="field p-2"
+              style={{width:'100%', outline:0}}
+              id="exampleInputEmail1"
+              aria-describedby="emailHelp"
+              placeholder="Enter email"
             />
           </div>
-          <button type="submit" className="button-submit">
+          <div className="form-group d-flex field mb-3">
+            <input
+              type={showPass ? 'text' : 'password'}
+              className="p-2"
+              id="exampleInputPassword1"
+              placeholder="Password"
+              style={{width:'100%',height:'40px',border:'none',outline:0}}
+            />
+            <button onClick={hiddenPass} type="button" className="label-pass">
+            { showPass ? <FontAwesomeIcon icon={faEye}/> : <FontAwesomeIcon icon={faEyeSlash}/>}
+            </button>
+          </div>
+          <div className="mt-3 d-flex">
+            <Link to="#" className="mb-3">No puedo acceder a mi cuenta</Link>
+          </div>
+          <button type="submit" className="btn btn-primary">
             Ingresar
           </button>
         </form>

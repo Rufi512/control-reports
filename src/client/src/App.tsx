@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ReportRegister from "./pages/reports/ReportRegister";
 import ReportList from "./pages/reports/ReportList";
 import ReportDetail from "./pages/reports/ReportDetail";
+import Login from "./pages/Login";
 //import ReportRegister from "./pages/reports/ReportRegister";
 //import ReportList from "./pages/reports/ReportList";
 //import ReportDetail from "./pages/reports/ReportDetail";
@@ -31,7 +32,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/*Login*/}
-          <Route  path="/" element={<CheckLogin><h1>Hello</h1></CheckLogin>} />
+          <Route  path="/" element={<CheckLogin><Login/></CheckLogin>} />
           {/*Not found*/}
           <Route path="/*" element={<NotFound />} />
           <Route

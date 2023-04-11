@@ -5,7 +5,7 @@ type Props = {
   edit?: boolean;
   create?: boolean;
   request?: (id: string) => void;
-  id?:string
+  id?: string;
 };
 
 import "../../assets/styles/components/forms.css";
@@ -16,14 +16,20 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import { fieldTest } from "../SomeFunctions";
 
-const EquipmentForm = ({ edit, create, equipment_detail,id,request }: Props) => {
-  const navigate = useNavigate()
+const EquipmentForm = ({
+  edit,
+  create,
+  equipment_detail,
+  id,
+  request,
+}: Props) => {
+  const navigate = useNavigate();
   const [equipment, setEquipment] = useState<Equipment>({
     model: "",
     serial: "",
     asset_number: "",
     description: "",
-    brand: ""
+    brand: "",
   });
   const [equipmentDescription, setEquipmentDescription] = useState("");
 
@@ -36,33 +42,38 @@ const EquipmentForm = ({ edit, create, equipment_detail,id,request }: Props) => 
   };
 
   const handleForm = async (continue_register: boolean) => {
-    let submit
-    let body = {...equipment,description:equipmentDescription}
+    let submit;
+    let body = { ...equipment, description: equipmentDescription };
 
-    if(create) submit = await registerEquipment(equipment)
-    if(edit) submit = await updateEquipment(id || '',body)
+    if (create) submit = await registerEquipment(equipment);
+    if (edit) submit = await updateEquipment(id || "", body);
 
-    if(submit && submit.status >= 400){
-      return toast.error(submit.data.message)
-  }
+    if (submit && submit.status >= 400) {
+      return toast.error(submit.data.message);
+    }
 
-    if(create && continue_register){
-      setEquipment({model: "",serial: "",asset_number: "",description: "",brand: ""})
+    if (create && continue_register) {
+      setEquipment({
+        model: "",
+        serial: "",
+        asset_number: "",
+        description: "",
+        brand: "",
+      });
       setEquipmentDescription("");
-      toast.success('Equipo registrado!')
-      return
+      toast.success("Equipo registrado!");
+      return;
     }
 
-    if(edit && request){
-      toast.success('Equipo modificado!')
-      request(id || '')
-      return
+    if (edit && request) {
+      toast.success("Equipo modificado!");
+      request(id || "");
+      return;
     }
 
-    if(create) toast.success('Equipo registrado!')
+    if (create) toast.success("Equipo registrado!");
 
-    return navigate("/equipment/list")
-
+    return navigate("/equipment/list");
   };
 
   useEffect(() => {
@@ -71,11 +82,10 @@ const EquipmentForm = ({ edit, create, equipment_detail,id,request }: Props) => 
       serial: equipment_detail?.serial || "",
       asset_number: equipment_detail?.asset_number || "",
       description: equipment_detail?.description || "",
-      brand: equipment_detail?.brand || ""
+      brand: equipment_detail?.brand || "",
     });
-    setEquipmentDescription(equipment_detail?.description || '')
+    setEquipmentDescription(equipment_detail?.description || "");
   }, [equipment_detail]);
-
 
   return (
     <form
@@ -144,18 +154,24 @@ const EquipmentForm = ({ edit, create, equipment_detail,id,request }: Props) => 
         <CKEditor
           editor={ClassicEditor}
           config={{
-            toolbar: [
-              "heading",
-              "|",
-              "bold",
-              "italic",
-              "link",
-              "numberedList",
-              "bulletedList",
-              "|",
-              "undo",
-              "redo",
-            ],
+            toolbar: {
+              items: [
+                "heading",
+                "blockQuote",
+                "bold",
+                "italic",
+                "link",
+                "|",
+                "indent",
+                "outdent",
+                "|",
+                "numberedList",
+                "bulletedList",
+                "|",
+                "undo",
+                "redo",
+              ],
+            },
           }}
           data={equipmentDescription}
           onReady={(editor) => {

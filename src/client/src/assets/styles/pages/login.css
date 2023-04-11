@@ -1,0 +1,25 @@
+.container-login .field{
+	border:2px solid #111724;
+	border-radius: 5px;
+	color:#121722;
+	outline: 0;
+}
+
+.container-login form{
+	width:90%;
+	max-width: 500px;
+}
+
+.container-login .label-pass{
+	border:none;
+	background: none;
+}
+
+.container-login a{
+	margin-left: auto;
+	text-decoration: none;
+}
+
+.container-login .btn{
+	width:100%;
+}

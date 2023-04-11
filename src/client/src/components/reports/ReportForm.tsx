@@ -52,7 +52,7 @@ export const ReportForm = ({
 
   const [equipmentsSelected, setEquipmentsSelected] = useState<Equipment[]>([]);
 
-  const [evidencesInSelect,setEvidencesInSelect] = useState([])
+  const [evidencesInSelect, setEvidencesInSelect] = useState([]);
 
   //Add new object in evidences array
   const handleAddEvidences = () => {
@@ -69,7 +69,7 @@ export const ReportForm = ({
     const ids = data.map((el: any) => el.value);
     console.log(ids);
     setReport({ ...report, equipments: ids });
-    setEvidencesInSelect(data)
+    setEvidencesInSelect(data);
   };
 
   const removeEquipmentsSelected = (position: number) => {
@@ -175,7 +175,7 @@ export const ReportForm = ({
       }
     }
 
-    setEvidencesInSelect([])
+    setEvidencesInSelect([]);
 
     let result;
     if (create) result = await registerReport(formData);
@@ -218,7 +218,7 @@ export const ReportForm = ({
       record_type: report_detail?.record_type || "informe tecnico",
       record_type_custom: report_detail?.record_type_custom || "",
       note: report_detail?.note || "",
-      equipments:[],
+      equipments: [],
       register_date_format:
         report_detail?.register_date_format
           .split("/")
@@ -240,7 +240,7 @@ export const ReportForm = ({
           : true
       );
     }
-    console.log(report_detail)
+    console.log(report_detail);
     setEquipmentsSelected(report_detail?.equipments || []);
     setReportDescription(report_detail?.description || "");
     setReportNote(report_detail?.note || "");
@@ -379,18 +379,24 @@ export const ReportForm = ({
         <CKEditor
           editor={ClassicEditor}
           config={{
-            toolbar: [
-              "heading",
-              "|",
-              "bold",
-              "italic",
-              "link",
-              "numberedList",
-              "bulletedList",
-              "|",
-              "undo",
-              "redo",
-            ],
+            toolbar: {
+              items: [
+                "heading",
+                "blockQuote",
+                "bold",
+                "italic",
+                "link",
+                "|",
+                "indent",
+                "outdent",
+                "|",
+                "numberedList",
+                "bulletedList",
+                "|",
+                "undo",
+                "redo",
+              ],
+            },
           }}
           data={reportDescription}
           onReady={(editor) => {
@@ -409,18 +415,24 @@ export const ReportForm = ({
         <CKEditor
           editor={ClassicEditor}
           config={{
-            toolbar: [
-              "heading",
-              "|",
-              "bold",
-              "italic",
-              "link",
-              "numberedList",
-              "bulletedList",
-              "|",
-              "undo",
-              "redo",
-            ],
+            toolbar: {
+              items: [
+                "heading",
+                "blockQuote",
+                "bold",
+                "italic",
+                "link",
+                "|",
+                "indent",
+                "outdent",
+                "|",
+                "numberedList",
+                "bulletedList",
+                "|",
+                "undo",
+                "redo",
+              ],
+            },
           }}
           data={reportNote}
           onReady={(editor) => {
@@ -628,7 +640,7 @@ export const ReportForm = ({
           onClick={(e) => handleForm(false)}
           className="btn btn-primary col-md-4"
         >
-          {create ? "Registrar Equipo" : "Editar Equipo"}
+          {create ? "Registrar Reporte" : "Editar Reporte"}
         </button>
 
         <button

@@ -4,11 +4,10 @@ import dotenv from "dotenv";
 import role from "../models/role";
 import { verifySignup } from "../middlewares";
 import { Request,Response,NextFunction } from "express";
-import { IUser, RoleModel } from "../types/types";
 dotenv.config();
 const secret = process.env.SECRET || '';
 
-interface RequestUser extends IUser,Request,RoleModel{}
+interface RequestUser extends Request{userId?:string, rolUser?:string}
 
 
 export const verifyToken = async (req:RequestUser, res:Response, next:NextFunction) => {
@@ -37,6 +36,27 @@ export const verifyToken = async (req:RequestUser, res:Response, next:NextFuncti
     return res.status(401).json({ message: "Token perdido o no autorizado" });
   }
 };
+
+export const verifyTokenValidate = async (req:RequestUser, res:Response, next:NextFunction) =>{
+  try{
+    const token = req.headers["x-access-token"] || '';
+    if (!token)
+      return res.status(403).json({ message: "No se ha obtenido el token" });
+   //Verificamos el token con el secret
+    const userFind = await user.findById(req.params.id);
+
+    if(!userFind) return res.status(404).json({message:'Usuario no encontrado'})
+    if(!userFind.first_login) return res.status(401).json({message:'Usuario verificado previamente'})
+    const decoded:any = jwt.verify(String(token), secret + userFind.password);
+    //Buscamos el usuario que se refiere el token
+
+    req.userId = decoded.id;
+    return next()
+  }catch(err){
+    return res.status(401).json({ message: "Token perdido o no autorizado" });
+    console.log(err)
+  }
+}
 
 export const verifyTokenExpire = async (req:RequestUser, res:Response) => {
   try {
@@ -98,12 +118,12 @@ export const checkPassword = async (req:RequestUser, res:Response, next:NextFunc
 };
 
 //Count try to access to session
-export const blockUser = async (req:RequestUser,resetCount:boolean) =>{
-  const userFound = await user.findById(req.userId);
+export const blockUser = async (userId:string,resetCount:boolean) =>{
+  const userFound = await user.findById(userId);
   if(!userFound) return
   const block_count = userFound.block_count += 1
-  await user.updateOne({_id:req.userId},{$set:{block_count: resetCount ? 0 : block_count}})
-  if(block_count >= 3 && !resetCount) await verifySignup.registerLog(req,"Usuario bloqueado por varios intento fallidos de iniciar sesion")
+  await user.updateOne({_id:userId},{$set:{block_count: resetCount ? 0 : block_count}})
+  if(block_count >= 3 && !resetCount) await verifySignup.registerLog(userId,"Usuario bloqueado por varios intento fallidos de iniciar sesion")
 }
 
 export const isTeacher = async (req:RequestUser, res:Response, next:NextFunction) => {
