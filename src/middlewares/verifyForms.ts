@@ -91,7 +91,7 @@ export const validateOnlyNumber = async (value: string) => {
 
 export const verifyCreateUser = async (data: any, validatePassword:boolean , userId:string) => {
     const { ci, firstname, lastname, position ,password, verifyPassword, email } = data;
-    console.log(data)
+    console.log('datos:',data)
     if (
         !Number(ci) ||
         !Number.isInteger(Number(ci)) ||

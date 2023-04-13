@@ -74,6 +74,15 @@
     cursor: pointer;
 }
 
+.container-actions-buttons{
+    padding: 0px 12px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column-reverse;
+    align-items: center;
+    margin-bottom:20px;
+}
+
 @media(min-width:768px){
     .evidences-form .container-buttons:last-child button:first-child{
         margin-right: 5px;
@@ -83,6 +92,16 @@
     }
     .evidences-container .description-container{
         margin: 0 auto;
+    }
+
+    .container-actions-buttons{
+        flex-direction:row;
+        justify-content:space-between;
+        height:54px;
+    }
+
+    .container-actions-buttons .form-check{
+        margin-left: auto;
     }
 }
 

@@ -147,8 +147,8 @@ export const createUser = async (req: any, res: Response) => {
             rol,
         });
 
-        //Verificamos que exista un rol que pide el usuario
-        const foundRoles = await role.findOne({ name: { $in: rol } });
+        //Verify if rol exits
+        const foundRoles = await role.findOne({ name: { $in: rol.toLowerCase() } });
         if (foundRoles) {
             newUser.rol = foundRoles._id;
         }
@@ -259,6 +259,9 @@ export const validateUser = async (req: any, res: Response) => {
 
         return res.json({ message: "Usuario Verificdo" });
     } catch (err) {
+        if(req.file && req.file.path){
+             fs.unlinkSync(req.file.path)
+        }
         console.log(err);
         return res
             .status(500)
@@ -289,8 +292,7 @@ export const updateUser = async (req: any, res: Response) => {
 
         const foundUser = await user.findById(req.params.id || req.userId);
 
-        //Request the info from user what make the modification
-        const userRequestFind = await user.findById(req.userId);
+        if(!foundUser) return res.status(404).json({message:'Usuario no encontrado'})
 
         const rolFind = await role.findOne({ name: { $in: req.body.rol } });
 
@@ -299,64 +301,24 @@ export const updateUser = async (req: any, res: Response) => {
                 .status(404)
                 .json({ message: "No se puede asignar el rol" });
 
-        if (req.rolUser) {
-            if (req.params.id && req.rolUser !== "Admin") {
-                return res
-                    .status(404)
-                    .json({ message: "No se ha encontrado al usuario" });
-            }
-
-            if (
-                rolFind._id !== userRequestFind?.rol &&
-                req.rolUser !== "Admin"
-            ) {
-                return res
-                    .status(400)
-                    .json({ message: "No puedes modificar el rol" });
-            }
-        }
         // Check if email or ci is in used to other user
         const userFind = await user.findOne({
             $or: [{ email: req.body.email }, { ci: req.body.ci }],
         });
 
-        const rolUserRequest = await role.find({
-            _id: { $in: userRequestFind?.rol },
-        });
-
-        const listUsers = await user.paginate({}, {});
-        const userAdmin = listUsers.docs[0];
-
-        if (userAdmin.id === userFind?.id)
-            return res
-                .status(400)
-                .json({ message: "No esta permitido editar a este usuario" });
-
-        if (!foundUser)
-            return res.status(404).json({ message: "Usuario no encontrado" });
-
         if (userFind && userFind.id !== (req.params.id || req.userId)) {
             return res.status(400).json({
-                message: "Cambio de email rechazado,el email esta en uso!",
+                message: "El email o la cedula se encuentra en uso por otro usuario, verifique",
             });
         }
 
-        if (!rolFind) return res.status(400).json({ message: "Rol no existe" });
-        //Verify if the user is admin or is the same
-        if (rolUserRequest[0].name != "Admin") {
-            if (foundUser.id != req.userId) {
-                return res.status(401).json({
-                    message: "No tienes permisos para modificar al usuario",
-                });
+        if(avatar !== '' && foundUser.avatar){
+            if (fs.existsSync(foundUser.avatar)){
+                fs.unlinkSync(foundUser.avatar || "")
             }
         }
 
-        if(avatar !== '' && foundUser.avatar){
-            fs.unlinkSync(foundUser.avatar || "")
-        }
-
         //Allow modification
-
             await user.updateOne(
                 { _id: req.params.id || req.userId },
                 {
@@ -378,6 +340,9 @@ export const updateUser = async (req: any, res: Response) => {
         return res.json({ message: "Usuario modificado" });
     } catch (err) {
         console.log(err);
+        if(req.file && req.file.path){
+             fs.unlinkSync(req.file.path)
+        }
         return res.status(500).json({ message: "Error fatal en el servidor" });
     }
 };
@@ -418,6 +383,7 @@ export const deleteAvatar = async (req: Request, res: Response) => {
         if (fs.existsSync(dir)) {
             fs.unlinkSync(dir);
         }
+        await user.updateOne({_id:req.params.id},{$set: {avatar:''},})
         return res.json({message:'Avatar eliminado'})
     } catch (err) {
         console.log(err);

@@ -1,0 +1,74 @@
+.user-detail p{
+	margin:0;
+}
+
+.profile-picture-form{
+	margin-bottom: 20px;
+}
+
+.profile-picture{
+	margin:auto;
+	width:166px;
+	height:167px;
+	max-width: 180px;
+	border: 3px solid #2267b5;
+	object-fit: cover;
+}
+
+.user-detail .label-name{
+	margin-top: 20px;
+	font-weight: 600;
+	font-size: 1.2em;
+}
+
+.user-detail .label-rol{
+	font-size:0.90em;
+	font-weight: 600;
+}
+
+.user-detail .label-name,.user-detail .label-rol,.user-detail .label-position{
+	text-align: center;
+}
+
+.user-detail .user-data-container{
+	width: 80%;
+	max-width:400px;
+    margin: auto;
+    box-shadow: 0px 3px 6px 3px #1b498124;
+    background: #f9f9f9;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.user-form .profile-picture-form,.user-form .profile-picture-form .default-profile{
+	position:relative;
+	display:flex;
+	justify-content: center;
+	align-items:center;
+
+}
+
+.user-form .default-profile{
+	margin-top:10px;
+}
+
+.user-form .default-profile .icon-profile, .user-data-container .default-profile .icon-profile{
+	margin: auto 12px;
+	width: 80px;
+    height: 80px;
+    padding: 20px;
+    border: 2px solid;
+    border-radius: 59px;
+}
+
+.user-form .default-profile div{
+	position: absolute;
+    bottom: 0px;
+    right: 3px;
+    transform: scale(1.5);
+}
+
+
+.user-form{
+	margin-top: -20px;
+}

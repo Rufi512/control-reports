@@ -194,8 +194,8 @@ const EquipmentDetail = () => {
         {load ? (
           <>
             <div
-              className="d-flex flex-row align-items-center flex-wrap"
-              style={{ padding: "0 12px", height: "54px" }}
+              className="container-actions-buttons"
+              style={{ padding: "0 12px"}}
             >
               <button className="btn btn-dark" onClick={exportPdf}>
                 <FontAwesomeIcon icon={faFilePdf} /> <span>Exportar a pdf</span>

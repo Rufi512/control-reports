@@ -1,3 +1,4 @@
 import * as EquipmentsApi from './EquipmentsApi'
 import * as reportsApi from './ReportsApi'
-export {EquipmentsApi,reportsApi} 
+import * as UsersApi from './UsersApi'
+export {EquipmentsApi,reportsApi,UsersApi} 

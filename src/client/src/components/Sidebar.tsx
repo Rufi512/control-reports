@@ -84,10 +84,10 @@ export const Sidebar = (props:Props) => {
         </Link>
       </li>
       <li className="nav-item">
-        <a href="#" className="nav-link link-dark">
+        <Link to="/user/list" className={`nav-link ${props.page === 'users' ? 'active' : 'link-dark'}`}>
         <FontAwesomeIcon icon={faUser}/>
           <p>Usuarios</p>
-        </a>
+        </Link>
       </li>
     </ul>
     <hr />

@@ -8,9 +8,9 @@ export const initialSetup = async () => {
 
     if (count <= 0){
          await Promise.all([
-      new roles({ name: "Admin" }).save(),
-      new roles({ name: "Moderator" }).save(),
-      new roles({ name: "User" }).save(),
+      new roles({ name: "admin" }).save(),
+      new roles({ name: "moderator" }).save(),
+      new roles({ name: "user" }).save(),
     ]);
     console.log("Roles creados");
          
@@ -21,7 +21,7 @@ export const initialSetup = async () => {
 
     //Create user admin
     const findUser = await user.findOne({ ci: 12345 });
-    const foundRoles = await roles.find({ name: { $in: "Admin" } });
+    const foundRoles = await roles.find({ name: { $in: "admin" } });
     if (!findUser) {
       let rolFind = null;
       if (foundRoles) {

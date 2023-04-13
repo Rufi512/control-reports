@@ -26,13 +26,18 @@ app.use('/api/users',users)
 app.use('/api/auth',auth)
 //Store public documents
 app.use('/public/contents/evidences',express.static(path.resolve('public/contents/evidences')))
-
+app.use('/public/users/avatar',express.static(path.resolve('public/users/avatar')))
 //Initial Setup
 initialSetup()
 
 //Client
 const client = path.join(__dirname, "client");
 app.use(express.static(client));
+
+app.get("/public/users/avatar/*", (_req:Request, res:Response) => {
+    res.sendStatus(404)
+});
+
 app.get("*", (_req:Request, res:Response) => {
     res.sendFile('index.html', { root: client });
 });

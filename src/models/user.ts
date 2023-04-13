@@ -14,7 +14,8 @@ interface User extends mongoose.PaginateModel<UserModel> {
 const userSchema = new Schema({
   ci:{
     type: String,
-    unique: true
+    unique: true,
+    maxLength:12
   },
 
   firstname:{

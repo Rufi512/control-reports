@@ -12,6 +12,9 @@ import ReportRegister from "./pages/reports/ReportRegister";
 import ReportList from "./pages/reports/ReportList";
 import ReportDetail from "./pages/reports/ReportDetail";
 import Login from "./pages/Login";
+import UserList from "./pages/users/UserList";
+import UserDetail from "./pages/users/UserDetail";
+import UserRegister from "./pages/users/UserRegister";
 //import ReportRegister from "./pages/reports/ReportRegister";
 //import ReportList from "./pages/reports/ReportList";
 //import ReportDetail from "./pages/reports/ReportDetail";
@@ -54,6 +57,9 @@ function App() {
             <Route path="report/detail/:id" element={<ReportDetail />} />
             */}
             
+             <Route path="user/list" element={<UserList />} />
+             <Route path="user/detail/:id" element={<UserDetail />} />
+             <Route path="user/register" element={<UserRegister />} />
             {/*Logout*/}
 
             {/*Protected routes*/}
