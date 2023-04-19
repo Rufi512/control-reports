@@ -1,12 +1,8 @@
-import React from "react";
-import { Sidebar } from "../components/Sidebar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAddressCard, faDesktop } from "@fortawesome/free-solid-svg-icons";
 import '../assets/styles/pages/home.css'
 const Home = () => {
   return (
-    <div className="container-fluid d-flex flex-row p-0">
-      <Sidebar page='dashboard' />
       <div className="container-fluid container-dashboard container-page">
         <div
           className="flex row flex-wrap"
@@ -147,7 +143,6 @@ const Home = () => {
         </div>
         <hr />
       </div>
-    </div>
   );
 };
 

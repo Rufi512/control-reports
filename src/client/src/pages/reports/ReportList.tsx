@@ -96,8 +96,6 @@ const EquipmentList = () => {
   }, [searchParams]);
 
   return (
-    <div className="container-fluid d-flex flex-row p-0">
-      <Sidebar page={'reports'}/>
       <div className="container-fluid d-flex flex-column container-page container-list">
         <div>
           <h2 style={{ textAlign: "right", marginTop: "10px" }}>
@@ -182,7 +180,7 @@ const EquipmentList = () => {
                 reports.map((el: Report, i: number) => {
                   return (
                     <Link
-                      to={`/report/detail/${el._id}`}
+                      to={`/report/detail/${el.id}`}
                       className="list-group-item list-group-item-action flex-column align-items-start"
                       key={i}
                     >
@@ -246,7 +244,6 @@ const EquipmentList = () => {
           </ul>
         </div>
       </div>
-    </div>
   );
 };
 

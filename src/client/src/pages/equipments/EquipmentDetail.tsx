@@ -118,9 +118,7 @@ const EquipmentDetail = () => {
 				description={propertiesModal.description}
 				action={actionsModal}
 			/>
-			<div className="container-fluid d-flex flex-row p-0 evidences-form">
-				<Sidebar page={"equipments"} />
-				<div className="container-fluid d-flex flex-column container-page">
+				<div className="container-fluid d-flex flex-column container-page evidences-form">
 					<div className="d-flex flex-column justify-content-between p-3">
 						<h2 className="text-right" style={{ marginLeft: "auto" }}>
 							Detalles del equipo
@@ -270,7 +268,6 @@ const EquipmentDetail = () => {
 						</div>
 					)}
 				</div>
-			</div>
 		</>
 	);
 };

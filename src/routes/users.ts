@@ -1,11 +1,13 @@
 import { Router } from "express";
-import {getUsers,createUser,updateUser, infoUser, deleteUser, deleteAvatar} from '../controllers/user_controller'
+import {getUsers,createUser,updateUser, infoUser, deleteUser, deleteAvatar, listSelect} from '../controllers/user_controller'
 import multer from '../libs/avatarMulter'
 import { verifyTokenValidate } from "../middlewares/authJwt";
 
 const router = Router()
 
 router.get('/list',getUsers)
+
+router.get('/list/select',listSelect)
 
 router.get('/detail/:id',infoUser)
 

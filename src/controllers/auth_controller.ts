@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import { Request, Response } from "express";
 import { verifySignup, authJwt } from "../middlewares";
 import { RoleModel } from "../types/types";
+import { UltimateTextToImage } from "ultimate-text-to-image";
 dotenv.config();
 
 const secret = process.env.SECRET ? process.env.SECRET : "secretWord";
@@ -91,6 +92,30 @@ export const signIn = async (req: RequestUser, res: Response) => {
         return res.status(500).json({ message: "Error fatal en el servidor" });
     }
 };
+
+export const sendCaptcha = (_req:Request,res:Response) =>{
+    const randomWords = () =>{
+         let result = '';  
+         let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';    
+         let charactersLength = characters.length;  
+         for (let i = 0; i < 6; i++) {    
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));  
+         }  
+         return result;
+    }
+
+    const captchaText = randomWords()
+    // generate image
+
+    const token = jwt.sign({ captcha:captchaText }, secret + captchaText, {
+                expiresIn:"10m", 
+            });
+    
+    const image = new UltimateTextToImage(captchaText, {width: 100,height:40,align: "center",
+    valign: "middle",useGlyphPadding: true, underlineSize: 2}).render().toDataUrl()
+
+    res.json({token,captcha:image})
+}
 
 export const verifyTokenConfirm = (req: RequestRole, res: Response) => {
     console.log(req.rolUser);

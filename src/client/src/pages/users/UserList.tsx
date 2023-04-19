@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Report } from "../../types/report";
 import { User } from "../../types/user";
+import { ObjectKeys } from "react-hook-form/dist/types/path/common";
 const UserList = () => {
   const ref = useRef(window);
   const [width, setWidth] = useState(window.innerWidth);
@@ -30,6 +31,11 @@ const UserList = () => {
     totalDocs: 0,
   });
   const [users, setUsers] = useState<User[]>([]);
+
+  const labelUser = {
+    admin:'Administrador/a',
+    user:'Usuario'
+  }
 
   const handleResize = () => {
     const actualWidth = window.innerWidth;
@@ -97,8 +103,6 @@ const UserList = () => {
   }, [searchParams]);
 
   return (
-    <div className="container-fluid d-flex flex-row p-0">
-      <Sidebar page={'users'}/>
       <div className="container-fluid d-flex flex-column container-page container-list">
         <div>
           <h2 style={{ textAlign: "right", marginTop: "10px" }}>
@@ -143,6 +147,9 @@ const UserList = () => {
               <tbody>
                 {users.length > 0 ? (
                   users.map((el: User, i: number) => {
+                    type ObjectKey = keyof typeof labelUser;
+                    const rol = el.rol?.name as ObjectKey;
+                    console.log(rol)
                     return (
                       <tr key={i}>
                         <th scope="row">
@@ -156,7 +163,7 @@ const UserList = () => {
                           <Link to={`/user/detail/${el._id}`}>{el.lastname}</Link>
                         </td>
                         <td>
-                          <Link to={`/user/detail/${el._id}`}>{`${el.rol?.name || 'usuario'}`}</Link>
+                          <Link to={`/user/detail/${el._id}`}>{`${labelUser[rol] || 'Usuario'}`}</Link>
                         </td>
                       </tr>
                     );
@@ -246,7 +253,6 @@ const UserList = () => {
           </ul>
         </div>
       </div>
-    </div>
   );
 };
 

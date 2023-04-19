@@ -33,8 +33,8 @@ export const validateFieldEquipment = async (field: string, value: string) => {
 };
 
 export const validateFieldReport = async (field: string, value: string) => {
-    if (!/^[a-zA-Z0-9áéíóúñ ]+$/.test(value) || value.length > 30) {
-        return `El campo ${field} es invalido: (debe tener 30 caracteres maximo y sin espacios)`;
+    if (!/^[a-zA-Z0-9áéíóúñ\s]+$/.test(value) || value.length > 30) {
+        return `El campo ${field} es invalido: (debe tener 30 caracteres maximo)`;
     }
     return "";
 };
@@ -88,6 +88,20 @@ export const validateOnlyNumber = async (value: string) => {
     }
     return "";
 };
+
+export const validatePassword = async (password:string) =>{
+     let error = ''
+     const regexMinus = new RegExp(/[a-z]/);
+     const regexSpecials = new RegExp(/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/)
+     const regexMayuscula = new RegExp(/[A-Z]/)
+     const regexNumerico = new RegExp(/[0-9]/)
+     if(password.length < 5) error = 'la contraseña debe tener minimo 5 caracteres' 
+     if(!regexSpecials.test(password)) error = 'La contraseña no contiene caracteres especiales'
+     if(!regexMayuscula.test(password)) error = 'La contraseña no contiene caracteres en mayuscula'
+     if(!regexNumerico.test(password)) error = 'La contraseña no contiene caracteres numericos'
+     if(!regexMinus.test(password)) error = 'La contraseña no contiene caracteres en minusculas'
+     return error
+}
 
 export const verifyCreateUser = async (data: any, validatePassword:boolean , userId:string) => {
     const { ci, firstname, lastname, position ,password, verifyPassword, email } = data;
@@ -178,7 +192,9 @@ export const verifyEquipment = async (data: IEquipment) => {
         if (key === "description") continue;
         if (key === "asset_number") {
             validation = await validateOnlyNumber(value);
-        } else {
+        } else if(key === "model") {
+            validation = await validateFieldReport(key,value)
+        }else{
             validation = await validateFieldEquipment(key, value);
         }
         if (validation) {
@@ -196,6 +212,12 @@ export const verifyReport = async (data: ReportModel) => {
     if (!description || !register_date || !equipments) {
         error = "Complete los campos requeridos";
         return error;
+    }
+
+    const foundUser = user.findOne({_id:data.user})
+    if(!foundUser){
+        error = 'No se encontro al usuario a asignar'
+        return error
     }
 
     for (const key in data) {

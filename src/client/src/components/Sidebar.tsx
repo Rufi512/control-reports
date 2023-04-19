@@ -72,19 +72,19 @@ export const Sidebar = (props:Props) => {
         </Link>
       </li>
       <li className="nav-item">
-        <Link to="/equipment/list" className={`nav-link ${props.page === 'equipments' ? 'active' : 'link-dark'}`}>
+        <Link to="/equipment/list" className={`nav-link ${props.page === 'equipment' ? 'active' : 'link-dark'}`}>
         <FontAwesomeIcon icon={faDesktop}/>
           <p>Lista de equipos</p>
         </Link>
       </li>
       <li className="nav-item">
-        <Link to="/report/list" className={`nav-link ${props.page === 'reports' ? 'active' : 'link-dark'}`}>
+        <Link to="/report/list" className={`nav-link ${props.page === 'report' ? 'active' : 'link-dark'}`}>
         <FontAwesomeIcon icon={faFlag} />
           <p>Lista de reportes</p>
         </Link>
       </li>
       <li className="nav-item">
-        <Link to="/user/list" className={`nav-link ${props.page === 'users' ? 'active' : 'link-dark'}`}>
+        <Link to="/user/list" className={`nav-link ${props.page === 'user' ? 'active' : 'link-dark'}`}>
         <FontAwesomeIcon icon={faUser}/>
           <p>Usuarios</p>
         </Link>

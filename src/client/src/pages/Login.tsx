@@ -1,21 +1,20 @@
-import React, { useState, useRef, FormEvent, ChangeEvent } from "react";
+import React, { useState, useRef, FormEvent, ChangeEvent, useEffect } from "react";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import {
   faEye,
   faEyeSlash,
-  faLock,
-  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import logo from '../assets/images/mp.png'
 import '../assets/styles/pages/login.css'
+import { getCaptcha, loginUser } from "../Api/AuthApi";
 //import Cookies from "js-cookie";
 //import { loginUser } from "../API";
 const Login = () => {
-  const recaptchaRef = useRef(null);
   const navigate = useNavigate();
-  const [user, setUser] = useState({ user: "", password: "", recaptcha: "" });
+  const [user, setUser] = useState({ user: "", password: "", captcha: ""});
+  const [captchaUser,setCaptchaUser] = useState({captcha:'',token:''})
   const [showPass, setShowPass] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
 
@@ -27,14 +26,16 @@ const Login = () => {
     }
   };
 
-  const onCaptcha = async (value: string) => {
-    if (value) {
-      console.log("No es el xocas");
-      setUser({ ...user, recaptcha: value });
-    } else {
-      setUser({ ...user, recaptcha: "" });
+  const request = async ()=>{
+    try{
+      const res = await getCaptcha()
+      if(res && res.status === 200){
+        setCaptchaUser({captcha:res.data.captcha, token:res.data.token})
+      }
+    }catch(err){
+      console.log(err)
     }
-  };
+  }
 
   const handleChanges = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -45,48 +46,21 @@ const Login = () => {
     e.preventDefault();
     if (isSubmit) return;
     setIsSubmit(true);
-    const toastId = toast.loading("Verificando datos...", {
-      closeOnClick: true,
-    });
-    try {
-      /*
-      const res = await loginUser(user);
-      recaptchaRef.current.reset();
-      setIsSubmit(false);
-      if (res.status >= 400) {
-        return toast.update(toastId, {
-          render: res.data.message,
-          type: "error",
-          isLoading: false,
-          closeOnClick: true,
-          autoClose: 5000,
-        });
-      }
-*/
-      //Cookies.set("token", res.data.token);
-      //Cookies.set("rol", res.data.rol);
-      /*
-      toast.update(toastId, {
-        render: "Ingreso Correcto",
-        type: "success",
-        isLoading: false,
-        closeOnClick: true,
-        autoClose: 3000,
-      });*/
 
-      navigate("/home");
+    try {
+      const res = await loginUser({token:captchaUser.token,body:user});
+      if(res && res.status === 200) console.log(res)
+      setIsSubmit(false);
     } catch (e) {
-      toast.update(toastId, {
-        render: "Fallo al verificar informacion",
-        type: "error",
-        isLoading: false,
-        closeOnClick: true,
-        autoClose: 3000,
-      });
+
       setIsSubmit(false);
       console.log(e);
     }
   };
+
+  useEffect(()=>{
+    request()
+  },[])
 
   return (
     <React.Fragment>
@@ -101,20 +75,25 @@ const Login = () => {
           </div>
           <div className="form-group mb-3">
             <input
-              type="email"
+              type="text"
               className="field p-2"
               style={{width:'100%', outline:0}}
-              id="exampleInputEmail1"
-              aria-describedby="emailHelp"
-              placeholder="Enter email"
+              id="user"
+              name="user"
+              onChange={handleChanges}
+              value={user.user}
+              placeholder="Cedula | Correo"
             />
           </div>
           <div className="form-group d-flex field mb-3">
             <input
               type={showPass ? 'text' : 'password'}
               className="p-2"
-              id="exampleInputPassword1"
-              placeholder="Password"
+              id="password"
+              name="password"
+              onChange={handleChanges}
+              value={user.password}
+              placeholder="Contraseña"
               style={{width:'100%',height:'40px',border:'none',outline:0}}
             />
             <button onClick={hiddenPass} type="button" className="label-pass">
@@ -123,6 +102,23 @@ const Login = () => {
           </div>
           <div className="mt-3 d-flex">
             <Link to="#" className="mb-3">No puedo acceder a mi cuenta</Link>
+          </div>
+
+          <div className="mt-3 d-flex flex-column mb-3">
+            <div className="d-flex align-items-center justify-content-between flow-wrap">
+            {captchaUser.captcha ? <img src={captchaUser.captcha} alt="captcha"/> : <p style={{margin:0}}>No se ha obtenido el captcha</p> }
+            <button type="button" onClick={()=>{request()}} className="btn btn-primary" style={{width:'150px', fontSize:'14px'}}>Recargar Captcha</button>
+            </div>
+            <input
+              type='text'
+              className="form-control mt-3 "
+              id="captcha"
+              name="captcha"
+              value={user.captcha}
+              onChange={handleChanges}
+              placeholder="Introduce el captcha"
+            />
+            <small className="mt-1">El captcha es sensible a la mayusculas y minusculas!</small>
           </div>
           <button type="submit" className="btn btn-primary">
             Ingresar

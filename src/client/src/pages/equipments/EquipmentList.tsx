@@ -101,8 +101,6 @@ const EquipmentList = () => {
   }, [searchParams]);
 
 	return (
-		  <div className="container-fluid d-flex flex-row p-0">
-      <Sidebar page={'equipments'}/>
       <div className="container-fluid d-flex flex-column container-page container-list">
         <div>
           <h2 style={{ textAlign: "right", marginTop: "10px" }}>
@@ -265,7 +263,6 @@ const EquipmentList = () => {
           </ul>
         </div>
       </div>
-    </div>
 	)
 }
 

@@ -7,6 +7,7 @@ import { ReportModel } from "../types/types";
 import mongoose from "mongoose";
 import equipment from "../models/equipment";
 import moment from "moment";
+import user from "../models/user";
 
 
 export const list = async (req: Request, res: Response) => {
@@ -56,7 +57,7 @@ export const getReport = async (req: Request, res: Response) => {
     console.log(id);
     const validId = mongoose.Types.ObjectId.isValid(id);
     if (!validId) return res.status(402).json("Identificador no valido");
-    const reportFound = await report.findOne({ id: id }).populate("equipments");
+    const reportFound = await report.findOne({ id: id }).populate("equipments").populate("user",{firstname:1,ci:1,lastname:1,position:1});
     if (!reportFound)
       return res.status(404).json({ message: "Reporte no encontrado" });
     return res.json(reportFound);
@@ -75,8 +76,13 @@ export const registerReport = async (req: any, res: Response) => {
       equipments,
       evidences_description,
       note,
+      userId
     } = req.body as ReportModel;
-    console.log(req.body)
+    
+    const foundUser = await user.findOne({_id:userId})
+
+    if(!foundUser) return res.status(404).json({message:'No se ha podido asignar al usuario'})
+
     const evidences = req.files as Express.Multer.File[];
 
     const descriptionsArray = Array.isArray(evidences_description)
@@ -128,6 +134,7 @@ export const registerReport = async (req: any, res: Response) => {
         year: dateSplit[0],
       }),
       note,
+      user:userId
     });
     await createReport.save();
     return res.json({ message: "Reporte registrado!", data: createReport });
@@ -147,12 +154,17 @@ export const updateReport = async (req: any, res: Response) => {
       evidences_description,
       evidences_description_old,
       note,
+      userId
     } = req.body as ReportModel;
 
     const reportFound = await report.findOne({ id: req.params.id });
 
     if (!reportFound)
       return res.status(404).json({ message: "No se encontro el reporte" });
+
+    const foundUser = await user.findOne({_id:userId})
+
+    if(!foundUser) return res.status(404).json({message:'No se ha podido asignar al usuario'})
 
     const dateSplit = register_date.split("-").map((el: string) => Number(el));
 
@@ -230,6 +242,7 @@ export const updateReport = async (req: any, res: Response) => {
           }),
           updated_at: new Date(),
           evidences: evidencesUpdate,
+          user:userId
         },
       }
     );

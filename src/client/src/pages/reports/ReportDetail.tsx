@@ -35,6 +35,7 @@ const EquipmentDetail = () => {
       month: "",
       year: "",
     },
+    user:{ci:'',firstname:'',lastname:'',position:'',_id:'',email:''}
   });
 
   const [evidencesOnlyRead, setEvidencesOnlyRead] = useState<Evidences[]>([]);
@@ -67,6 +68,7 @@ const EquipmentDetail = () => {
         created_at: data.created_at,
         updated_at: data.updated_at,
         note: data.note,
+        user: data.user || {ci:'',firstname:'',lastname:'',position:'',_id:'',email:''} 
       });
 
       setEquipmentRead(data.equipments || []);
@@ -175,10 +177,8 @@ const EquipmentDetail = () => {
   }, [window]);
 
   return (
-    <div className="container-fluid d-flex flex-row p-0 evidences-form">
-      <Sidebar page={"reports"} />
 
-      <div className="container-fluid d-flex flex-column container-page evidences-detail">
+      <div className="container-fluid d-flex flex-column container-page evidences-detail evidences-form">
         <ModalConfirmation
           title={propertiesModal.title}
           description={propertiesModal.description}
@@ -338,7 +338,7 @@ const EquipmentDetail = () => {
                                       fontSize: "16px",
                                     }}
                                   >
-                                    Numero de bien:
+                                    Numero de bien: 
                                   </span>
                                   {el.asset_number}
                                 </small>
@@ -351,7 +351,7 @@ const EquipmentDetail = () => {
                                     }}
                                   >
                                     Marca:
-                                  </span>{" "}
+                                  </span>
                                   {el.brand}
                                 </small>
                                 <small>
@@ -363,7 +363,7 @@ const EquipmentDetail = () => {
                                     }}
                                   >
                                     Modelo:
-                                  </span>{" "}
+                                  </span>
                                   {el.model}
                                 </small>
                                 <small>
@@ -375,7 +375,7 @@ const EquipmentDetail = () => {
                                     }}
                                   >
                                     Serial:
-                                  </span>{" "}
+                                  </span>
                                   {el.serial}
                                 </small>
                               </div>
@@ -452,6 +452,12 @@ const EquipmentDetail = () => {
                   }}
                   data={report.note}
                 />
+              </div>
+              <div className="form-row row fields-container">
+                <div className="form-group col-md-12">
+                  <label htmlFor="record_type">Usuario asignado</label>
+                  {report.user?.ci !== '' ? <p style={{fontSize:'1.15em',textTransform:'capitalize'}}> {report.user?.ci} - {report.user?.firstname} {report.user?.lastname} - {report.user?.position}</p> : <p>No se ha encontrado usuario asignado</p>}
+                </div>
               </div>
               <hr />
               <div className="form-group fields-container">
@@ -601,7 +607,6 @@ const EquipmentDetail = () => {
           </div>
         )}
       </div>
-    </div>
   );
 };
 

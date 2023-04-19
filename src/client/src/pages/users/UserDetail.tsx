@@ -15,10 +15,12 @@ import { toast } from "react-toastify";
 import { User } from "../../types/user";
 import UserForm from "../../components/users/UserForm";
 import ModalConfirmation from "../../components/ModalConfirmation";
+import { Quest } from "../../types/quest";
 
 const UserDetail = () => {
 	const navigate = useNavigate();
 	const [userRead, setUserRead] = useState<User>();
+	const [userQuestions, setUserQuestions] = useState<Quest[]>([]);
 	const [avatar, setAvatar] = useState(true);
 	const [load, setLoad] = useState(false);
 	const [edit, setEdit] = useState(false);
@@ -60,7 +62,7 @@ const UserDetail = () => {
 		try {
 			const res = await UsersApi.getUser(id || "");
 			console.log(res);
-			if (res && res.data) setUserRead(res.data);
+			if (res && res.data){ setUserRead(res.data.user); setUserQuestions(res.data.quests)}
 			setAvatar(true);
 			setLoad(true);
 			setEdit(false);
@@ -93,11 +95,10 @@ const UserDetail = () => {
 		};
 	}, []);
 	return (
-		<div className="container-fluid d-flex flex-row p-0 evidences-form">
-			<Sidebar page={"users"} />
+		<>
 
 			{load ? (
-				<div className="container-fluid d-flex flex-column container-page evidences-detail user-detail">
+				<div className="container-fluid d-flex flex-column container-page evidences-detail user-detail evidences-form">
 					<ModalConfirmation
 						title={propertiesModal.title}
 						description={propertiesModal.description}
@@ -161,6 +162,7 @@ const UserDetail = () => {
 						create={false}
 						userRead={userRead}
 						request={request}
+						userQuest={userQuestions}
 					/>
 					<div style={{ display: edit ? "none" : "block" }}>
 						<div className="form-group col-md-12 d-flex flex-column align-items-center mb-3 user-data-container">
@@ -250,7 +252,7 @@ const UserDetail = () => {
 					</button>
 				</div>
 			)}
-		</div>
+		</>
 	);
 };
 

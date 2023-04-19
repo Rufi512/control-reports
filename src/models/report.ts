@@ -45,6 +45,11 @@ const reportSchema = new Schema(
       required: false,
       default: "",
     },
+    user:{
+      ref:'user',
+      type:Schema.Types.ObjectId,
+      required:true
+    }
   },
   {
     versionKey: false,

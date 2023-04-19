@@ -117,6 +117,28 @@ export const checkPassword = async (req:RequestUser, res:Response, next:NextFunc
   }
 };
 
+export const verifyCaptcha = async (req:Request,res:Response,next:NextFunction) =>{
+  try{
+  const token:string = String(req.headers["x-captcha-token"]) || '';
+  console.log(req.body, token)
+  if(!req.body.captcha || req.body.captcha === '') return res.status(403).json({message:'Complete el captcha'})
+
+  if (!token) return res.status(403).json({ message: "No se ha obtenido el token" });
+  
+  const decoded:any = jwt.verify(token, secret + req.body.captcha);
+
+  if(!decoded) return res.status(403).json({message:'Captcha no valido'})
+
+  if(decoded.captcha !== req.body.captcha) return res.status(403).json({message:'Captcha invalido'}) 
+
+  return next()
+  }catch(err){
+    console.log(err)
+    return res.status(403).json({message:'Captcha invalido, verifique o recargue'})
+  }
+
+}
+
 //Count try to access to session
 export const blockUser = async (userId:string,resetCount:boolean) =>{
   const userFound = await user.findById(userId);

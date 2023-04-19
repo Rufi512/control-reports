@@ -11,6 +11,7 @@ import AsyncSelect from "react-select/async";
 import makeAnimated from "react-select/animated";
 import { getEquipmentsSelect } from "../../Api/EquipmentsApi";
 import { Equipment } from "../../types/equipment";
+import { getSelectsUsers } from "../../Api/UsersApi";
 const animatedComponents = makeAnimated();
 
 type Props = {
@@ -21,6 +22,10 @@ type Props = {
   request?: (id: string) => void;
 };
 
+interface ReportForm extends Report {
+  userId: string;
+}
+
 export const ReportForm = ({
   report_detail,
   report_evidences,
@@ -30,7 +35,8 @@ export const ReportForm = ({
 }: Props) => {
   const { id } = useParams();
   let navigate = useNavigate();
-  const [report, setReport] = useState<Report>({
+
+  const [report, setReport] = useState<ReportForm>({
     description: "",
     record_type: "informe tecnico",
     record_type_custom: "",
@@ -42,6 +48,7 @@ export const ReportForm = ({
       month: "",
       year: "",
     },
+    userId: "",
   });
 
   const [reportDescription, setReportDescription] = useState("");
@@ -51,7 +58,10 @@ export const ReportForm = ({
   const [evidencesOld, setEvidencesOld] = useState<Evidences[]>([]);
 
   const [equipmentsSelected, setEquipmentsSelected] = useState<Equipment[]>([]);
-
+  const [userSelected, setUserSelected] = useState({
+    label: "Elegir usuario",
+    value: "",
+  });
   const [evidencesInSelect, setEvidencesInSelect] = useState([]);
 
   //Add new object in evidences array
@@ -70,6 +80,12 @@ export const ReportForm = ({
     console.log(ids);
     setReport({ ...report, equipments: ids });
     setEvidencesInSelect(data);
+  };
+
+  const handleSelectUser = (data: any) => {
+    setUserSelected({ label: data.label, value: data.value });
+    setReport({ ...report, userId: data.value });
+    console.log(data.value)
   };
 
   const removeEquipmentsSelected = (position: number) => {
@@ -134,7 +150,7 @@ export const ReportForm = ({
 
   const handleForm = async (continue_register: boolean) => {
     let formData = new FormData();
-    console.log(report);
+    if(!report.userId) return toast.error('Debes de asignar un usuario')
     for (const [key, value] of Object.entries(report)) {
       if (key !== "register_date") {
         if (key === "description") {
@@ -203,9 +219,11 @@ export const ReportForm = ({
           month: "",
           year: "",
         },
+        userId: "",
       });
       setReportDescription("");
       setReportNote("");
+      
       return;
     }
 
@@ -230,6 +248,7 @@ export const ReportForm = ({
         month: "",
         year: "",
       },
+      userId: "",
     });
 
     if (report_detail) {
@@ -240,16 +259,16 @@ export const ReportForm = ({
           : true
       );
     }
-    console.log(report_detail);
     setEquipmentsSelected(report_detail?.equipments || []);
     setReportDescription(report_detail?.description || "");
     setReportNote(report_detail?.note || "");
     setEvidencesOld(report_evidences || []);
+    setUserSelected({label:report_detail?.user ? `${report_detail.user?.ci} - ${report_detail.user?.firstname} - ${report_detail.user?.lastname} - ${report_detail.user?.position}` : 'Elige un usuario', value:report_detail?.user?._id || ''})
   }, [report_detail]);
 
-  const requestOptionsSelect = async (value: string) => {
+  const requestOptionsSelect = async (search: string) => {
     try {
-      const res = await getEquipmentsSelect(value);
+      const res = await getEquipmentsSelect(search);
       if (res && res.status >= 400)
         return toast.error("Error al requerir lista de equipos");
       //filter options by selected equipments
@@ -260,6 +279,18 @@ export const ReportForm = ({
         (el: any) => !equipmentFilter.includes(el.value)
       );
       return list || [];
+    } catch (err) {
+      console.log(err);
+      return;
+    }
+  };
+
+  const requestUserSelect = async (search: string) => {
+    try {
+      const res = await getSelectsUsers(search || "");
+      if (res && res.status >= 400)
+        return toast.error("Error al requerir lista de equipos");
+      return res?.data || [];
     } catch (err) {
       console.log(err);
       return;
@@ -366,6 +397,7 @@ export const ReportForm = ({
         ""
       )}
       <div className="form-group">
+      <label style={{ marginBottom: "10px" }}>Elegir equipos a reportar</label>
         <AsyncSelect
           isMulti
           components={animatedComponents}
@@ -373,6 +405,7 @@ export const ReportForm = ({
           onChange={handleChangeSelect2}
           value={evidencesInSelect}
         />
+        <small className="text-muted">Escribe en el campo para seleccionar equipo</small>
       </div>
       <div className="form-group fields-container">
         <label style={{ marginBottom: "10px" }}>Descripcion del registro</label>
@@ -444,6 +477,19 @@ export const ReportForm = ({
             setReportNote(data);
           }}
         />
+      </div>
+
+      <div className="form-group fields-container">
+        <label>Asignar al usuario</label>
+        <div className="form-group">
+          <AsyncSelect
+            components={animatedComponents}
+            loadOptions={requestUserSelect}
+            onChange={handleSelectUser}
+            value={userSelected}
+          />
+          <small className="text-muted pt-3 mt-3">Escribe en el campo para seleccionar usuario</small>
+        </div>
       </div>
       <hr />
       <div className="form-group mt-3">

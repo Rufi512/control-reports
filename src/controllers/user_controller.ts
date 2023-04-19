@@ -61,6 +61,48 @@ export const getUsers = async (req: Request, res: Response) => {
     return res.json(users);
 };
 
+export const listSelect = async (req:Request, res:Response) => {
+  try {
+    let optionsPagination = {
+        lean: false,
+        limit:
+            req.query && Number(req.query.limit) ? Number(req.query.limit) : 10,
+        page: req.query && Number(req.query.page) ? Number(req.query.page) : 1,
+        select: { password: 0 },
+        populate: { path: "rol", select: { name: 1 } },
+    };
+    const search = req.query.search || ''
+
+    const users = await user.paginate({
+      $or: [
+                {
+                    firstname: new RegExp(String(search), "gi"),
+                },
+                {
+                    lastname: new RegExp(String(search), "gi"),
+                },
+                {
+                    ci: new RegExp(String(search), "gi"),
+                },
+            ],
+  },optionsPagination)
+
+    let newList = [];
+    
+    for (const elm of users.docs) {
+      newList.push({
+        label: `${elm.ci} - ${elm.firstname} - ${elm.lastname} - ${elm.position}`,
+        value: elm.id,
+      });
+    }
+
+    return res.json(newList);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Error en el servidor" });
+  }
+};
+
 export const getLogs = async (req: Request, res: Response) => {
     try {
         if (req.query) {
@@ -178,11 +220,14 @@ export const createUser = async (req: any, res: Response) => {
 export const infoUser = async (req: Request, res: Response) => {
     try {
         console.log(req.params);
-
-        const userFind = await user.findById(req.params.id).populate("rol");
+        const userFind = await user.findById(req.params.id,{password:0}).populate("rol");
         if (!userFind)
             return res.status(404).json({ message: "Usuario no encontrado" });
-        return res.json(userFind);
+
+
+        const quests = await quest.find({user:req.params.id},{answer:0,user:0})
+
+        return res.json({user:userFind,quests:quests});
     } catch (err) {
         console.log(err);
         return res.status(404).json({ message: "Usuario no encontrado" });

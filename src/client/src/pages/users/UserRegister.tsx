@@ -8,11 +8,9 @@ const UserRegister = () => {
 	const [load, setLoad] = useState(true);
 	const [edit, setEdit] = useState(true);
 	return (
-		<div className="container-fluid d-flex flex-row p-0 evidences-form">
-			<Sidebar page={"users"} />
-
+		<>
 			{load ? (
-				<div className="container-fluid d-flex flex-column container-page">
+				<div className="container-fluid d-flex flex-column container-page evidences-form">
 					<div className="d-flex flex-column justify-content-between p-3">
 						<h2
 							className="text-right"
@@ -41,7 +39,7 @@ const UserRegister = () => {
 					</button>
 				</div>
 			)}
-		</div>
+		</>
 	);
 };
 

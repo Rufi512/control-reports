@@ -19,6 +19,7 @@ export interface ReportModel{
     description:string
     equipments:[]
     register_date:string,
+    userId:string
     evidences_description:string[] | string,
     evidences?:Express.Multer.File[],
     evidences_description_new?:string[] | string,

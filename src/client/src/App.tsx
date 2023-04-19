@@ -15,6 +15,7 @@ import Login from "./pages/Login";
 import UserList from "./pages/users/UserList";
 import UserDetail from "./pages/users/UserDetail";
 import UserRegister from "./pages/users/UserRegister";
+import Welcome from "./pages/Welcome";
 //import ReportRegister from "./pages/reports/ReportRegister";
 //import ReportList from "./pages/reports/ReportList";
 //import ReportDetail from "./pages/reports/ReportDetail";
@@ -35,9 +36,13 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/*Login*/}
-          <Route  path="/" element={<CheckLogin><Login/></CheckLogin>} />
+          <Route path="/" element={<CheckLogin><Login/></CheckLogin>} />
+          
+          {/*Welcome (first_login)*/}
+          <Route path="/welcome/:token" element={<Welcome/>}/>
           {/*Not found*/}
           <Route path="/*" element={<NotFound />} />
+
           <Route
             path="/*"
             element={<ProtectedRoute key={null} type={""} props={undefined} />}

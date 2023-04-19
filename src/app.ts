@@ -6,6 +6,7 @@ import equipments from './routes/equipments'
 import reports from './routes/reports'
 import auth from './routes/auth';
 import users from './routes/users';
+import quests from './routes/quests'
 import { Request, Response } from 'express';
 import { initialSetup } from './libs/initalSetup';
 //import { initialSetup } from './libs/initalSetup';
@@ -24,6 +25,7 @@ app.use('/api/equipments',equipments)
 app.use('/api/reports',reports)
 app.use('/api/users',users)
 app.use('/api/auth',auth)
+app.use('/api/quests',quests)
 //Store public documents
 app.use('/public/contents/evidences',express.static(path.resolve('public/contents/evidences')))
 app.use('/public/users/avatar',express.static(path.resolve('public/users/avatar')))

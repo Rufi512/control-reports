@@ -1,17 +1,15 @@
 import { Request, Response } from "express";
 import quest from "../models/quest";
 import user from "../models/user";
+import { QuestModel } from "../types/types";
+
+type bodyForm ={
+	quests:[{question:string,answer:string}]
+}
 
 export const listQuests = async (req: Request, res: Response) => {
 	try {
-		const questsFound = await quest.find({ user: req.params.id });
-		if (!questsFound)
-			return res
-				.status(404)
-				.json({
-					message:
-						"No se han encontrado preguntas de seguridad del usuario",
-				});
+		const questsFound = await quest.find({ user: req.params.id },{user:0});
 		return res.json(questsFound);
 	} catch (err) {
 		console.log(err);
@@ -23,46 +21,48 @@ export const listQuests = async (req: Request, res: Response) => {
 	}
 };
 
-export const setQuestions = async (req: any, res: Response) => {
+export const setQuestions = async (req: Request, res: Response) => {
 	try {
-		const userFound = await user.findById(req.params.id || req.userId);
+		const {quests}:bodyForm = req.body
+		console.log(req.body)
+		const userFound = await user.findById(req.params.id);
+
 		if (!userFound)
 			return res.status(404).json({ message: "Usuario no encontrado" });
-		if (req.params.id && req.rolUser !== "Admin") {
-			return res
-				.status(404)
-				.json({ message: "No se ha encontrado al usuario" });
-		}
 
-		const quests = await quest.find({ user: userFound.id }, { answer: 0 });
+		const questsFound:QuestModel[] = await quest.find({ user: userFound.id }, { answer: 0 });
 
-		if (quests.length >= 4)
+		if (questsFound.length >= 4 || questsFound.length + quests.length >= 5)
 			return res.status(400).json({
 				message: "Ya tienes el máximo de 4 preguntas de seguridad",
 			});
+
 		const questsRegistered = await quest.find(
 			{ user: userFound.id },
 			{ answer: 0 }
 		);
 
-		for (const elm of req.body.quests) {
-			const sameQuestion = questsRegistered.filter((el) => {
-				el.question.toLowerCase() === elm.question.toLowerCase();
+		const newQuestions:string[] = quests.map((quest)=>quest.question.toLowerCase())
+
+		const duplicatedNewQuestions = newQuestions.filter((item:string, index:number) => newQuestions.indexOf(item) !== index)
+
+		if(duplicatedNewQuestions.length > 0) return res.status(400).json({message:'Las preguntas no se pueden repetir'})
+
+		for (const elm of quests) {
+			console.log(newQuestions)
+			const sameQuestion = questsRegistered.filter((oldQuests) => {
+				return newQuestions.includes(oldQuests.question.toLowerCase());
 			});
-			if (elm.id && !sameQuestion) {
-				const foundQuestionId = await quest.findOne(userFound.id, {
-					answer: 0,
-				});
-				if (foundQuestionId && foundQuestionId.id === elm.id)
-					return res.status(400).json({
-						message: "Las preguntas no se pueden repetir",
-					});
-			}
+
+			console.log(sameQuestion)
+
+			if (sameQuestion.length > 0) return res.status(400).json({message: "Las preguntas no se pueden repetir"});
 
 			if (elm.question == "" || elm.answer == "")
 				return res
 					.status(400)
 					.json({ message: "Los campos no pueden quedar vacíos!" });
+
 			const createQuestion = new quest({
 				user: userFound.id,
 				question: elm.question,
@@ -83,22 +83,16 @@ export const setQuestions = async (req: any, res: Response) => {
 export const deleteQuestionUser = async (req: any, res: Response) => {
 	try {
 		const questionFound = await quest.findById(req.params.id);
-		const questionsRegistered = await quest.find({ id: req.userId});
+		const questionsRegistered = await quest.find({ user: req.userId});
 		if (!questionFound)
 			return res
 				.status(404)
 				.json({ message: "No se ha podido encontrar la pregunta" });
-		if (questionsRegistered.length <= 1)
+		if (!questionsRegistered || questionsRegistered.length <= 1)
 			return res
 				.status(404)
 				.json({ message: "No se pueden eliminar mas preguntas" });
-		if (!req.rolUser || req.rolUser !== "Admin") {
-			if (questionFound.user.toString() !== req.userId) {
-				return res
-					.status(404)
-					.json({ message: "No se ha podido encontrar la pregunta" });
-			}
-		}
+
 
 		await quest.findByIdAndDelete(req.params.id);
 		return res.json({ message: "Pregunta eliminada" });

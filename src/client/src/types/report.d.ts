@@ -1,3 +1,5 @@
+import { User } from "./user"
+
 export interface Report {
     description:string,
     register_date:{day:string,month:string,year:string},
@@ -8,6 +10,7 @@ export interface Report {
     record_type_custom?:string,
     equipments:string[] | Equipment[]
     note:string,
+    user?:User
     evidences?:[{file:string,description:string}]
     id?:string
     _id?:string
