@@ -7,7 +7,7 @@ contents
 .DS_Store
 *.db
 # Logs
-logs
+!src/client/pages/logs
 *.log
 npm-debug.log*
 !src/client/public
