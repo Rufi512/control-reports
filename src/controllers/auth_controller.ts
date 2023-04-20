@@ -37,7 +37,7 @@ export const signIn = async (req: RequestUser, res: Response) => {
         if (userFound.block_count >= 3)
             return res.status(400).json({
                 message:
-                    "El usuario esta bloqueado, desbloquee su usuario en: desbloquear usuario",
+                    "El usuario esta bloqueado",
             });
 
         req.userId = userFound.id;
@@ -48,11 +48,9 @@ export const signIn = async (req: RequestUser, res: Response) => {
             userFound.password
         );
 
-        console.log(matchPassword)
-
         if (!matchPassword) {
             if (userFound.id !== userAdmin.id && userFound.first_login !== true) {
-                await authJwt.blockUser(req.userId || "", false);
+                await authJwt.blockUser(req || "", false);
             }
             return res.status(401).json({ message: "Contraseña invalida" });
         }
@@ -77,9 +75,9 @@ export const signIn = async (req: RequestUser, res: Response) => {
         if (!rolFind)
             return res.status(404).json({ message: "Error al ingresar" });
 
-        await verifySignup.registerLog(req.userId || "", "Ingreso de sesión");
+        await verifySignup.registerLog(req || "", "Ingreso de sesión");
 
-        await authJwt.blockUser(req.userId || "", true);
+        await authJwt.blockUser(req || "", true);
 
         return res.json({
             user:userFound.id,

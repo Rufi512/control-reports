@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import logo from '../assets/images/mp.png'
 import '../assets/styles/pages/login.css'
 import { getCaptcha, loginUser } from "../Api/AuthApi";
+import Cookies from "js-cookie";
 //import Cookies from "js-cookie";
 //import { loginUser } from "../API";
 const Login = () => {
@@ -49,7 +50,14 @@ const Login = () => {
 
     try {
       const res = await loginUser({token:captchaUser.token,body:user});
-      if(res && res.status === 200) console.log(res)
+      if(!res || res.status >= 400) return setIsSubmit(false);
+      Cookies.set('token',res?.data.token)
+      Cookies.set('user',res?.data.user)
+      Cookies.set('rol',res?.data.rol.toLowerCase())
+      const first_login = res?.data.first_login
+      const id_user = res?.data.user
+       if(first_login) return navigate(`/welcome/${id_user}`)
+      navigate(`/dashboard`)
       setIsSubmit(false);
     } catch (e) {
 

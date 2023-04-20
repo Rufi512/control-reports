@@ -102,13 +102,13 @@ const EquipmentList = () => {
 
 	return (
       <div className="container-fluid d-flex flex-column container-page container-list">
-        <div>
+        <div className="header-page">
           <h2 style={{ textAlign: "right", marginTop: "10px" }}>
             Lista de equipos
           </h2>
           <hr />
         </div>
-        <div className="container-fluid">
+        <div className="container-fluid container-body-content">
           <SearchBar
             searchParams={{
               limit: 10,
@@ -200,12 +200,12 @@ const EquipmentList = () => {
                         <h5 className="mb-1">
                           {el.asset_number.toUpperCase()}
                         </h5>
-                        {el.register_date ? <td>
+                        {el.register_date ? 
                           <small>
                             {el.register_date.day}/{el.register_date.month}/
                             {el.register_date.year}
                           </small>
-                        </td> : ''}
+                        : ''}
                       </div>
                       <small>
                         {el.brand.toUpperCase()} - {el.model.toUpperCase()}

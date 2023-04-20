@@ -62,6 +62,11 @@ const userSchema = new Schema({
     required:true,
     default:0
   },
+  created_at:{
+    type:Date,
+    required:false,
+    default:new Date(),
+  },
   updated_at:{
     type:Date,
     required:true,

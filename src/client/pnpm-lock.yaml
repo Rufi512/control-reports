@@ -31,9 +31,9 @@ dependencies:
   file-saver:
     specifier: 2.0.5
     version: 2.0.5
-  js-cookies:
-    specifier: ^1.0.4
-    version: 1.0.4
+  js-cookie:
+    specifier: ^3.0.1
+    version: 3.0.1
   node-html-parser:
     specifier: 6.1.5
     version: 6.1.5
@@ -66,6 +66,9 @@ devDependencies:
   '@types/ckeditor__ckeditor5-build-classic':
     specifier: ^29.0.1
     version: 29.0.1
+  '@types/js-cookie':
+    specifier: ^3.0.3
+    version: 3.0.3
   '@types/react':
     specifier: ^18.0.28
     version: 18.0.28
@@ -1545,6 +1548,10 @@ packages:
       '@types/ckeditor__ckeditor5-engine': 32.0.11
     dev: true
 
+  /@types/js-cookie@3.0.3:
+    resolution: {integrity: sha512-Xe7IImK09HP1sv2M/aI+48a20VX+TdRJucfq4vfRVy6nWN8PYPOEnlMRSgxJAgYQIXJVL8dZ4/ilAM7dWNaOww==}
+    dev: true
+
   /@types/parse-json@4.0.0:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
     dev: false
@@ -2075,8 +2082,9 @@ packages:
     resolution: {integrity: sha512-ITvGim8FhRiYe4IQ5uHSkj7pVaPDrCTkNd3yq3cV7iZAcJdHTUMPMEHcqSOy9xZ9qFenQCvi+2wjH9a1nXqHww==}
     dev: false
 
-  /js-cookies@1.0.4:
-    resolution: {integrity: sha512-cO1SHDH7zJsi8FihHmDtcWx90mWmrfGOrcLKPeaEX6tLyuTK2wnzgdmNa34Q6rNAd6VhQUgjDt5Eyl90VI/Fpg==}
+  /js-cookie@3.0.1:
+    resolution: {integrity: sha512-+0rgsUXZu4ncpPxRL+lNEptWMOWl9etvPHc/koSRp6MPwpRYAhmk0dUG00J4bxVV3r9uUzfo24wW0knS07SKSw==}
+    engines: {node: '>=12'}
     dev: false
 
   /js-tokens@4.0.0:

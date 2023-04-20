@@ -11,7 +11,7 @@ const UserRegister = () => {
 		<>
 			{load ? (
 				<div className="container-fluid d-flex flex-column container-page evidences-form">
-					<div className="d-flex flex-column justify-content-between p-3">
+					<div className="d-flex flex-column justify-content-between p-3 header-page">
 						<h2
 							className="text-right"
 							style={{ marginLeft: "auto" }}
@@ -20,7 +20,9 @@ const UserRegister = () => {
 						</h2>
 						<hr />
 					</div>
+					<div className="container-body-content">
 					<UserForm create={true} edit={false} />
+					</div>
 				</div>
 			) : (
 				<div className="container-fluid d-flex flex-column justify-content-center align-items-center container-page evidences-detail">

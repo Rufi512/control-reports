@@ -5,6 +5,8 @@ export interface MongooseId extends Request {
     id?:mongoose.Types.ObjectId
 }
 
+interface RequestUser extends Request{userId?:string, rolUser?:string}
+
 export interface IEquipment{
     [key: string]: any
     description:string,

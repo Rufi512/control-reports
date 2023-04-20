@@ -17,6 +17,18 @@ export const getUsers = async ({ page = 1, limit = 15, search = "" }) => {
     }
 };
 
+export const getFirstLogin = async (id:string,token:string) => {
+    try {
+        const config = {headers:{'x-access-token':token}}
+        const res = await axios.get(USERS_API + `/data/user/${id}`, config);
+        return res;
+    } catch (error) {
+        const err = error as AxiosError;
+        console.log(err.response?.data);
+        return err.response;
+    }
+};
+
 export const getSelectsUsers = async (search = "") => {
     try {
         const res = await axios.get(
@@ -44,6 +56,21 @@ export const registerUser = async (body: any) => {
         return err.response;
     }
 };
+
+export const validateUser = async (id:string,token:string,body:FormData) =>{
+    try {
+        const config = {headers:{'x-access-token':token}}
+        const res = await axios.post(`/api/auth/verify/user/${id}`,body,config);
+        return res;
+    } catch (error) {
+        const err = error as AxiosError;
+        const message_error: any = err.response?.data;
+        toast.error(
+            message_error?.message || "No se pudo registrar el usuario"
+        );
+        return err.response;
+    }
+}
 
 export const getUser = async (id: string) => {
     try {

@@ -2,3 +2,44 @@
     overflow-y:auto; 
     height:100vh;
 }
+
+.header-page{
+    position: fixed;
+    display: flex;
+    width: 100%;
+    left:0;
+    right: 0;
+    padding: 0 20px;
+    height: 60px;
+    overflow: hidden;
+    justify-content: flex-end;
+    background-color: #fff;
+    box-shadow: 0px 1px 2px #dedde1;
+    z-index: 10;
+}
+
+.container-body-content{
+    margin-top: 70px;
+}
+
+.container-actions-buttons button{
+    margin-top: 10px;
+}
+
+.container-actions-buttons .btn-danger{
+    margin-left: 5px;
+}
+
+@media(min-width:1024px){
+    .header-page{position: relative; overflow: unset;}
+    
+    .container-body-content{margin-top: 30px;}
+    
+    .container-actions-buttons button{
+        margin-top: 0px;
+    }
+
+    .container-actions-buttons .btn-danger{
+        margin-left: 0px;
+    }
+}

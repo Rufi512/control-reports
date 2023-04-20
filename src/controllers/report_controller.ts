@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 import equipment from "../models/equipment";
 import moment from "moment";
 import user from "../models/user";
+import { registerLog } from "../middlewares/verifySignup";
 
 
 export const list = async (req: Request, res: Response) => {
@@ -27,6 +28,7 @@ export const list = async (req: Request, res: Response) => {
       lean: false,
       limit: req.query && Number(req.query.limit) ? Number(req.query.limit) : 10,
       page: req.query && Number(req.query.page) ? Number(req.query.page) : 1,
+      sort:{created_at:-1},
       populate: 'equipments'
     };
 
@@ -137,6 +139,7 @@ export const registerReport = async (req: any, res: Response) => {
       user:userId
     });
     await createReport.save();
+    await registerLog(req,`Registro reporte: ${createReport.record_type}`);
     return res.json({ message: "Reporte registrado!", data: createReport });
   } catch (error) {
     console.log(error);
@@ -247,6 +250,7 @@ export const updateReport = async (req: any, res: Response) => {
       }
     );
 
+    await registerLog(req,`Actualizo reporte: ${record_type}`);
     return res.json({ message: "Reporte actualizado!" });
   } catch (error) {
     console.log(error);
@@ -300,6 +304,7 @@ export const deleteEvidences = async (req: Request, res: Response) => {
       }
     );
 
+    await registerLog(req,`Elimino evidencias del reporte ${reportFound.record_type}`);
     return res.status(200).json({
       message: "Archivo/s eliminado/s",
     });
@@ -325,7 +330,9 @@ export const deleteReport = async (req: Request, res: Response) => {
     fs.rmSync(dir, { recursive: true, force: true });
   }
 
-  await equipment.findOneAndDelete({ id });
+  await report.findOneAndDelete({ id });
+
+  await registerLog(req,`Elimino el reporte ${reportFound.record_type}`);
 
   return res.status(200).json({ message: "Registro eliminado!" });
 };

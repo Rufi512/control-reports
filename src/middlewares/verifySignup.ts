@@ -5,6 +5,7 @@ import reCAPTCHA from "recaptcha2";
 import dotenv from "dotenv";
 import ip from 'ip'
 import { Request,Response, NextFunction } from "express";
+import { RequestUser } from "../types/types";
 dotenv.config();
 
 export const validateCaptcha = async (req:Request, res:Response, next:NextFunction) => {
@@ -57,11 +58,11 @@ export const checkRolesExisted = async (req:Request, res:Response, next:NextFunc
 };
 
 //Register logs from users
-export const registerLog = async (userId:string, reason:string) => {
+export const registerLog = async (req:RequestUser, reason:string) => {
   try {
     const userIp = ip.address();
     let userData
-    if(userId) userData = await user.findById(userId)
+    if(req.userId) userData = await user.findById(req.userId)
     if(!userData) return 
     const newLog = new log({
       user:userData.id,

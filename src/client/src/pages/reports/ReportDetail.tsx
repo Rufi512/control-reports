@@ -185,14 +185,14 @@ const EquipmentDetail = () => {
           active={propertiesModal.active}
           action={actionsModal}
         />
-        <div className="d-flex flex-column justify-content-between p-3">
+        <div className="d-flex flex-column justify-content-between p-3 header-page">
           <h2 className="text-right" style={{ marginLeft: "auto" }}>
             Detalles del reporte
           </h2>
           <hr />
         </div>
         {load ? (
-          <>
+          <div className="container-body-content">
             <div
               className="container-actions-buttons"
               style={{ padding: "0 12px"}}
@@ -201,7 +201,7 @@ const EquipmentDetail = () => {
                 <FontAwesomeIcon icon={faFilePdf} /> <span>Exportar a pdf</span>
               </button>
               <button
-                className="btn btn-danger m-2"
+                className="btn btn-danger"
                 style={{ display: edit ? "block" : "none" }}
                 onClick={() => {
                   setPropertiesModal({
@@ -218,7 +218,6 @@ const EquipmentDetail = () => {
                 className="form-check form-switch"
                 style={{
                   width: "max-content",
-                  marginLeft: "auto",
                   height: "inherit",
                   display: "flex",
                   alignItems: "center",
@@ -588,7 +587,7 @@ const EquipmentDetail = () => {
               </div>
               <hr />
             </div>{" "}
-          </>
+          </div>
         ) : (
           <div className="container-fluid d-flex flex-column justify-content-center align-items-center container-page evidences-detail">
             <div className="spinner-border mb-3" role="status">

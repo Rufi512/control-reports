@@ -105,16 +105,17 @@ const UserDetail = () => {
 						active={propertiesModal.active}
 						action={actionsModal}
 					/>
-					<div className="d-flex flex-column justify-content-between p-3">
+					<div className="d-flex flex-column justify-content-between p-3 header-page">
 						<h2 className="text-right" style={{ marginLeft: "auto" }}>
 							Detalles de usuario
 						</h2>
 						<hr />
 					</div>
+					<div className="container-body-content">
 					<div
 						className="container-actions-buttons"
 						style={{ padding: "0 12px" }}
-					>
+					   >
 						<button
 							className="btn btn-danger m-2"
 							style={{ display: edit ? "block" : "none" }}
@@ -235,6 +236,8 @@ const UserDetail = () => {
 						</div>
 					</div>
 				</div>
+			</div>
+
 			) : (
 				<div className="container-fluid d-flex flex-column justify-content-center align-items-center container-page evidences-detail">
 					<div className="spinner-border mb-3" role="status">

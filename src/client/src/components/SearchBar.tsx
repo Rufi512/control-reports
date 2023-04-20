@@ -25,7 +25,7 @@ const SearchBar = (props:Props) => {
   },[activeDate])
   return (
     <div className="container-fluid p-0">
-      <div className="input-group mb-3">
+      <div className="input-group mb-3" style={{display:props.placeholder ? 'flex' : 'none'}}>
         <input
           type="text"
           className="form-control"

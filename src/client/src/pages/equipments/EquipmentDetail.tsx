@@ -119,17 +119,17 @@ const EquipmentDetail = () => {
 				action={actionsModal}
 			/>
 				<div className="container-fluid d-flex flex-column container-page evidences-form">
-					<div className="d-flex flex-column justify-content-between p-3">
+					<div className="d-flex flex-column justify-content-between p-3 header-page">
 						<h2 className="text-right" style={{ marginLeft: "auto" }}>
 							Detalles del equipo
 						</h2>
 						<hr />
 					</div>
-
+				<div className="container-body-content">
 					<div
 						className="container-actions-buttons"
 						style={{ padding: "0 12px"}}
-					>
+					    >
 						<button
 							className="btn btn-danger m-2"
 							style={{ display: edit ? "block" : "none" }}
@@ -146,7 +146,7 @@ const EquipmentDetail = () => {
 						</button>
 						<div
 							className="form-check form-switch"
-							style={{ width: "max-content", marginLeft: "auto" }}
+							style={{ width: "max-content"}}
 						>
 							<input
 								className="form-check-input"
@@ -267,6 +267,7 @@ const EquipmentDetail = () => {
 							</button>
 						</div>
 					)}
+					</div>
 				</div>
 		</>
 	);

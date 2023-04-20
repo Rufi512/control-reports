@@ -4,10 +4,9 @@ import dotenv from "dotenv";
 import role from "../models/role";
 import { verifySignup } from "../middlewares";
 import { Request,Response,NextFunction } from "express";
+import { RequestUser } from "../types/types";
 dotenv.config();
 const secret = process.env.SECRET || '';
-
-interface RequestUser extends Request{userId?:string, rolUser?:string}
 
 
 export const verifyToken = async (req:RequestUser, res:Response, next:NextFunction) => {
@@ -140,12 +139,12 @@ export const verifyCaptcha = async (req:Request,res:Response,next:NextFunction) 
 }
 
 //Count try to access to session
-export const blockUser = async (userId:string,resetCount:boolean) =>{
-  const userFound = await user.findById(userId);
+export const blockUser = async (req:RequestUser,resetCount:boolean) =>{
+  const userFound = await user.findById(req.userId);
   if(!userFound) return
   const block_count = userFound.block_count += 1
-  await user.updateOne({_id:userId},{$set:{block_count: resetCount ? 0 : block_count}})
-  if(block_count >= 3 && !resetCount) await verifySignup.registerLog(userId,"Usuario bloqueado por varios intento fallidos de iniciar sesion")
+  await user.updateOne({_id:req.userId},{$set:{block_count: resetCount ? 0 : block_count}})
+  if(block_count >= 3 && !resetCount) await verifySignup.registerLog(req,"Usuario bloqueado por varios intento fallidos de iniciar sesion")
 }
 
 export const isTeacher = async (req:RequestUser, res:Response, next:NextFunction) => {

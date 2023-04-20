@@ -4,6 +4,7 @@ import { IEquipment } from "../types/types";
 import mongoose from "mongoose";
 import { verifyEquipment } from "../middlewares/verifyForms";
 import moment from "moment";
+import { registerLog } from "../middlewares/verifySignup";
 
 export const getEquipment = async (req: Request, res: Response) => {
   //Get the equipemnt from the id
@@ -57,10 +58,13 @@ export const registerEquipment = async (
     });
 
     await registerEquipment.save();
-    res.json({ message: "Equipo registrado!", data: registerEquipment });
+
+    await registerLog(req,`Registro equipo: ${registerEquipment.asset_number} - ${registerEquipment.brand} - ${registerEquipment.model} - ${registerEquipment.serial}`);
+    
+    return res.json({ message: "Equipo registrado!", data: registerEquipment });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Error al registrar el equipo" });
+    return res.status(500).json({ message: "Error al registrar el equipo" });
   }
 };
 
@@ -104,6 +108,8 @@ export const updateEquipment = async (req: Request, res: Response) => {
         },
       }
     );
+
+    await registerLog(req,`Se modifico equipo: ${asset_number} - ${brand} - ${model} - ${serial}`);
  
     return res.status(200).json({
       message:'Datos actualizados',
@@ -131,6 +137,7 @@ export const list = async (req:Request,res:Response) =>{
       lean: false,
       limit: req.query && Number(req.query.limit) ? Number(req.query.limit) : 10,
       page: req.query && Number(req.query.page) ? Number(req.query.page) : 1,
+      sort:{created_at:-1}
     };
     console.log(String(`${dateQuery}`))
     const search = req.query.search || ''
@@ -197,6 +204,7 @@ export const deleteEquipment = async (req: Request, res: Response) => {
 
   await equipment.findByIdAndDelete(id);
 
+  await registerLog(req,`Se elimino equipo: ${equipmentFound.asset_number} - ${equipmentFound.brand} - ${equipmentFound.model} - ${equipmentFound.serial}`);
   return res.status(200).json({ message: "Registro eliminado!" });
 };
 

@@ -1,9 +1,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars, faDesktop, faFlag, faHouse, faUser, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faDesktop, faFlag, faHouse, faTableList, faUser, faXmark } from '@fortawesome/free-solid-svg-icons'
 import logo from '../assets/images/mp.png'
 import '../assets/styles/sidebar.css'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import Cookies from 'js-cookie'
 type Props ={
   page:string
 }
@@ -65,28 +66,34 @@ export const Sidebar = (props:Props) => {
     </div>
     <hr />
     <ul className="nav nav-pills flex-column mb-auto">
-      <li className="nav-item">
+      <li className="nav-item" onClick={()=>setMobileSidebar(false)}>
         <Link to="/dashboard" className={`nav-link ${props.page === 'dashboard' ? 'active' : 'link-dark'}`} aria-current="page">
         <FontAwesomeIcon icon={faHouse}/>
           <p>Inicio</p>
         </Link>
       </li>
-      <li className="nav-item">
+      <li className="nav-item" onClick={()=>setMobileSidebar(false)}>
         <Link to="/equipment/list" className={`nav-link ${props.page === 'equipment' ? 'active' : 'link-dark'}`}>
         <FontAwesomeIcon icon={faDesktop}/>
           <p>Lista de equipos</p>
         </Link>
       </li>
-      <li className="nav-item">
+      <li className="nav-item" onClick={()=>setMobileSidebar(false)}>
         <Link to="/report/list" className={`nav-link ${props.page === 'report' ? 'active' : 'link-dark'}`}>
         <FontAwesomeIcon icon={faFlag} />
           <p>Lista de reportes</p>
         </Link>
       </li>
-      <li className="nav-item">
+      <li className="nav-item" onClick={()=>setMobileSidebar(false)}>
         <Link to="/user/list" className={`nav-link ${props.page === 'user' ? 'active' : 'link-dark'}`}>
         <FontAwesomeIcon icon={faUser}/>
           <p>Usuarios</p>
+        </Link>
+      </li>
+      <li className="nav-item" onClick={()=>setMobileSidebar(false)}>
+        <Link to="/log/list" className={`nav-link ${props.page === 'log' ? 'active' : 'link-dark'}`}>
+        <FontAwesomeIcon icon={faTableList} />
+          <p>Actividades</p>
         </Link>
       </li>
     </ul>
@@ -99,9 +106,9 @@ export const Sidebar = (props:Props) => {
         <strong>Celio Zavarce</strong>
       </button>
       <ul className={`dropdown-menu text-small shadow ${dropdown ? 'dropdown-menu-show' : ''}`}>
-        <li><a className="dropdown-item" href="#">Opciones</a></li>
+        <li onClick={()=>setMobileSidebar(false)}><Link className="dropdown-item" to={`/user/detail/${Cookies.get('user')}`}>Opciones</Link></li>
         <li><hr className="dropdown-divider"/></li>
-        <li><a className="dropdown-item" href="#">Cerrar sesion</a></li>
+        <li><Link className="dropdown-item" to="/logout">Cerrar sesion</Link></li>
       </ul>
     </div>
   </div>  

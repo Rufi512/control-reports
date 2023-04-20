@@ -104,13 +104,13 @@ const UserList = () => {
 
   return (
       <div className="container-fluid d-flex flex-column container-page container-list">
-        <div>
-          <h2 style={{ textAlign: "right", marginTop: "10px" }}>
+        <div className="header-page">
+          <h2 style={{ textAlign: "right", marginTop: "10px" }} >
             Lista de usuarios
           </h2>
           <hr />
         </div>
-        <div className="container-fluid">
+        <div className="container-fluid container-body-content">
           <SearchBar
             searchParams={{
               limit: 10,
