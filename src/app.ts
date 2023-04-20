@@ -8,6 +8,7 @@ import auth from './routes/auth';
 import users from './routes/users';
 import quests from './routes/quests'
 import logs from './routes/logs'
+import recovery from './routes/recovery'
 import { Request, Response } from 'express';
 import { initialSetup } from './libs/initalSetup';
 //import { initialSetup } from './libs/initalSetup';
@@ -28,6 +29,7 @@ app.use('/api/users',users)
 app.use('/api/auth',auth)
 app.use('/api/quests',quests)
 app.use('/api/logs',logs)
+app.use('/api/recovery',recovery)
 //Store public documents
 app.use('/public/contents/evidences',express.static(path.resolve('public/contents/evidences')))
 app.use('/public/users/avatar',express.static(path.resolve('public/users/avatar')))

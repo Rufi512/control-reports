@@ -38,7 +38,6 @@ const ReportPdf = ({ data, equipments }: props) => {
   const noteHtml = parse(data.note);
   const descriptionHtml = parse(data.description);
 
-
   const stylesheet = {
     p: {
       margin: 0,
@@ -115,8 +114,8 @@ const ReportPdf = ({ data, equipments }: props) => {
         </View>
         <View style={styles.footer}>
           <View style={styles.author}>
-            <Text style={styles.authorData}>LCDO. John Doe</Text>
-            <Text style={styles.authorData}>ASISTENTE EN INFORMÁTICA</Text>
+            <Text style={styles.authorData}>{data.user?.firstname} {data.user?.lastname}</Text>
+            <Text style={styles.authorData}>{data.user?.position}</Text>
             <Text style={styles.authorData}>
               EN LA CIRCUNSCRIPCIÓN JUDICIAL DEL ESTADO FALCÓN.
             </Text>
@@ -212,6 +211,7 @@ const styles = StyleSheet.create({
     color: "black",
   },
   authorData: {
+    textAlign:'center',
     textTransform: "uppercase",
     fontWeight: 600,
   },

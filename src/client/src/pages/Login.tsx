@@ -76,10 +76,10 @@ const Login = () => {
         className="container-sm d-flex align-items-center m-auto container-login"
         style={{ height: "100vh" }}
       >
-        <form className="form m-auto" onSubmit={handleSubmit}>
-          <div className="d-flex flex-column align-items-center mb-3">
+        <form className="form m-auto card p-3" style={{boxShadow: "0px 1px 14px 1px #818c9b4d"}} onSubmit={handleSubmit}>
+          <div className="d-flex flex-column align-items-center mb-3 card-header">
           <img src={logo} alt="logo" className="mb-3" style={{width:'70px'}}/>
-          <h3>Sistema de registro</h3>
+          <h3 className="text-center">Sistema de registro</h3>
           </div>
           <div className="form-group mb-3">
             <input
@@ -109,7 +109,7 @@ const Login = () => {
             </button>
           </div>
           <div className="mt-3 d-flex">
-            <Link to="#" className="mb-3">No puedo acceder a mi cuenta</Link>
+            <Link to="/recovery/user" className="mb-3">No puedo acceder a mi cuenta</Link>
           </div>
 
           <div className="mt-3 d-flex flex-column mb-3">

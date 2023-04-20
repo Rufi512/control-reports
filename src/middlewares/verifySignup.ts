@@ -1,33 +1,11 @@
 import user from "../models/user";
 import role from "../models/role";
 import log from "../models/log";
-import reCAPTCHA from "recaptcha2";
 import dotenv from "dotenv";
 import ip from 'ip'
 import { Request,Response, NextFunction } from "express";
 import { RequestUser } from "../types/types";
 dotenv.config();
-
-export const validateCaptcha = async (req:Request, res:Response, next:NextFunction) => {
-  const recaptcha = new reCAPTCHA({
-    siteKey: process.env.SITE_KEY_CAPTCHA || '', // retrieved during setup
-    secretKey: process.env.SERVER_KEY_CAPTCHA || '', // retrieved during setup
-    ssl: true, // optional, defaults to true.
-    // Disable if you don't want to access
-    // the Google API via a secure connection
-  });
-  recaptcha
-    .validate(req.body.recaptcha)
-    .then(function () {
-      console.log("No es el xokas xd");
-      next();
-    })
-    .catch((errorCodes)=>{
-         // invalid
-         console.log(recaptcha.translateErrors(errorCodes)); // translate error codes to human readable text
-         return res.status(401).json({ message: "Captcha Invalido!" });
-    });
-};
 
 export const checkUser = async (req:Request, res:Response, next:NextFunction) => {
   // Si el usuario ya existe

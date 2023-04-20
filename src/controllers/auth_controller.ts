@@ -104,7 +104,6 @@ export const sendCaptcha = (_req:Request,res:Response) =>{
 
     const captchaText = randomWords()
     // generate image
-
     const token = jwt.sign({ captcha:captchaText }, secret + captchaText, {
                 expiresIn:"10m", 
             });

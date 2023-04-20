@@ -18,9 +18,10 @@ import UserRegister from "./pages/users/UserRegister";
 import Welcome from "./pages/Welcome";
 import LogList from "./pages/logs/LogList";
 import Logout from "./pages/Logout";
-//import ReportRegister from "./pages/reports/ReportRegister";
-//import ReportList from "./pages/reports/ReportList";
-//import ReportDetail from "./pages/reports/ReportDetail";
+import Recovery from "./pages/Recovery";
+import Quests from "./pages/Recovery/Quests";
+import Password from "./pages/Recovery/Password";
+
 function App() {
   return (
     <>
@@ -42,6 +43,12 @@ function App() {
           
           {/*Welcome (first_login)*/}
           <Route path="/welcome/:id" element={<Welcome/>}/>
+
+          {/*recovery users*/}
+          <Route path="/recovery/user" element={<Recovery/>}/>
+          <Route path="/recovery/questions/:id" element={<Quests/>}/>
+          <Route path="/recovery/password/:id" element={<Password/>}/>
+
           {/*Not found*/}
           <Route path="/*" element={<NotFound />} />
 

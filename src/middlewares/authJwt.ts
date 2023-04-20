@@ -147,48 +147,6 @@ export const blockUser = async (req:RequestUser,resetCount:boolean) =>{
   if(block_count >= 3 && !resetCount) await verifySignup.registerLog(req,"Usuario bloqueado por varios intento fallidos de iniciar sesion")
 }
 
-export const isTeacher = async (req:RequestUser, res:Response, next:NextFunction) => {
-  //Request id and search the rol from user
-
-  const userFind = await user.findById(req.userId);
-  if(!userFind) return res.status(404).json({message:'No se encontro al usuario'})
-  const rol = await role.find({ _id: { $in: userFind.rol } });
-
-
-  for (const el of rol) {
-    if (
-      el.name === "User" ||
-      el.name === "Moderator" ||
-      el.name === "Admin"
-    ) {
-      next();
-      return;
-    }
-  }
-
-  return res
-    .status(403)
-    .json({ message: "Debes ser Maestro para completar la acción!" });
-};
-
-export const isModerator = async (req:RequestUser, res:Response, next:NextFunction) => {
-  const userFind = await user.findById(req.userId);
-  if(!userFind) return res.status(404).json({message:'No se encontro al usuario'})
-
-  const rol = await role.find({ _id: { $in: userFind.rol } });
-
-  for (const el of rol) {
-    if (el.name === "Moderator" || el.name === "Admin") {
-      next();
-      return;
-    }
-  }
-
-  return res
-    .status(403)
-    .json({ message: "Debes ser Moderador para completa la acción!" });
-};
-
 export const isUserOrAdmin = async (req:RequestUser,res:Response,next:NextFunction) =>{
   const userFind = await user.findById(req.userId)
   if(!userFind) return res.status(404).json({message:'No se ha encontrado al usuario'})

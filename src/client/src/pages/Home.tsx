@@ -203,7 +203,7 @@ const Home = () => {
         {width > 1024 ? (
           <table className="table table-bordered table-equipments">
             <thead>
-              <tr>
+              <tr style={{background: '#f3f3f3'}}>
                 <th scope="col">Tipo de registro</th>
                 <th scope="col">Fecha de registro</th>
                 <th scope="col">Equipos reportados</th>
@@ -290,7 +290,7 @@ const Home = () => {
         {width > 1024 ? (
           <table className="table table-bordered table-equipments">
             <thead>
-              <tr>
+              <tr style={{background: '#f3f3f3'}}>
                 <th scope="col">Numero de bien</th>
                 <th scope="col">Marca</th>
                 <th scope="col">Modelo</th>
@@ -398,7 +398,7 @@ const Home = () => {
         {width > 1024 ? (
           <table className="table table-bordered table-equipments">
             <thead>
-              <tr>
+              <tr style={{background: '#f3f3f3'}}>
                 <th scope="col">Cedula</th>
                 <th scope="col">Nombre</th>
                 <th scope="col">Apellido</th>
@@ -482,7 +482,7 @@ const Home = () => {
         {width > 1024 ? (
           <table className="table table-bordered table-equipments">
             <thead>
-              <tr>
+              <tr style={{background: '#f3f3f3'}}>
                 <th scope="col">Direccion IP</th>
                 <th scope="col">Usuario</th>
                 <th scope="col">Razon</th>

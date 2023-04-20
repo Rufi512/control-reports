@@ -192,7 +192,6 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 	};
 
 	const validatePassword = async (password: string) => {
-		console.log(password);
 		const regexMinus = new RegExp(/[a-z]/);
 		const regexSpecials = new RegExp(
 			/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/
@@ -209,7 +208,6 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 			minus: regexMinus.test(password),
 			spaces: regexSpaces.test(password),
 		});
-		console.log(validationPass);
 	};
 
 	useEffect(() => {

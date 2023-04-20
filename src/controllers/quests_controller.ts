@@ -14,9 +14,9 @@ export const listQuests = async (req: Request, res: Response) => {
 	} catch (err) {
 		console.log(err);
 		return res
-			.status(500)
+			.status(404)
 			.json({
-				message: "No se ha podido obtener las preguntas de seguridad",
+				message: "Preguntas de seguridad no encontradas",
 			});
 	}
 };
