@@ -21,6 +21,7 @@ import Logout from "./pages/Logout";
 import Recovery from "./pages/Recovery";
 import Quests from "./pages/Recovery/Quests";
 import Password from "./pages/Recovery/Password";
+import VerifyRol from "./components/VerifyRol";
 
 function App() {
   return (
@@ -71,13 +72,19 @@ function App() {
             <Route path="report/list" element={<ReportList />} />
             <Route path="report/detail/:id" element={<ReportDetail />} />
 
-            {/*Users Pages*/}
-             <Route path="user/list" element={<UserList />} />
-             <Route path="user/detail/:id" element={<UserDetail />} />
-             <Route path="user/register" element={<UserRegister />} />
-
+            {/*Users Pages (admin only)*/}
+            <Route path="user/*" element={<VerifyRol allowedRoles={['admin']}/>}>
+             <Route path="list" element={<UserList />} />
+             <Route path="register" element={<UserRegister />} />
+            </Route>
+            <Route path="user/*" element={<VerifyRol allowedRoles={['admin','user']}/>}>
+             <Route path="detail/:id" element={<UserDetail />} />
+            
+            </Route>
              {/*Logs*/}
-             <Route path="log/list" element={<LogList/>}/>
+            <Route path="log/*" element={<VerifyRol allowedRoles={['admin']}/>}>
+             <Route path="list" element={<LogList/>}/>
+            </Route>
             
           </Route>
           {/*Logout*/}

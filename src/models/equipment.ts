@@ -19,13 +19,13 @@ const equipmentSchema = new Schema({
   asset_number:{
     type: String,
     required:true,
-    maxLength: 30,
+    maxLength: 40,
     unique:true
   },
   model:{
     type: String,
     required:true,
-    maxLength: 30
+    maxLength: 40
   },
   brand:{
     type: String,
@@ -34,7 +34,7 @@ const equipmentSchema = new Schema({
   serial:{
     type: String,
     required:true,
-    maxLength: 30,
+    maxLength: 40,
     unique:true
   },
   register_date:{

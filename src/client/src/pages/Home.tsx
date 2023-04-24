@@ -12,8 +12,11 @@ import { User } from "../types/user";
 import { Equipment } from "../types/equipment";
 import { getResumen } from "../Api/LogsApi";
 import { Log } from "../types/log";
+import Cookies from "js-cookie";
+import useAuth from "../hooks/useAuth";
 const Home = () => {
   const ref = useRef(window);
+  const auth = useAuth()
   const [width, setWidth] = useState(window.innerWidth);
 
   const handleResize = () => {
@@ -35,14 +38,21 @@ const Home = () => {
 
   const [logs, setLogs] = useState<Log[]>([]);
 
+  const [load,isLoad] = useState(false)
+
+  const [status,setStatus] = useState({text:'Cargando informacion...',check:true})
+
   const labelUser = {
-    admin: "Administrador/a",
-    user: "Usuario",
+    'admin': "Administrador/a",
+    'user': "Usuario",
   };
 
   const request = async () => {
+    setTimeout(()=>{setStatus({text:'No se pudo cargar la informacion, intente recargar',check:false})},3000)
     try {
-      const res = await getResumen();
+      const res = await getResumen(Cookies.get('rol') === 'admin' ? 'admin' : 'user');
+      if(!res || res.status > 400) return
+      if(Cookies.get('rol') === "admin"){
       setReports(res?.data.reports);
       setUsers(res?.data.users);
       setEquipments(res?.data.equipments);
@@ -52,7 +62,19 @@ const Home = () => {
         reports: res?.data?.length_data.reports,
         users: res?.data?.length_data.users,
       });
-      console.log(res?.data);
+      return isLoad(true)
+    }
+
+    if(Cookies.get('rol') === "user"){
+      setReports(res?.data.reports);
+      setEquipments(res?.data.equipments);
+      setLegths({
+        equipments: res?.data?.length_data.equipments,
+        reports: res?.data?.length_data.reports,
+        users:0
+      });
+      return isLoad(true)
+    }
     } catch (err) {
       console.log(err);
     }
@@ -79,11 +101,12 @@ const Home = () => {
           Detalles de actividad
         </h2>
       </div>
+     {load ? <>
       <div
         className="flex row flex-wrap container-body-content"
         style={{ padding: "5px 12px", justifyContent: "space-around" }}
-      >
-        <Link
+         >
+       { lengths.users > 0 ? <Link
           className="col-lg-3 mt-1"
           to="/user/list"
           style={{
@@ -118,8 +141,8 @@ const Home = () => {
                 style={{ height: "50px", opacity: 0.3 }}
               />
             </div>
-          </div>
-        </Link>
+          </div> 
+        </Link>: ''}
         <Link
           className="col-lg-3 mt-1"
           to="/equipment/list"
@@ -376,7 +399,6 @@ const Home = () => {
                     <small>
                       {el.brand.toUpperCase()} - {el.model.toUpperCase()}
                     </small>
-                    <br />
                     <small>
                       <span style={{ fontWeight: "600" }}>Serial:</span>
                       {el.serial.toUpperCase()}
@@ -393,7 +415,7 @@ const Home = () => {
         )}
       </div>
       <hr />
-      <div>
+     {users.length > 0 && Cookies.get('rol') === 'admin' ? <div>
         <h3>Usuarios registrado recientemente</h3>
         {width > 1024 ? (
           <table className="table table-bordered table-equipments">
@@ -410,7 +432,6 @@ const Home = () => {
                 users.map((el: User, i: number) => {
                   type ObjectKey = keyof typeof labelUser;
                   const rol = el.rol?.name as ObjectKey;
-                  console.log(rol);
                   return (
                     <tr key={i}>
                       <th scope="row">
@@ -452,6 +473,8 @@ const Home = () => {
           <div className="list-group">
             {users.length > 0 ? (
               users.map((el: User, i: number) => {
+                 type ObjectKey = keyof typeof labelUser;
+                 const rol = el.rol?.name as ObjectKey;
                 return (
                   <Link
                     to={`/user/detail/${el._id}`}
@@ -464,7 +487,7 @@ const Home = () => {
                       </h5>
                       <small>Cedula: {el.ci}</small>
                     </div>
-                    <small>Rol: {el.rol?.name || "usuario"}</small>
+                    <small>Rol: {labelUser[rol] || "Usuario"}</small>
                   </Link>
                 );
               })
@@ -475,9 +498,9 @@ const Home = () => {
             )}
           </div>
         )}
-      </div>
+      </div> : '' }
 
-      <div>
+      {logs.length > 0 && Cookies.get('rol') === 'admin' ? <div>
         <h3>Actividad registrada recientemente</h3>
         {width > 1024 ? (
           <table className="table table-bordered table-equipments">
@@ -546,7 +569,6 @@ const Home = () => {
                       {el.user ? "" : "Desconocido"} {el.user?.firstname}{" "}
                       {el.user?.lastname}
                     </small>
-                    <br />
                     <small>
                       <span style={{ fontWeight: "600" }}>Razon:</span>
                       {el.reason}
@@ -561,8 +583,23 @@ const Home = () => {
             )}
           </div>
         )}
-      </div>
+      </div> : ''}
       <hr />
+      </> : <div className="container-fluid d-flex flex-column justify-content-center align-items-center container-page evidences-detail">
+          <div className="spinner-border mb-3" role="status">
+            <span className="sr-only"></span>
+          </div>
+          <span className="mb-3">{status.text}</span>
+
+         {!status.check ? <button
+            className="btn btn-primary"
+            onClick={() => {
+              request()
+            }}
+          >
+            Recargar
+          </button> : '' }
+        </div>}
     </div>
   );
 };

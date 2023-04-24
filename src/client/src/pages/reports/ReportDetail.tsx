@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../../assets/styles/pages/equipment.css";
 import { Equipment, Evidences } from "../../types/equipment";
-import { Sidebar } from "../../components/Sidebar";
 import { useNavigate, useParams } from "react-router-dom";
 import { reportsApi } from "../../Api";
 import ModalConfirmation from "../../components/ModalConfirmation";
@@ -13,6 +12,7 @@ import { toast } from "react-toastify";
 import { Report } from "../../types/report";
 import { ReportForm } from "../../components/reports/ReportForm";
 import ReportPdf from "../../components/reports/ReportPdf";
+import imageDefault from '../../assets/images/notfound.png'
 import { pdf } from "@react-pdf/renderer";
 
 const EquipmentDetail = () => {
@@ -78,6 +78,8 @@ const EquipmentDetail = () => {
           description: el.description,
         }));
         setEvidencesOnlyRead(evidences_data);
+      }else{
+        setEvidencesOnlyRead([]);
       }
       setLoad(true);
       setEdit(false);
@@ -147,6 +149,7 @@ const EquipmentDetail = () => {
     generatePdfDocument();
   };
 
+
   useEffect(() => {
     const callApi = async () => {
       try {
@@ -197,7 +200,7 @@ const EquipmentDetail = () => {
               className="container-actions-buttons"
               style={{ padding: "0 12px"}}
             >
-              <button className="btn btn-dark" onClick={exportPdf}>
+              <button className="btn btn-dark" onClick={()=>{exportPdf()}}>
                 <FontAwesomeIcon icon={faFilePdf} /> <span>Exportar a pdf</span>
               </button>
               <button
@@ -471,14 +474,6 @@ const EquipmentDetail = () => {
                 </label>
                 {evidencesOnlyRead.length > 0 ? (
                   evidencesOnlyRead.map((ev, i) => {
-                    if (ev.url_file) {
-                      console.log(
-                        ev.url_file
-                          .split(".")
-                          .pop()
-                          ?.match(/(jpg|png|jpeg|webp)$/)
-                      );
-                    }
                     return (
                       <div className="evidences-detail" key={i}>
                         <div
@@ -512,6 +507,7 @@ const EquipmentDetail = () => {
                                   <img
                                     className="img img-thumbnail"
                                     src={"/" + ev.url_file || ""}
+                                    onError={(e)=>{e.currentTarget.src = imageDefault}}
                                     alt="prev"
                                   />
                                 ) : (

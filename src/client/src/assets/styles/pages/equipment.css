@@ -70,6 +70,10 @@
     color: white;
 }
 
+.evidences-detail .container-actions-buttons .btn-danger{
+    margin-left: 5px;
+}
+
 .container-list .pagination span{
     cursor: pointer;
 }

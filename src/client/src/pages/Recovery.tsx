@@ -57,7 +57,6 @@ const Recovery = () => {
 
 		if(Number(data.option) === 1) toast.error('Opcion no disponible')
 
-		console.log(data)
 	};
 
 	useEffect(() => {

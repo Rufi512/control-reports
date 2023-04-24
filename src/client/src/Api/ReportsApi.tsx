@@ -1,8 +1,11 @@
 import axios, { AxiosError } from "axios"
+import Cookies from "js-cookie"
 const REPORTS_API = '/api/reports'
+
 export const getReports = async ({page = 1,limit = 15,search = '',searchForDate = false, date=`${new Date().getFullYear()}-${new Date().getUTCMonth() + 1 < 10 ? '0' : ''}${new Date().getUTCMonth() + 1 }`}) =>{
     try {
-        const res = await axios.get(REPORTS_API + `/list?page=${page}&limit=${limit}${searchForDate ? `&date=${date}` : '' }&search=${search}`)
+        const config = {headers:{"x-access-token":Cookies.get('accessToken')}}
+        const res = await axios.get(REPORTS_API + `/list?page=${page}&limit=${limit}${searchForDate ? `&date=${date}` : '' }&search=${search}`,config)
         return res
     } catch (error) {
         const err = error as AxiosError
@@ -13,7 +16,8 @@ export const getReports = async ({page = 1,limit = 15,search = '',searchForDate 
 
 export const getReport = async (id:string) =>{
     try {
-        const res = await axios.get(REPORTS_API + `/info/${id}`)
+        const config = {headers:{"x-access-token":Cookies.get('accessToken')}}
+        const res = await axios.get(REPORTS_API + `/info/${id}`,config)
         return res
     } catch (error) {
         const err = error as AxiosError
@@ -24,9 +28,8 @@ export const getReport = async (id:string) =>{
 
 export const registerReport = async (body:any) => {
     try {
-        const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+        const config = { headers: { 'Content-Type': 'multipart/form-data','x-access-token':Cookies.get('accessToken') } };
         const res = await axios.post(REPORTS_API + `/register`, body, config);
-        console.log(res)
         return res
     } catch (error) {
         const err = error as AxiosError
@@ -37,9 +40,8 @@ export const registerReport = async (body:any) => {
 
 export const updateReport = async (id:string,body:any) =>{
     try {
-        const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+        const config = { headers: { 'Content-Type': 'multipart/form-data','x-access-token':Cookies.get('accessToken') } };
         const res = await axios.put(REPORTS_API + `/update/${id}`, body, config);
-        console.log(res)
         return res
     } catch (error) {
         const err = error as AxiosError
@@ -50,8 +52,8 @@ export const updateReport = async (id:string,body:any) =>{
 
 export const deleteEvidenceReport = async (id:string,evidences:number[]) =>{
     try {
-        const res = await axios.post(REPORTS_API + `/delete/evidences/${id}`, {evidences_position:evidences});
-        console.log(res)
+        const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
+        const res = await axios.post(REPORTS_API + `/delete/evidences/${id}`, {evidences_position:evidences},config);
         return res
     } catch (error) {
         const err = error as AxiosError
@@ -62,8 +64,8 @@ export const deleteEvidenceReport = async (id:string,evidences:number[]) =>{
 
 export const deleteReport = async (id:string) =>{
     try {
-        const res = await axios.delete(REPORTS_API + `/delete/${id}`);
-        console.log(res)
+        const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
+        const res = await axios.delete(REPORTS_API + `/delete/${id}`,config);
         return res
     } catch (error) {
         const err = error as AxiosError

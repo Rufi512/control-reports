@@ -1,13 +1,16 @@
 import axios, { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { Quest } from "../types/quest";
+import Cookies from "js-cookie";
 const USERS_API = "/api/users";
 const QUESTS_API = "/api/quests"
 
 export const getUsers = async ({ page = 1, limit = 15, search = "" }) => {
     try {
+        const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
         const res = await axios.get(
-            USERS_API + `/list?page=${page}&limit=${limit}&search=${search}`
+            USERS_API + `/list?page=${page}&limit=${limit}&search=${search}`,
+            config
         );
         return res;
     } catch (error) {
@@ -19,7 +22,7 @@ export const getUsers = async ({ page = 1, limit = 15, search = "" }) => {
 
 export const getFirstLogin = async (id:string,token:string) => {
     try {
-        const config = {headers:{'x-access-token':token}}
+        const config = {headers:{'x-access-token':Cookies.get('accessToken')}}
         const res = await axios.get(USERS_API + `/data/user/${id}`, config);
         return res;
     } catch (error) {
@@ -31,8 +34,10 @@ export const getFirstLogin = async (id:string,token:string) => {
 
 export const getSelectsUsers = async (search = "") => {
     try {
+        const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
         const res = await axios.get(
-            USERS_API + `/list/select?search=${search}`
+            USERS_API + `/list/select?search=${search}`,
+            config
         );
         return res;
     } catch (error) {
@@ -44,7 +49,8 @@ export const getSelectsUsers = async (search = "") => {
 
 export const registerUser = async (body: any) => {
     try {
-        const res = await axios.post(USERS_API + `/register`, body);
+        const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
+        const res = await axios.post(USERS_API + `/register`, body,config);
         if (res.status === 200) toast.success("Usuario registrado");
         return res;
     } catch (error) {
@@ -59,7 +65,7 @@ export const registerUser = async (body: any) => {
 
 export const validateUser = async (id:string,token:string,body:FormData) =>{
     try {
-        const config = {headers:{'x-access-token':token}}
+        const config = {headers:{'x-access-token':Cookies.get('accessToken')}}
         const res = await axios.post(`/api/auth/verify/user/${id}`,body,config);
         return res;
     } catch (error) {
@@ -74,7 +80,8 @@ export const validateUser = async (id:string,token:string,body:FormData) =>{
 
 export const getUser = async (id: string) => {
     try {
-        const res = await axios.get(USERS_API + `/detail/${id}`);
+        const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
+        const res = await axios.get(USERS_API + `/detail/${id}`,config);
         return res;
     } catch (error) {
         const err = error as AxiosError;
@@ -86,7 +93,8 @@ export const getUser = async (id: string) => {
 
 export const getQuests = async (id: string) => {
     try {
-        const res = await axios.get(QUESTS_API + `/quests/user/${id}`);
+        const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
+        const res = await axios.get(QUESTS_API + `/quests/user/${id}`,config);
         return res;
     } catch (error) {
         const err = error as AxiosError;
@@ -98,7 +106,8 @@ export const getQuests = async (id: string) => {
 
 export const registerQuest = async (id: string,body:Quest[]) => {
     try {
-        const res = await axios.post(QUESTS_API + `/register/${id}`, body);
+        const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
+        const res = await axios.post(QUESTS_API + `/register/${id}`, body,config);
          if (res.status === 200) toast.success("Pregunta agregada");
         return res;
     } catch (error) {
@@ -111,7 +120,8 @@ export const registerQuest = async (id: string,body:Quest[]) => {
 
 export const deleteQuest = async (id:string,user:string) =>{
     try {
-        const res = await axios.post(QUESTS_API + `/delete/questions/${id}`);
+        const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
+        const res = await axios.post(QUESTS_API + `/delete/questions/${id}`,{},config);
          if (res.status === 200) toast.success("Pregunta Eliminada");
         return res;
     } catch (error) {
@@ -124,7 +134,7 @@ export const deleteQuest = async (id:string,user:string) =>{
 
 export const editUser = async (id: string, body: any) => {
     try {
-        const config = { headers: { "Content-Type": "multipart/form-data" } };
+        const config = { headers: { "Content-Type": "multipart/form-data",'x-access-token':Cookies.get('accessToken') } };
         const res = await axios.put(USERS_API + `/update/${id}`, body, config);
         if (res.status === 200) toast.success("Usuario Modificado");
         return res;
@@ -140,8 +150,9 @@ export const editUser = async (id: string, body: any) => {
 
 export const deleteAvatar = async (id: string) => {
     try {
+        const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
         const res = await axios.delete(
-            USERS_API + `/delete/profile/picture/${id}`
+            USERS_API + `/delete/profile/picture/${id}`,config
         );
         if (res.status === 200) toast.success("Foto de perfil eliminada!");
     } catch (error) {
@@ -156,9 +167,10 @@ export const deleteAvatar = async (id: string) => {
 
 
 export const deleteUser = async (id: string) => {
+    const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
     try {
         const res = await axios.delete(
-            USERS_API + `/delete/${id}`
+            USERS_API + `/delete/${id}`,config
         );
         if (res.status === 200) toast.success("Usuario eliminado!");
     } catch (error) {

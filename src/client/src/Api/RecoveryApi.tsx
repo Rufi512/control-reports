@@ -7,7 +7,6 @@ const RECOVERY_API = "/api/recovery"
 export const getQuestsRecovery = async ({token, captcha,user}:any) =>{
     try {
         const config = {headers:{"x-captcha-token":token}}
-
         const res = await axios.post(RECOVERY_API + `/questions`,{captcha,user},config)
         return res
     } catch (error) {
@@ -22,7 +21,6 @@ export const getQuestsRecovery = async ({token, captcha,user}:any) =>{
 
 export const sendQuests = async (id:string,body:any) =>{
 	try {
-		const config = {headers:{"x-access-token":Cookies.get('token')}}
         const res = await axios.post(RECOVERY_API + `/questions/${id}`,body)
         return res
     } catch (error) {

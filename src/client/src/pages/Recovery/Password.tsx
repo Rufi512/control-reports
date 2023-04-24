@@ -3,11 +3,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { recoveryPassword } from "../../Api/RecoveryApi";
 
-interface FormInput {
-	password: string;
-	confirmPassword: string;
-}
-
 interface Params {
 	state: { id: string };
 }

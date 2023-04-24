@@ -327,6 +327,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 							type="text"
 							className="form-control"
 							placeholder="Email"
+							autoComplete="off"
 							{...register("email", {
 								required: true,
 								pattern: /^\S+@\S+$/i,
@@ -350,9 +351,10 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 							type="text"
 							className="form-control"
 							placeholder="Nombre"
+							autoComplete="off"
 							{...register("firstname", {
 								required: true,
-								pattern: /^[A-Za-z ñ'`]+$/i,
+								pattern: /^[A-Za-z áéíóúñ'`]+$/i,
 							})}
 						/>
 						<ErrorMessage
@@ -372,9 +374,10 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 							type="text"
 							className="form-control"
 							placeholder="Apellido"
+							autoComplete="off"
 							{...register("lastname", {
 								required: true,
-								pattern: /^[A-Za-z ñ'`]+$/i,
+								pattern: /^[A-Za-z áéíóúñ'`]+$/i,
 							})}
 						/>
 						<ErrorMessage
@@ -415,9 +418,10 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 							type="text"
 							className="form-control"
 							placeholder="Posicion"
+							autoComplete="off"
 							{...register("position", {
 								required: true,
-								pattern: /^[A-Za-z0-9 ñ'`]+$/i,
+								pattern: /^[A-Za-z0-9 áéíóúñ'`]+$/i,
 							})}
 						/>
 						<ErrorMessage
@@ -579,7 +583,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 
 			<div
 				className="container-quests pb-5"
-				style={{ display: edit || create ? "block" : "none" }}
+				style={{ display: edit ? "block" : "none" }}
 			>
 				<h4>Preguntas de seguridad registradas</h4>
 				<ul className="list-group">

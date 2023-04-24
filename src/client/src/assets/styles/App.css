@@ -26,10 +26,6 @@
     margin-top: 10px;
 }
 
-.container-actions-buttons .btn-danger{
-    margin-left: 5px;
-}
-
 @media(min-width:1024px){
     .header-page{position: relative; overflow: unset;}
     

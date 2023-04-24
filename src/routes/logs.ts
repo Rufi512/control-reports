@@ -1,10 +1,13 @@
 import { Router } from "express";
-import { listLogs, resume } from "../controllers/logs_controller";
+import { listLogs, resumeAdmin, resumeUser } from "../controllers/logs_controller";
+import { isAdmin, verifyToken } from "../middlewares/authJwt";
 
 const router = Router()
 
-router.get('/list',listLogs) 
+router.get('/list',[verifyToken,isAdmin],listLogs) 
 
-router.get('/resume',resume)
+router.get('/resume/admin',[verifyToken,isAdmin],resumeAdmin)
+
+router.get('/resume',[verifyToken],resumeUser)
 
 export default router

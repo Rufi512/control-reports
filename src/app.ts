@@ -15,8 +15,7 @@ import { initialSetup } from './libs/initalSetup';
 const app = express()
 
 //Settings
-app.set('PORT',3000 || process.env.PORT)
-
+app.set('PORT',process.env.PORT || 3000)
 //middlewares
 app.use(morgan("dev"));
 app.use(cors());

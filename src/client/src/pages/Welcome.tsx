@@ -91,7 +91,6 @@ const Welcome = () => {
   };
 
   const validatePassword = async (password: string) => {
-    console.log(password);
     const regexMinus = new RegExp(/[a-z]/);
     const regexSpecials = new RegExp(/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/);
     const regexMayuscula = new RegExp(/[A-Z]/);
@@ -113,7 +112,6 @@ const Welcome = () => {
 	const res = await getFirstLogin(id || '',token || '')
 	if(!res || res.status >= 400) return navigate('/')
 	const userData:User = res?.data.user
-	console.log(userData)
 	setValue('firstname', userData.firstname, { shouldValidate: true })
 	setValue('lastname', userData.lastname, { shouldValidate: true })
 	setValue('ci', userData.ci, { shouldValidate: true })
@@ -126,7 +124,6 @@ const Welcome = () => {
   }
 
   const onSubmit:SubmitHandler<FormInput> = async (data) =>{
-	console.log(data)
 	let formData = new FormData()
 	//Confirm password
 	for (const [key, value] of Object.entries(validationPass)) {
@@ -255,7 +252,7 @@ const Welcome = () => {
                 placeholder="Su nombre completo"
                 autoComplete="off"
                 {...register("firstname", {
-                  pattern: /^[A-Za-z ñ'`]+$/i,
+                  pattern: /^[A-Za-z áéíóúñ'`]+$/i,
                   required: true,
                   maxLength: 40,
                 })}
@@ -279,7 +276,7 @@ const Welcome = () => {
                 placeholder="Su apellido completo"
                 autoComplete="off"
                 {...register("lastname", {
-                  pattern: /^[A-Za-z ñ'`]+$/i,
+                  pattern: /^[A-Za-z áéíóúñ'`]+$/i,
                   required: true,
                   maxLength: 40,
                 })}
@@ -331,7 +328,7 @@ const Welcome = () => {
                 autoComplete="off"
                 {...register("position", {
                   required: true,
-                  pattern: /^[A-Za-z0-9 ñ'`]+$/i,
+                  pattern: /^[A-Za-z0-9 áéíóúñ'`]+$/i,
                 })}
               />
               <ErrorMessage
@@ -479,11 +476,12 @@ const Welcome = () => {
             {fields.map((field, index) => (
               <div key={field.id} className="d-flex row position-relative mb-3 pt-4">
                 <div className="col-md-6 d-flex flex-column">
-                  <label htmlFor="firstname" className="form-label fw-bold">
+                  <label htmlFor={`quests.${index}.questions`} className="form-label fw-bold">
                     Pregunta
                   </label>
                   <input
 				  className="form-control"
+          autoComplete="off"
                     {...register(`quests.${index}.questions` as const,{maxLength:40,required:true})}
                   />
 				   <ErrorMessage
@@ -495,11 +493,12 @@ const Welcome = () => {
               />
                 </div>
                 <div className="col-md-6 d-flex flex-column">
-                  <label htmlFor="lastname" className="form-label fw-bold">
+                  <label htmlFor={`quests.${index}.answers`} className="form-label fw-bold">
                     Repuesta
                   </label>
                   <input
 				  className="form-control"
+          autoComplete="off"
                     {...register(`quests.${index}.answers` as const,{required:true})}
                   />
 				   <ErrorMessage
@@ -512,7 +511,7 @@ const Welcome = () => {
                 )}
               />
                 </div>
-				<button className="btn btn-danger" onClick={()=>remove(index)} style={{position:'absolute',top: 0,right: 0, width:40}}><FontAwesomeIcon icon={faTrash} color="#ffffff"/></button>
+				{ index !== 0 ? <button className="btn btn-danger" onClick={()=>remove(index)} style={{position:'absolute',top: 0,right: 0, width:40}}><FontAwesomeIcon icon={faTrash} color="#ffffff"/></button> : '' }
               </div>
             ))}
 
@@ -535,7 +534,7 @@ const Welcome = () => {
             </button> : ''}
             <hr />
             <button className="btn btn-primary" type="submit">
-              Enviar formulario
+              Enviar datos
             </button>
           </form>
         </div>

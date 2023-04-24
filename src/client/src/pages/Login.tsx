@@ -1,5 +1,4 @@
 import React, { useState, useRef, FormEvent, ChangeEvent, useEffect } from "react";
-import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import {
   faEye,
@@ -10,8 +9,7 @@ import logo from '../assets/images/mp.png'
 import '../assets/styles/pages/login.css'
 import { getCaptcha, loginUser } from "../Api/AuthApi";
 import Cookies from "js-cookie";
-//import Cookies from "js-cookie";
-//import { loginUser } from "../API";
+
 const Login = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState({ user: "", password: "", captcha: ""});
@@ -51,12 +49,15 @@ const Login = () => {
     try {
       const res = await loginUser({token:captchaUser.token,body:user});
       if(!res || res.status >= 400) return setIsSubmit(false);
-      Cookies.set('token',res?.data.token)
-      Cookies.set('user',res?.data.user)
-      Cookies.set('rol',res?.data.rol.toLowerCase())
       const first_login = res?.data.first_login
       const id_user = res?.data.user
-       if(first_login) return navigate(`/welcome/${id_user}`)
+      Cookies.set('accessToken',res?.data.accessToken)
+      if(first_login) return navigate(`/welcome/${id_user}`)
+      Cookies.set('refreshToken',res.data.refreshToken)
+      Cookies.set('name',res?.data.user.name)
+      Cookies.set('rol',res?.data.user.rol.toLowerCase())
+      Cookies.set('avatar',res?.data.user.avatar)
+      Cookies.set('id_user',res?.data.user.id)
       navigate(`/dashboard`)
       setIsSubmit(false);
     } catch (e) {
@@ -88,6 +89,7 @@ const Login = () => {
               style={{width:'100%', outline:0}}
               id="user"
               name="user"
+              autoComplete="off"
               onChange={handleChanges}
               value={user.user}
               placeholder="Cedula | Correo"
@@ -99,6 +101,7 @@ const Login = () => {
               className="p-2"
               id="password"
               name="password"
+              autoComplete="off"
               onChange={handleChanges}
               value={user.password}
               placeholder="Contraseña"

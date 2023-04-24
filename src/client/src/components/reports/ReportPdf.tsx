@@ -1,5 +1,4 @@
 import {
-  usePDF,
   Document,
   Page,
   View,

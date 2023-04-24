@@ -90,7 +90,6 @@ const EquipmentList = () => {
         totalPages: res.data.totalPages,
         totalDocs: res.data.totalDocs,
       });
-      console.log(res.data)
     } catch (err) {
       console.log(err);
     }

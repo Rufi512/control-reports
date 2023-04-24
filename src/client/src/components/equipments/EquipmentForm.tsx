@@ -1,5 +1,14 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Equipment } from "../../types/equipment";
+import "../../assets/styles/components/forms.css";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { registerEquipment, updateEquipment } from "../../Api/EquipmentsApi";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { ErrorMessage } from "@hookform/error-message";
+
 type Props = {
   equipment_detail?: Equipment;
   edit?: boolean;
@@ -8,13 +17,7 @@ type Props = {
   id?: string;
 };
 
-import "../../assets/styles/components/forms.css";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import { registerEquipment, updateEquipment } from "../../Api/EquipmentsApi";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router";
-import { fieldTest } from "../SomeFunctions";
+interface FormInput extends Equipment {}
 
 const EquipmentForm = ({
   edit,
@@ -31,19 +34,19 @@ const EquipmentForm = ({
     description: "",
     brand: "",
   });
+
   const [equipmentDescription, setEquipmentDescription] = useState("");
+  const {
+    register,
+    formState: { errors },
+    setValue,
+    handleSubmit,
+    reset,
+  } = useForm<FormInput>({ defaultValues: { ...equipment } });
 
-  const handleChanges = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    if (name === "asset_number" && !fieldTest("number", value)) return;
-    //serial field without spaces
-    if (name === "serial" && /\s/g.test(value)) return;
-    setEquipment({ ...equipment, [name]: value });
-  };
-
-  const handleForm = async (continue_register: boolean) => {
+  const onSubmit = async (data:Equipment) => {
     let submit;
-    let body = { ...equipment, description: equipmentDescription };
+    let body = { ...data, description: equipmentDescription };
 
     if (create) submit = await registerEquipment(equipment);
     if (edit) submit = await updateEquipment(id || "", body);
@@ -52,14 +55,7 @@ const EquipmentForm = ({
       return toast.error(submit.data.message);
     }
 
-    if (create && continue_register) {
-      setEquipment({
-        model: "",
-        serial: "",
-        asset_number: "",
-        description: "",
-        brand: "",
-      });
+    if (create) {
       setEquipmentDescription("");
       toast.success("Equipo registrado!");
       return;
@@ -71,9 +67,6 @@ const EquipmentForm = ({
       return;
     }
 
-    if (create) toast.success("Equipo registrado!");
-
-    return navigate("/equipment/list");
   };
 
   useEffect(() => {
@@ -91,61 +84,99 @@ const EquipmentForm = ({
     <form
       className="p-3 form-container"
       style={{ display: create || edit ? "block" : "none" }}
+      onSubmit={handleSubmit(onSubmit)}
     >
       <div className="form-row row fields-container">
         <div className="form-group col-md-6">
           <label htmlFor="model">Modelo del equipo</label>
-          <input
-            type="text"
-            className="form-control"
-            id="model"
-            name="model"
-            placeholder="Logitech SR40"
-            onInput={handleChanges}
-            value={equipment.model || ""}
-            autoComplete="off"
-          />
+         <input
+              type="text"
+              className="form-control"
+              placeholder="Modelo T34..."
+              {...register("model", {
+                required: true,
+                maxLength:40,
+                pattern: /^[A-Za-z0-9 áéíóúñ'`]+$/i,
+              })}
+            />
+            <ErrorMessage
+              errors={errors}
+              name="model"
+              render={({ message }) => (
+                <small className="text-danger">
+                  El campo es requerido y no debe pasar de los 40 caracteres
+                </small>
+              )}
+            />
         </div>
         <div className="form-group col-md-6">
           <label htmlFor="serial">Serial del equipo</label>
           <input
-            type="text"
-            className="form-control"
-            id="serial"
-            name="serial"
-            placeholder="SERIAL1234"
-            onInput={handleChanges}
-            value={equipment.serial.toUpperCase() || ""}
-            autoComplete="off"
-          />
+              type="text"
+              className="form-control"
+              placeholder="Serial..."
+              {...register("serial", {
+                required: true,
+                maxLength:40,
+                pattern: /^[A-Za-z0-9áéíóúñ'`]+$/i,
+              })}
+            />
+            <ErrorMessage
+              errors={errors}
+              name="serial"
+              render={({ message }) => (
+                <small className="text-danger">
+                  El campo es requerido! no debe contener espacios y no debe pasar
+                  los 40 caracteres
+                </small>
+              )}
+            />
         </div>
       </div>
       <div className="form-row row fields-container">
         <div className="form-group col-md-6">
           <label htmlFor="brand">Marca del equipo</label>
           <input
-            type="text"
-            className="form-control"
-            id="brand"
-            name="brand"
-            placeholder="HP | AMD | Intel"
-            onInput={handleChanges}
-            value={equipment.brand || ""}
-            autoComplete="off"
-          />
+              type="text"
+              className="form-control"
+              placeholder="Marca..."
+              {...register("brand", {
+                required: true,
+                maxLength:40,
+                pattern: /^[A-Za-z0-9 áéíóúñ'`]+$/i,
+              })}
+            />
+            <ErrorMessage
+              errors={errors}
+              name="brand"
+              render={({ message }) => (
+                <small className="text-danger">
+                  El campo es requerido! y no debe pasar los 40 caracteres
+                </small>
+              )}
+            />
         </div>
         <div className="form-group col-md-6">
           <label htmlFor="asset_number">Numero del bien</label>
           <input
-            type="text"
-            className="form-control"
-            id="asset_number"
-            name="asset_number"
-            placeholder="123434324"
-            onInput={handleChanges}
-            value={equipment.asset_number || ""}
-            autoComplete="off"
-          />
+              type="text"
+              className="form-control"
+              placeholder="0000..."
+              {...register("model", {
+                required: true,
+                maxLength:40,
+                pattern: /^[0-9]+$/i,
+              })}
+            />
+            <ErrorMessage
+              errors={errors}
+              name="model"
+              render={({ message }) => (
+                <small className="text-danger">
+                  El campo es requerido! debe contener solo numeros y no pasar de 40 caracteres
+                </small>
+              )}
+            />
         </div>
       </div>
 
@@ -191,20 +222,10 @@ const EquipmentForm = ({
         style={{ marginTop: "15px" }}
       >
         <button
-          type="button"
-          onClick={(e) => handleForm(false)}
+          type="submit"
           className="btn btn-primary col-md-4"
         >
           {create ? "Registrar Equipo" : "Editar Equipo"}
-        </button>
-
-        <button
-          type="button"
-          onClick={(e) => handleForm(true)}
-          className="btn btn-primary col-md-4"
-          style={{ display: `${edit ? "none" : "block"}` }}
-        >
-          Registrar y Continuar
         </button>
       </div>
     </form>

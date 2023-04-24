@@ -4,6 +4,8 @@ import { useSearchParams } from 'react-router-dom';
 import { getLogs } from '../../Api/LogsApi';
 import "../../assets/styles/pages/equipment.css";
 import { Log } from '../../types/log';
+import dateformat from '../../hooks/useDateFormat'
+
 const LogList = () => {
 	 const ref = useRef(window);
   const [width, setWidth] = useState(window.innerWidth);
@@ -87,7 +89,6 @@ const LogList = () => {
         totalPages: res.data.totalPages,
         totalDocs: res.data.totalDocs,
       });
-      console.log(res.data)
     } catch (err) {
       console.log(err);
     }
@@ -148,7 +149,7 @@ const LogList = () => {
                          {el.reason}
                         </td>
                         <td className='p-2'>
-                          {el.created_at}
+                          {dateformat(el.created_at || '')}
                         </td>
                         
                       </tr>
@@ -183,20 +184,19 @@ const LogList = () => {
                         <h5 className="mb-1">
                           {el.ip}
                         </h5>
-
-                          <small>
-                            {el.created_at}
-                          </small>
-
                       </div>
                       <small className='text-capitalize'>
-                        {el.user ? '' : 'Desconocido'} {el.user?.firstname} {el.user?.lastname}
+                        <span style={{ fontWeight: "600" }}>Usuario: </span>{el.user ? '' : 'Desconocido'} {el.user?.firstname} {el.user?.lastname}
                       </small>
                       <br />
                       <small>
-                        <span style={{ fontWeight: "600" }}>Razon:</span>
+                        <span style={{ fontWeight: "600" }}>Razon: </span>
                         {el.reason}
                       </small>
+                      <br/>
+                      <small>
+                             <span style={{ fontWeight: "600" }}>Fecha: </span>{dateformat(el.created_at)}
+                          </small>
                     </span>
                   );
                 })

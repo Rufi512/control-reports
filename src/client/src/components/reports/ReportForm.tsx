@@ -12,6 +12,8 @@ import makeAnimated from "react-select/animated";
 import { getEquipmentsSelect } from "../../Api/EquipmentsApi";
 import { Equipment } from "../../types/equipment";
 import { getSelectsUsers } from "../../Api/UsersApi";
+import imageDefault from '../../assets/images/notfound.png'
+
 const animatedComponents = makeAnimated();
 
 type Props = {
@@ -152,31 +154,39 @@ export const ReportForm = ({
     let formData = new FormData();
     if(!report.userId) return toast.error('Debes de asignar un usuario')
     for (const [key, value] of Object.entries(report)) {
-      if (key !== "register_date") {
+
         if (key === "description") {
+          if(!reportDescription || reportDescription == "") return toast.error('Es necesaria la descripcion!')
           formData.append(`description`, `${reportDescription}`);
-        } else if (key === "record_type_custom" && value !== "") {
+        }
+        if(key === "record_type" ){
+          formData.append(`record_type`, `${value}`);
+        }
+        if (key === "record_type_custom" && value !== "") {
           formData.delete("record_type");
           formData.append(`record_type`, `${value}`);
-        } else if (key === "note") {
+        }
+        if (key === "note") {
           formData.append(`note`, `${reportNote}`);
-        } else if (key === "equipments") {
+        }
+
+        if (key === "equipments") {
           report.equipments.forEach((el: string) => {
             formData.append(`${key}`, el);
           });
           equipmentsSelected.forEach((elm: Equipment) => {
             formData.append(`${key}`, `${elm._id}`);
           });
-        } else {
-          formData.append(`${key}`, `${value}`);
-        }
-      }
+        } 
+ 
 
       if (key === "register_date_format") {
         console.log("register:", value);
         formData.append("register_date", `${value}`);
       }
     }
+
+    formData.append("userId", `${userSelected.value}`);
 
     formData.delete("record_type_custom");
     formData.delete("register_date_format");
@@ -191,7 +201,6 @@ export const ReportForm = ({
       }
     }
 
-    setEvidencesInSelect([]);
 
     let result;
     if (create) result = await registerReport(formData);
@@ -203,6 +212,8 @@ export const ReportForm = ({
       }
       toast.success(result.data.message);
       setEvidences([]);
+      setEvidencesInSelect([]);
+      setUserSelected({label:'Elegir usuario',value:''})
       if (request) return request(id || "");
     }
 
@@ -248,7 +259,7 @@ export const ReportForm = ({
         month: "",
         year: "",
       },
-      userId: "",
+      userId: report_detail?.user?._id || '',
     });
 
     if (report_detail) {
@@ -599,6 +610,7 @@ export const ReportForm = ({
                         <img
                           className="img img-thumbnail"
                           src={evidences[i].preview || ""}
+                          onError={(e)=>{e.currentTarget.src = imageDefault}}
                           alt="prev"
                         />
                       ) : evidences[i].preview === "" && evidences[i].file ? (

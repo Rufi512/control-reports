@@ -4,10 +4,9 @@ import { useNavigate } from "react-router-dom";
 const Logout = () => {
 	const navigate = useNavigate();
 	useEffect(() => {
-		Cookies.remove("token");
-		Cookies.remove("rol");
-		Cookies.remove("user");
-		console.log("All removed");
+		Object.keys(Cookies.get()).forEach(function(cookieName) {
+  			Cookies.remove(cookieName);
+		});
 		navigate('/')
 	}, [navigate]);
 	return <></>;

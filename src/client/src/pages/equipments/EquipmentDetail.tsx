@@ -81,7 +81,6 @@ const EquipmentDetail = () => {
 				created_at: res?.data.created_at,
 				updated_at: res?.data.updated_at,
 			});
-			console.log("pass");
 			setEdit(false);
 			setLoad(true);
 		} catch (error) {
@@ -126,6 +125,8 @@ const EquipmentDetail = () => {
 						<hr />
 					</div>
 				<div className="container-body-content">
+				{load ? (
+						<>
 					<div
 						className="container-actions-buttons"
 						style={{ padding: "0 12px"}}
@@ -163,8 +164,7 @@ const EquipmentDetail = () => {
 						</div>
 					</div>
 
-					{load ? (
-						<>
+					
 							<EquipmentForm
 								edit={edit}
 								create={false}
@@ -251,7 +251,7 @@ const EquipmentDetail = () => {
 							</div>
 						</>
 					) : (
-						<div className="container-fluid d-flex flex-column justify-content-center align-items-center container-page evidences-detail">
+						<div className="container-fluid d-flex flex-column justify-content-center align-items-center container-page evidences-detail" style={{marginTop:'-70px'}}>
 							<div className="spinner-border mb-3" role="status">
 								<span className="sr-only"></span>
 							</div>

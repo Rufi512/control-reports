@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "../../assets/styles/pages/equipment.css";
 import "../../assets/styles/pages/user.css";
-import { Sidebar } from "../../components/Sidebar";
 import { useNavigate, useParams } from "react-router";
 import {
 	faCircleCheck,
@@ -16,7 +15,7 @@ import { User } from "../../types/user";
 import UserForm from "../../components/users/UserForm";
 import ModalConfirmation from "../../components/ModalConfirmation";
 import { Quest } from "../../types/quest";
-
+import dateformat from '../../hooks/useDateFormat' 
 const UserDetail = () => {
 	const navigate = useNavigate();
 	const [userRead, setUserRead] = useState<User>();
@@ -34,6 +33,12 @@ const UserDetail = () => {
 		action_name: "",
 	});
 
+	const labelUser = {
+    admin:'Administrador/a',
+    user:'Usuario'
+  }
+  type ObjectKey = keyof typeof labelUser;
+
 	const actionsModal = async (cancel: boolean) => {
 		if (cancel) {
 			setPropertiesModal({
@@ -48,7 +53,7 @@ const UserDetail = () => {
 			if (propertiesModal.action_name === "delete_user") {
 				const delete_user = await UsersApi.deleteUser(id || "");
 				if (delete_user && delete_user.status >= 400)
-					return toast.error("No se pudo eliminar el equipo");
+					return
 				return navigate("/user/list");
 			}
 			request(id || "");
@@ -61,7 +66,6 @@ const UserDetail = () => {
 	const request = async (id: string) => {
 		try {
 			const res = await UsersApi.getUser(id || "");
-			console.log(res);
 			if (res && res.data){ setUserRead(res.data.user); setUserQuestions(res.data.quests)}
 			setAvatar(true);
 			setLoad(true);
@@ -173,7 +177,6 @@ const UserDetail = () => {
 									src={"/" + userRead?.avatar}
 									alt="user_profile"
 									onError={(e) => {
-										console.log(e);
 										setAvatar(false);
 									}}
 								/>
@@ -223,15 +226,18 @@ const UserDetail = () => {
 									</span>
 								</div>
 							</div>
+							<div>
+							<p className="label-rol fs-6  mt-3">Rol en el sistema</p>
 							<p
-								className="label-rol text-capitalize fs-5 mt-3"
+								className="label-rol fs-6"
 								style={{ color: "#265eb1" }}
 							>
-								Usuario
+								{labelUser[userRead?.rol?.name as ObjectKey] || ''}
 							</p>
+							</div>
 							<div className="mt-3">
 								<p className="label-rol fs-6">Ultima actualizacion</p>
-								<p>{userRead?.updated_at}</p>
+								<p>{dateformat(userRead?.updated_at)}</p>
 							</div>
 						</div>
 					</div>

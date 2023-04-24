@@ -1,9 +1,5 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { Sidebar } from "../../components/Sidebar";
+import React from "react";
 import "../../assets/styles/pages/equipment.css";
-import { fieldTest } from "../../components/SomeFunctions";
-import { registerEquipment } from "../../Api/EquipmentsApi";
-import { toast } from "react-toastify";
 import { ReportForm } from "../../components/reports/ReportForm";
 
 const ReportRegister = () => {

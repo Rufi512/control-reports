@@ -410,18 +410,23 @@ export const updateUser = async (req: any, res: Response) => {
 
 export const deleteUser = async (req: RequestUser, res: Response) => {
     try {
-        const userFind = await user.findById(req.params.id);
+
+        const userFound = await user.findById(req.params.id);
         const listUsers = await user.paginate({}, {});
         const userAdmin = listUsers.docs[0];
         
-        if (!userFind) return res.status(404).json({ message: "Usuario no encontrado" });
+        if (!userFound) return res.status(404).json({ message: "Usuario no encontrado" });
         
-        if (userAdmin.id === userFind.id)
+        if (userAdmin.id === userFound.id)
             return res
                 .status(400)
                 .json({ message: "No esta permitido borrar al usuario" });
+
+        if(userFound.id === req.userId){
+            return res.status(400).json({message:'No puedes hacer esta accion'})
+        }
         
-        const dir = `${userFind.avatar || ''}`;
+        const dir = `${userFound.avatar || ''}`;
         if (fs.existsSync(dir)) {
             fs.unlinkSync(dir);
         }
@@ -429,7 +434,7 @@ export const deleteUser = async (req: RequestUser, res: Response) => {
         await quest.deleteMany({user:req.params.id})
         await user.findByIdAndDelete(req.params.id);
 
-        await registerLog(req,`Elimino usuario: ${userFind.firstname} ${userFind.lastname} - cedula: ${userFind.ci}`);
+        await registerLog(req,`Elimino usuario: ${userFound.firstname} ${userFound.lastname} - cedula: ${userFound.ci}`);
 
         return res.json({ message: "Usuario eliminado" });
     } catch (err) {
@@ -440,9 +445,9 @@ export const deleteUser = async (req: RequestUser, res: Response) => {
 
 export const deleteAvatar = async (req: Request, res: Response) => {
     try {
-        const userFind = await user.findById(req.params.id);
-        if (!userFind) return res.status(404).json({ message: "Usuario no encontrado" });
-        const dir = `${userFind.avatar || ''}`;
+        const userFound = await user.findById(req.params.id);
+        if (!userFound) return res.status(404).json({ message: "Usuario no encontrado" });
+        const dir = `${userFound.avatar || ''}`;
         if (fs.existsSync(dir)) {
             fs.unlinkSync(dir);
         }

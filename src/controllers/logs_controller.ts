@@ -65,7 +65,7 @@ export const listLogs = async (req: Request, res: Response) => {
 	}
 };
 
-export const resume = async (req: Request, res: Response) => {
+export const resumeAdmin = async (req: Request, res: Response) => {
 	try {
 		let optionsPaginationLogs = {
 			lean: false,
@@ -79,6 +79,20 @@ export const resume = async (req: Request, res: Response) => {
 					: 1,
 			populate: "user",
 			sort: { created_at: -1 } 
+		};
+
+		let optionsPaginationUser = {
+			lean: false,
+			limit:
+				req.query && Number(req.query.limit)
+					? Number(req.query.limit)
+					: 5,
+			page:
+				req.query && Number(req.query.page)
+					? Number(req.query.page)
+					: 1,
+			sort: { created_at: -1 },
+			populate:"rol" 
 		};
 
 		let optionsPagination = {
@@ -96,7 +110,7 @@ export const resume = async (req: Request, res: Response) => {
 
 		const listLogs = await log.paginate({}, optionsPaginationLogs);
 
-		const listUsers = await user.paginate({}, optionsPagination);
+		const listUsers = await user.paginate({}, optionsPaginationUser);
 
 		const listEquipments = await equipment.paginate({}, optionsPagination);
 
@@ -108,6 +122,38 @@ export const resume = async (req: Request, res: Response) => {
 			equipments: listEquipments.docs,
 			reports: listReports.docs,
 			length_data: {equipments:(await equipment.find()).length, reports:(await report.find()).length, users:(await user.find()).length}
+		});
+	} catch (err) {
+		console.log(err);
+		return res
+			.status(404)
+			.json({ message: "No se ha podido encontrar resumen" });
+	}
+};
+
+export const resumeUser = async (req: Request, res: Response) => {
+	try {
+		let optionsPagination = {
+			lean: false,
+			limit:
+				req.query && Number(req.query.limit)
+					? Number(req.query.limit)
+					: 5,
+			page:
+				req.query && Number(req.query.page)
+					? Number(req.query.page)
+					: 1,
+			sort: { created_at: -1 } 
+		};
+
+		const listEquipments = await equipment.paginate({}, optionsPagination);
+
+		const listReports = await report.paginate({}, optionsPagination);
+
+		return res.json({
+			equipments: listEquipments.docs,
+			reports: listReports.docs,
+			length_data: {equipments:(await equipment.find()).length, reports:(await report.find()).length}
 		});
 	} catch (err) {
 		console.log(err);

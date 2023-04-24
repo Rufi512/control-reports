@@ -1,5 +1,4 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { Sidebar } from "../../components/Sidebar";
 import { reportsApi } from "../../Api";
 import SearchBar from "../../components/SearchBar";
 import { Link, useSearchParams } from "react-router-dom";
@@ -7,6 +6,8 @@ import "../../assets/styles/pages/equipment.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Report } from "../../types/report";
+import dateformat from '../../hooks/useDateFormat'
+
 const EquipmentList = () => {
   const ref = useRef(window);
   const [width, setWidth] = useState(window.innerWidth);
@@ -85,7 +86,6 @@ const EquipmentList = () => {
         totalPages: res.data.totalPages,
         totalDocs: res.data.totalDocs,
       });
-      console.log(res.data)
     } catch (err) {
       console.log(err);
     }
@@ -153,7 +153,7 @@ const EquipmentList = () => {
                           <Link to={`/report/detail/${el.id}`}>{el.equipments.length}</Link>
                         </td>
                         <td>
-                          <Link to={`/report/detail/${el.id}`}>{`${el.updated_at}`}</Link>
+                          <Link to={`/report/detail/${el.id}`}>{dateformat(el.updated_at || '')}</Link>
                         </td>
                       </tr>
                     );
@@ -195,6 +195,10 @@ const EquipmentList = () => {
                       </div>
                       <small>
                         Equipos registrados: {el.equipments.length}
+                      </small>
+                      <br/>
+                      <small>
+                      Ultima actualizacion: {dateformat(el.updated_at || '')}
                       </small>
                     </Link>
                   );

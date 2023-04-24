@@ -20,7 +20,7 @@ const CheckLogin = ({children}:any) => {
    if(isLoad){
       return isLogin ? <Navigate to="/dashboard"/> : children 
    }
-   return <div><h1>pez</h1></div>
+   return <Navigate to="/"/> 
 };
 
 export default CheckLogin
