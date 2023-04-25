@@ -33,7 +33,8 @@ export const validateFieldEquipment = async (field: string, value: string) => {
 };
 
 export const validateFieldReport = async (field: string, value: string) => {
-    if (!/^[a-zA-Z0-9áéíóúñ\s]+$/.test(value) || value.length > 30) {
+    console.log(value)
+    if (!/^[a-zA-Z0-9áéíóúñ'`\s]+$/.test(value) || value.length > 30) {
         return `El campo ${field} es invalido: (debe tener 30 caracteres maximo)`;
     }
     return "";
@@ -188,11 +189,13 @@ export const verifyEquipment = async (data: IEquipment) => {
 
     for (const key in data) {
         let validation;
+        console.log(data)
         const value = data[key];
         if (key === "description") continue;
         if (key === "asset_number") {
             validation = await validateOnlyNumber(value);
-        } else if(key === "model") {
+        } else if(key === "model" || key === "brand") {
+            console.log(key,value)
             validation = await validateFieldReport(key,value)
         }else{
             validation = await validateFieldEquipment(key, value);

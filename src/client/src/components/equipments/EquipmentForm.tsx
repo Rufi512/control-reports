@@ -47,8 +47,8 @@ const EquipmentForm = ({
   const onSubmit = async (data:Equipment) => {
     let submit;
     let body = { ...data, description: equipmentDescription };
-
-    if (create) submit = await registerEquipment(equipment);
+    console.log(data)
+    if (create) submit = await registerEquipment(body);
     if (edit) submit = await updateEquipment(id || "", body);
 
     if (submit && submit.status >= 400) {
@@ -58,7 +58,7 @@ const EquipmentForm = ({
     if (create) {
       setEquipmentDescription("");
       toast.success("Equipo registrado!");
-      return;
+      return reset();
     }
 
     if (edit && request) {
@@ -162,7 +162,7 @@ const EquipmentForm = ({
               type="text"
               className="form-control"
               placeholder="0000..."
-              {...register("model", {
+              {...register("asset_number", {
                 required: true,
                 maxLength:40,
                 pattern: /^[0-9]+$/i,
@@ -170,7 +170,7 @@ const EquipmentForm = ({
             />
             <ErrorMessage
               errors={errors}
-              name="model"
+              name="asset_number"
               render={({ message }) => (
                 <small className="text-danger">
                   El campo es requerido! debe contener solo numeros y no pasar de 40 caracteres
