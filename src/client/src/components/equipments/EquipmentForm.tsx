@@ -78,6 +78,12 @@ const EquipmentForm = ({
       brand: equipment_detail?.brand || "",
     });
     setEquipmentDescription(equipment_detail?.description || "");
+    setValue("model", equipment_detail?.model || '');
+    setValue("serial", equipment_detail?.serial || '');
+    setValue("asset_number", equipment_detail?.asset_number || '');
+    setValue("description", equipment_detail?.description || '');
+    setValue("brand", equipment_detail?.brand || '');
+    setEquipmentDescription(equipment_detail?.description || '')
   }, [equipment_detail]);
 
   return (
