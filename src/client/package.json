@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "prebuild": "pnpm i",
+    "tsc": "tsc",
     "build": "tsc && vite build && mv dist ../../build/client",
     "preview": "vite preview"
   },
