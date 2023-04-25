@@ -11,7 +11,6 @@ import logs from './routes/logs'
 import recovery from './routes/recovery'
 import { Request, Response } from 'express';
 import { initialSetup } from './libs/initalSetup';
-//import { initialSetup } from './libs/initalSetup';
 const app = express()
 
 //Settings
@@ -37,6 +36,7 @@ initialSetup()
 
 //Client
 const client = path.join(__dirname, "client");
+
 app.use(express.static(client));
 
 app.get("/public/users/avatar/*", (_req:Request, res:Response) => {
