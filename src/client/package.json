@@ -8,7 +8,7 @@
     "dev": "vite",
     "prebuild": "pnpm i",
     "tsc": "tsc",
-    "build": "tsc && vite build && mv dist ../../build/client",
+    "build": "pnpm run prebuild && tsc && vite build && mv dist ../../build/client",
     "preview": "vite preview"
   },
   "dependencies": {
