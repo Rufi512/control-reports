@@ -16,6 +16,8 @@ import UserForm from "../../components/users/UserForm";
 import ModalConfirmation from "../../components/ModalConfirmation";
 import { Quest } from "../../types/quest";
 import dateformat from '../../hooks/useDateFormat' 
+import Loader from "../../components/Loader";
+import ErrorAdvice from "../../components/ErrorAdvice";
 const UserDetail = () => {
 	const navigate = useNavigate();
 	const [userRead, setUserRead] = useState<User>();
@@ -23,6 +25,7 @@ const UserDetail = () => {
 	const [avatar, setAvatar] = useState(true);
 	const [load, setLoad] = useState(false);
 	const [edit, setEdit] = useState(false);
+	const [errorRequest,setErrorRequest] = useState(false)
 	const { id } = useParams();
 	const timer = useRef<NodeJS.Timeout | null>(null);
 
@@ -32,6 +35,7 @@ const UserDetail = () => {
 		active: false,
 		action_name: "",
 	});
+
 
 	const labelUser = {
     admin:'Administrador/a',
@@ -64,44 +68,29 @@ const UserDetail = () => {
 	};
 
 	const request = async (id: string) => {
+		
 		try {
 			const res = await UsersApi.getUser(id || "");
 			if (res && res.data){ setUserRead(res.data.user); setUserQuestions(res.data.quests)}
+			if(res && res.status >= 400) return setErrorRequest(true)
 			setAvatar(true);
+		setErrorRequest(false)
 			setLoad(true);
 			setEdit(false);
 		} catch (err) {
 			console.log(err);
-			timer.current = setTimeout(() => {
-				request(id || "");
-			}, 5000);
-			return toast.error(
-				"No se pudo obtener la informacion del usuario, reintentando..."
-			);
-		}
+			setLoad(false)
+			setErrorRequest(true)
 	};
+}
 
 	useEffect(() => {
-		const callApi = async () => {
-			try {
-				await request(id || "");
-			} catch (err) {
-				timer.current = setTimeout(() => {
-					request(id || "");
-				}, 5000);
-			}
-		};
-
-		callApi();
-
-		return () => {
-			if (timer.current) clearTimeout(timer.current);
-		};
+		request(id || "");
 	}, []);
 	return (
 		<>
 
-			{load ? (
+			{load && !errorRequest ? (
 				<div className="container-fluid d-flex flex-column container-page evidences-detail user-detail evidences-form">
 					<ModalConfirmation
 						title={propertiesModal.title}
@@ -245,20 +234,8 @@ const UserDetail = () => {
 			</div>
 
 			) : (
-				<div className="container-fluid d-flex flex-column justify-content-center align-items-center container-page evidences-detail">
-					<div className="spinner-border mb-3" role="status">
-						<span className="sr-only"></span>
-					</div>
-					<span className="mb-3">Cargando Información...</span>
-
-					<button
-						className="btn btn-primary"
-						onClick={() => {
-							navigate("/user/list");
-						}}
-					>
-						Volver a la lista
-					</button>
+				errorRequest ? <div className="d-flex flex-column justify-content-center" style={{height:'75vh'}}><ErrorAdvice action={()=>{request(id || '')}}/></div> : <div className="container-fluid d-flex flex-column justify-content-center align-items-center container-page evidences-detail">
+					<Loader action={()=>{navigate("/user/list");}}/>
 				</div>
 			)}
 		</>

@@ -44,15 +44,19 @@ const EquipmentForm = ({
     reset,
   } = useForm<FormInput>({ defaultValues: { ...equipment } });
 
-  const onSubmit = async (data:Equipment) => {
-    let submit;
-    let body = { ...data, description: equipmentDescription };
-    console.log(data)
-    if (create) submit = await registerEquipment(body);
-    if (edit) submit = await updateEquipment(id || "", body);
+  const [submit,isSubmit] = useState(false)
 
-    if (submit && submit.status >= 400) {
-      return toast.error(submit.data.message);
+  const onSubmit = async (data:Equipment) => {
+    if(submit) return 
+    try{
+    isSubmit(true)
+    let toSubmit;
+    let body = { ...data, description: equipmentDescription };
+    if (create) toSubmit = await registerEquipment(body);
+    if (edit) toSubmit = await updateEquipment(id || "", body);
+    isSubmit(false)
+    if (toSubmit && toSubmit.status >= 400) {
+      return toast.error(toSubmit.data.message);
     }
 
     if (create) {
@@ -66,7 +70,10 @@ const EquipmentForm = ({
       request(id || "");
       return;
     }
-
+}catch(err){
+  isSubmit(false)
+  console.log(err)
+}
   };
 
   useEffect(() => {
@@ -104,6 +111,7 @@ const EquipmentForm = ({
                 maxLength:40,
                 pattern: /^[A-Za-z0-9 áéíóúñ'`]+$/i,
               })}
+              autoComplete="off"
             />
             <ErrorMessage
               errors={errors}
@@ -126,6 +134,7 @@ const EquipmentForm = ({
                 maxLength:40,
                 pattern: /^[A-Za-z0-9áéíóúñ'`]+$/i,
               })}
+              autoComplete="off"
             />
             <ErrorMessage
               errors={errors}
@@ -151,6 +160,7 @@ const EquipmentForm = ({
                 maxLength:40,
                 pattern: /^[A-Za-z0-9 áéíóúñ'`]+$/i,
               })}
+              autoComplete="off"
             />
             <ErrorMessage
               errors={errors}
@@ -173,6 +183,7 @@ const EquipmentForm = ({
                 maxLength:40,
                 pattern: /^[0-9]+$/i,
               })}
+              autoComplete="off"
             />
             <ErrorMessage
               errors={errors}
@@ -230,8 +241,14 @@ const EquipmentForm = ({
         <button
           type="submit"
           className="btn btn-primary col-md-4"
+          disabled={submit}
         >
-          {create ? "Registrar Equipo" : "Editar Equipo"}
+          {!submit ? `${create ? "Registrar Equipo" : "Editar Equipo"}` : ''}
+          {submit ? 
+          <div className="spinner-border" role="status">
+            <span className="sr-only"></span>
+          </div>
+          : ''}
         </button>
       </div>
     </form>

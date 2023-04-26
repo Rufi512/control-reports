@@ -6,6 +6,7 @@ import "../../assets/styles/pages/equipment.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { User } from "../../types/user";
+import Loader from "../../components/Loader";
 
 const UserList = () => {
   const ref = useRef(window);
@@ -66,6 +67,8 @@ const UserList = () => {
     setSearchParams({ ...searchParams, page: Number(value) });
   };
 
+  const [isRequest, setIsRequest] = useState(true);
+
   useEffect(() => {
     const element = ref.current;
 
@@ -79,8 +82,10 @@ const UserList = () => {
 
   // Request Equipment
   const request = async () => {
+    setIsRequest(true);
     try {
       const res = await UsersApi.getUsers(searchParams);
+      setIsRequest(false);
       if (!res) return;
       if (res.status >= 400) return;
       setUsers(res.data.docs);
@@ -91,6 +96,7 @@ const UserList = () => {
         totalDocs: res.data.totalDocs,
       });
     } catch (err) {
+      setIsRequest(false);
       console.log(err);
     }
   };
@@ -125,144 +131,157 @@ const UserList = () => {
           totalDocs={requestParams.totalDocs}
           request={request}
         />
-        <div
-          className="container-links"
-          style={{
-            margin: "10px 0",
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
-        >
-          <Link to={"/user/register"} className="btn btn-primary">
-            <FontAwesomeIcon icon={faPlus} />
-            <span>Agregar Usuario</span>
-          </Link>
-        </div>
-        {width > 1024 ? (
-          <table className="table table-bordered table-equipments">
-            <thead>
-              <tr>
-                <th scope="col">Cedula</th>
-                <th scope="col">Nombre</th>
-                <th scope="col">Apellido</th>
-                <th scope="col">Rol</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.length > 0 ? (
-                users.map((el: User, i: number) => {
-                  type ObjectKey = keyof typeof labelUser;
-                  const rol = el.rol?.name as ObjectKey;
-                  return (
-                    <tr key={i}>
-                      <th scope="row">
-                        <Link to={`/user/detail/${el._id}`}>{el.ci}</Link>
-                      </th>
-                      <td>
-                        <Link to={`/user/detail/${el._id}`}>
-                          {el.firstname}
-                        </Link>
-                      </td>
-                      <td>
-                        <Link to={`/user/detail/${el._id}`}>{el.lastname}</Link>
-                      </td>
-                      <td>
-                        <Link to={`/user/detail/${el._id}`}>{`${
-                          labelUser[rol] || "Usuario"
-                        }`}</Link>
+        {isRequest ? (
+          <div
+            className="container-fluid d-flex flex-column justify-content-center align-items-center"
+            style={{ marginTop: "30px" }}
+          >
+            <Loader/>
+          </div>
+        ) : (
+          <div>
+            <div
+              className="container-links"
+              style={{
+                margin: "10px 0",
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Link to={"/user/register"} className="btn btn-primary">
+                <FontAwesomeIcon icon={faPlus} />
+                <span>Agregar Usuario</span>
+              </Link>
+            </div>
+            {width > 1024 ? (
+              <table className="table table-bordered table-equipments">
+                <thead>
+                  <tr>
+                    <th scope="col">Cedula</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Apellido</th>
+                    <th scope="col">Rol</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.length > 0 ? (
+                    users.map((el: User, i: number) => {
+                      type ObjectKey = keyof typeof labelUser;
+                      const rol = el.rol?.name as ObjectKey;
+                      return (
+                        <tr key={i}>
+                          <th scope="row">
+                            <Link to={`/user/detail/${el._id}`}>{el.ci}</Link>
+                          </th>
+                          <td>
+                            <Link to={`/user/detail/${el._id}`}>
+                              {el.firstname}
+                            </Link>
+                          </td>
+                          <td>
+                            <Link to={`/user/detail/${el._id}`}>
+                              {el.lastname}
+                            </Link>
+                          </td>
+                          <td>
+                            <Link to={`/user/detail/${el._id}`}>{`${
+                              labelUser[rol] || "Usuario"
+                            }`}</Link>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        style={{
+                          padding: "10px",
+                          textAlign: "center",
+                          fontSize: "1.2em",
+                        }}
+                      >
+                        Ningun resultado encontrado
                       </td>
                     </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td
-                    colSpan={5}
-                    style={{
-                      padding: "10px",
-                      textAlign: "center",
-                      fontSize: "1.2em",
-                    }}
-                  >
-                    Ningun resultado encontrado
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        ) : (
-          <div className="list-group">
-            {users.length > 0 ? (
-              users.map((el: User, i: number) => {
-                type ObjectKey = keyof typeof labelUser;
-                const rol = el.rol?.name as ObjectKey;
-                return (
-                  <Link
-                    to={`/user/detail/${el._id}`}
-                    className="list-group-item list-group-item-action flex-column align-items-start"
-                    key={i}
-                  >
-                    <div className="d-flex w-100 justify-content-between">
-                      <h5 className="mb-1">
-                        {el.firstname} {el.lastname}
-                      </h5>
-                    </div>
-                    <small>
-                      <span style={{ fontWeight: "600" }}>Cedula: </span>{" "}
-                      {el.ci}
-                    </small>
-                    <br />
-
-                    <small>
-                      <span style={{ fontWeight: "600" }}>Rol: </span>{" "}
-                      {`${labelUser[rol] || "Usuario"}`}
-                    </small>
-                  </Link>
-                );
-              })
+                  )}
+                </tbody>
+              </table>
             ) : (
-              <div className="alert alert-dark" role="alert">
-                Ningun resultado encontrado
+              <div className="list-group">
+                {users.length > 0 ? (
+                  users.map((el: User, i: number) => {
+                    type ObjectKey = keyof typeof labelUser;
+                    const rol = el.rol?.name as ObjectKey;
+                    return (
+                      <Link
+                        to={`/user/detail/${el._id}`}
+                        className="list-group-item list-group-item-action flex-column align-items-start"
+                        key={i}
+                      >
+                        <div className="d-flex w-100 justify-content-between">
+                          <h5 className="mb-1">
+                            {el.firstname} {el.lastname}
+                          </h5>
+                        </div>
+                        <small>
+                          <span style={{ fontWeight: "600" }}>Cedula: </span>{" "}
+                          {el.ci}
+                        </small>
+                        <br />
+
+                        <small>
+                          <span style={{ fontWeight: "600" }}>Rol: </span>{" "}
+                          {`${labelUser[rol] || "Usuario"}`}
+                        </small>
+                      </Link>
+                    );
+                  })
+                ) : (
+                  <div className="alert alert-dark" role="alert">
+                    Ningun resultado encontrado
+                  </div>
+                )}
               </div>
             )}
+
+            <ul
+              className="pagination justify-content-end w-auto mt-2"
+              style={{ display: requestParams.totalDocs > 0 ? "flex" : "none" }}
+            >
+              <li
+                className={`page-item ${
+                  requestParams.hasPrevPage ? "" : "disabled"
+                }`}
+                onClick={() => {
+                  requestParams.hasPrevPage
+                    ? setSearchParams({
+                        ...searchParams,
+                        page: Number(searchParams.page) - 1,
+                      })
+                    : "";
+                }}
+              >
+                <span className="page-link">Anterior</span>
+              </li>
+              <li
+                className={`page-item ${
+                  requestParams.hasNextPage ? "" : "disabled"
+                }`}
+                onClick={() => {
+                  requestParams.hasNextPage
+                    ? setSearchParams({
+                        ...searchParams,
+                        page: Number(searchParams.page) + 1,
+                      })
+                    : "";
+                }}
+              >
+                <span className="page-link">Siguiente</span>
+              </li>
+            </ul>
           </div>
         )}
-
-        <ul
-          className="pagination justify-content-end w-auto mt-2"
-          style={{ display: requestParams.totalDocs > 0 ? "flex" : "none" }}
-        >
-          <li
-            className={`page-item ${
-              requestParams.hasPrevPage ? "" : "disabled"
-            }`}
-            onClick={() => {
-              requestParams.hasPrevPage
-                ? setSearchParams({
-                    ...searchParams,
-                    page: Number(searchParams.page) - 1,
-                  })
-                : "";
-            }}
-          >
-            <span className="page-link">Anterior</span>
-          </li>
-          <li
-            className={`page-item ${
-              requestParams.hasNextPage ? "" : "disabled"
-            }`}
-            onClick={() => {
-              requestParams.hasNextPage
-                ? setSearchParams({
-                    ...searchParams,
-                    page: Number(searchParams.page) + 1,
-                  })
-                : "";
-            }}
-          >
-            <span className="page-link">Siguiente</span>
-          </li>
-        </ul>
       </div>
     </div>
   );

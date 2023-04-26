@@ -40,10 +40,14 @@ const Quests = () => {
 		control,
 	});
 
+	const [submit, isSubmit] = useState(false);
+
 	const onSubmit = async (data:any)=>{
 		try{
 			const questsData = data.quests 
+			isSubmit(true)
 			const res = await sendQuests(state?.id,questsData)
+			isSubmit(false)
 			if(!res || res.status >= 400) return
 			Cookies.set('token',res.data.token)
 
@@ -59,6 +63,7 @@ const Quests = () => {
 			}
 
 		}catch(err){
+			isSubmit(false)
 			console.log(err)
 			toast.error('Respuestas de seguridad invalidas')
 		}
@@ -130,7 +135,16 @@ const Quests = () => {
 						})}
 						<div className="d-flex align-items-center justify-content-between" style={{flexFlow:'wrap-reverse'}}>
 						<Link to="/recovery/user" className="btn btn-secondary mt-2 mb-2" style={{minWidth:'110px'}}>Volver</Link>
-						<button type="submit" className="btn btn-primary mt-2 mb-2" style={{minWidth:'110px'}}>Enviar</button>
+						<button type="submit" className="btn btn-primary mt-2 mb-2" style={{minWidth:'110px'}} disabled={submit}>{submit ? (
+									<div
+										className="spinner-border"
+										role="status"
+									>
+										<span className="sr-only"></span>
+									</div>
+								) : (
+									"Enviar"
+								)}</button>
 						</div>
 					</form>
 				</div>

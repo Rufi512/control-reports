@@ -1,26 +1,18 @@
 import {useState,useEffect, PropsWithChildren, ReactElement} from 'react'
 import {Navigate} from "react-router-dom"
-//import {verifyToken} from '../API'
+import Cookies from 'js-cookie'
 
 const CheckLogin = ({children}:any) => {
    const [isLogin,setIsLogin] = useState(false)
-   const [isLoad,setIsLoad] = useState(true)
+   const [isLoad,setIsLoad] = useState(false)
    useEffect(() => {
-    /*
-      const request = async() =>{
-         const res = await verifyToken(true)
-         if(res.status < 400){
-            setIsLogin(true)
-         }
-         setIsLoad(true)
-      }
-      request()
-      */
+      if(Cookies.get('accessToken')) return setIsLogin(true);
+      setIsLoad(true)
    }, [])
    if(isLoad){
       return isLogin ? <Navigate to="/dashboard"/> : children 
    }
-   return <Navigate to="/"/> 
+   return <></> 
 };
 
 export default CheckLogin

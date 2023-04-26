@@ -64,6 +64,8 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 
 	const [confirmPassword, setConfirmPassword] = useState(false);
 
+	const [submit, isSubmit] = useState(false);
+
 	const handleChangesPassword = (e: ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
 		if (name === "password") validatePassword(value);
@@ -76,10 +78,18 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 	};
 
 	const handleDeleteAvatar = async () => {
-		const confirm = window.confirm("Estas seguro de eliminar la foto?");
-		if (confirm && userRead && request) {
-			await UsersApi.deleteAvatar(userRead?._id || "");
-			request(userRead?._id || "");
+		if (submit) return;
+		try {
+			const confirm = window.confirm("Estas seguro de eliminar la foto?");
+			if (confirm && userRead && request) {
+				isSubmit(true);
+				await UsersApi.deleteAvatar(userRead?._id || "");
+				isSubmit(false);
+				request(userRead?._id || "");
+			}
+		} catch (err) {
+			console.log(err);
+			isSubmit(false);
 		}
 	};
 
@@ -97,33 +107,57 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 	};
 
 	const handleSubmitQuest = async () => {
-		const res = await registerQuest(
-			userRead?._id || "",
-			Object({ quests: [quest] })
-		);
-		if (res && res.status === 200 && request) {
-			request(userRead?._id || "");
-			setQuest({ question: "", answer: "" });
+		if (submit) return;
+		try {
+			isSubmit(true);
+			const res = await registerQuest(
+				userRead?._id || "",
+				Object({ quests: [quest] })
+			);
+
+			isSubmit(false);
+			if (res && res.status === 200 && request) {
+				request(userRead?._id || "");
+				setQuest({ question: "", answer: "" });
+			}
+		} catch (err) {
+			isSubmit(false);
+			console.log(err);
 		}
 	};
 
 	const handleDeleteQuestionSubmit = async (question: string, id: string) => {
-		if (
-			window.confirm("Estas seguro de eliminar la pregunta:" + question)
-		) {
-			const res = await deleteQuest(id, userRead?._id || "");
-			if (res && res.status === 200 && request)
-				request(userRead?._id || "");
+		if (submit) return;
+		try {
+			isSubmit(true);
+			if (
+				window.confirm(
+					"Estas seguro de eliminar la pregunta:" + question
+				)
+			) {
+				const res = await deleteQuest(id, userRead?._id || "");
+				isSubmit(false);
+				if (res && res.status === 200 && request)
+					request(userRead?._id || "");
+			}
+		} catch (err) {
+			console.log(err);
+			isSubmit(false);
 		}
 	};
 
 	const onSubmit: SubmitHandler<FormInput> = async (data) => {
+		if (submit) return;
+		isSubmit(true);
 		try {
 			toast.dismiss();
 			let formData = new FormData();
 			if (create && !edit) {
 				const setPass = userPassword.password === userPassword.compare;
-				if (!setPass) return toast.error("Las contraseña no coinciden");
+				if (!setPass) {
+					isSubmit(false);
+					return toast.error("Las contraseña no coinciden");
+				}
 				formData.append("password", userPassword.password);
 			}
 
@@ -135,10 +169,12 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 			if (create || (confirmPassword && edit)) {
 				for (const [key, value] of Object.entries(validationPass)) {
 					if (key === "spaces" && value === false) continue;
-					if (value === false)
+					if (value === false) {
+						isSubmit(false);
 						return toast.error(
 							"Complete los requisitos de la contraseña"
 						);
+					}
 				}
 			}
 
@@ -165,6 +201,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 				? await UsersApi.registerUser(body)
 				: await UsersApi.editUser(userRead?._id || "", formData);
 
+			isSubmit(false);
 			//Clean form
 			if (res && res.status === 200 && create) {
 				if (create) reset();
@@ -186,6 +223,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 				lengthWords: false,
 			});
 		} catch (err) {
+			isSubmit(false);
 			toast.error("No se pudo enviar la informacion");
 			console.log(err);
 		}
@@ -573,8 +611,25 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 					className="container-buttons row p-2 justify-content-end"
 					style={{ marginTop: "15px" }}
 				>
-					<button type="submit" className="btn btn-primary col-md-4">
-						{create ? "Registrar Usuario" : "Guardar cambios"}
+					<button
+						type="submit"
+						className="btn btn-primary col-md-4"
+						disabled={submit}
+					>
+						{!submit
+							? `${
+									create
+										? "Registrar Usuario"
+										: "Guardar cambios"
+							  }`
+							: ""}
+						{submit ? (
+							<div className="spinner-border" role="status">
+								<span className="sr-only"></span>
+							</div>
+						) : (
+							""
+						)}
 					</button>
 				</div>
 

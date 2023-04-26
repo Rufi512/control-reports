@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import UserForm from "../../components/users/UserForm";
+import Loader from "../../components/Loader";
 
 const UserRegister = () => {
 	const navigate = useNavigate();
@@ -25,19 +26,7 @@ const UserRegister = () => {
 				</div>
 			) : (
 				<div className="container-fluid d-flex flex-column justify-content-center align-items-center container-page evidences-detail">
-					<div className="spinner-border mb-3" role="status">
-						<span className="sr-only"></span>
-					</div>
-					<span className="mb-3">Cargando Información...</span>
-
-					<button
-						className="btn btn-primary"
-						onClick={() => {
-							navigate("/user/list");
-						}}
-					>
-						Volver a la lista
-					</button>
+					<Loader action={()=>{navigate("/equipment/list");}}/>
 				</div>
 			)}
 		</>

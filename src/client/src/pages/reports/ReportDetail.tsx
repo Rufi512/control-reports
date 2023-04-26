@@ -14,6 +14,9 @@ import { ReportForm } from "../../components/reports/ReportForm";
 import ReportPdf from "../../components/reports/ReportPdf";
 import imageDefault from '../../assets/images/notfound.png'
 import { pdf } from "@react-pdf/renderer";
+import dateformat from '../../hooks/useDateFormat'
+import Loader from "../../components/Loader";
+import ErrorAdvice from "../../components/ErrorAdvice";
 
 const EquipmentDetail = () => {
   const { id } = useParams();
@@ -23,6 +26,7 @@ const EquipmentDetail = () => {
   const [width, setWidth] = useState(window.innerWidth);
   const [edit, setEdit] = useState(false);
   const [load, setLoad] = useState(false);
+  const [errorRequest,setErrorRequest] = useState(false)
   const [report, setReport] = useState<Report>({
     description: "",
     record_type: "informe tecnico",
@@ -56,7 +60,7 @@ const EquipmentDetail = () => {
     try {
       if (!id) return;
       const res = await reportsApi.getReport(id);
-      if (!res) return;
+      if (!res || res && res.status >= 400) return setErrorRequest(true);
       const data = res.data;
       setReport({
         description: data.description,
@@ -83,13 +87,12 @@ const EquipmentDetail = () => {
       }
       setLoad(true);
       setEdit(false);
+      setErrorRequest(false)
       return true;
     } catch (err) {
       console.log(err);
+      setErrorRequest(true)
       setLoad(false);
-      toast.dismiss();
-      toast.error("No se pudo cargar el reporte :( reintentando en 5 segundos");
-      throw Error("Error al requerir información");
     }
   };
 
@@ -151,21 +154,7 @@ const EquipmentDetail = () => {
 
 
   useEffect(() => {
-    const callApi = async () => {
-      try {
-        await request(id);
-      } catch (err) {
-        timer.current = setTimeout(() => {
-          request(id);
-        }, 5000);
-      }
-    };
-
-    callApi();
-
-    return () => {
-      if (timer.current) clearTimeout(timer.current);
-    };
+    request(id);
   }, []);
 
   useEffect(() => {
@@ -270,7 +259,7 @@ const EquipmentDetail = () => {
                   <label htmlFor="asset_number">Fecha de creacion</label>
                   <p>
                     {report.created_at
-                      ? String(new Date(report.created_at).toUTCString())
+                      ? dateformat(report.created_at)
                       : ""}
                   </p>
                 </div>
@@ -278,7 +267,7 @@ const EquipmentDetail = () => {
                   <label htmlFor="register_date">Fecha de actualizacion</label>
                   <p>
                     {report.updated_at
-                      ? String(new Date(report.updated_at).toUTCString())
+                      ? dateformat(report.updated_at)
                       : ""}
                   </p>
                 </div>
@@ -585,20 +574,8 @@ const EquipmentDetail = () => {
             </div>{" "}
           </div>
         ) : (
-          <div className="container-fluid d-flex flex-column justify-content-center align-items-center container-page evidences-detail">
-            <div className="spinner-border mb-3" role="status">
-              <span className="sr-only"></span>
-            </div>
-            <span className="mb-3">Cargando Información...</span>
-
-            <button
-              className="btn btn-primary"
-              onClick={() => {
-                navigate("/report/list");
-              }}
-            >
-              Volver a la lista
-            </button>
+          errorRequest ? <div className="d-flex flex-column justify-content-center" style={{height:'75vh'}}><ErrorAdvice action={()=>{request(id || '')}}/></div> : <div className="container-fluid d-flex flex-column justify-content-center align-items-center container-page evidences-detail">
+            <Loader action={()=>{navigate("/report/list");}}/>
           </div>
         )}
       </div>

@@ -6,13 +6,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faTrash, faUser } from "@fortawesome/free-solid-svg-icons";
 import "../assets/styles/pages/user.css";
 import { toast } from "react-toastify";
-import Cookies from 'js-cookie'
+import Cookies from "js-cookie";
 import { useNavigate, useParams } from "react-router";
 import { getFirstLogin, validateUser } from "../Api/UsersApi";
 const Welcome = () => {
-  const {id} = useParams()
-  const token = Cookies.get('token')
-  const navigate = useNavigate()
+  const { id } = useParams();
+  const token = Cookies.get("token");
+  const navigate = useNavigate();
   const [user, setUser] = useState<User>({
     firstname: "",
     lastname: "",
@@ -37,7 +37,7 @@ const Welcome = () => {
     setValue,
     handleSubmit,
     reset,
-	setFocus
+    setFocus,
   } = useForm<FormInput>({ defaultValues: { ...user } });
 
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
@@ -60,6 +60,8 @@ const Welcome = () => {
     password: "",
     compare: "",
   });
+
+  const [submit, isSubmit] = useState(false);
 
   type stateAvatar = {
     file: any;
@@ -107,77 +109,97 @@ const Welcome = () => {
     });
   };
 
-  const request = async () =>{
-	try{
-	const res = await getFirstLogin(id || '',token || '')
-	if(!res || res.status >= 400) return navigate('/')
-	const userData:User = res?.data.user
-	setValue('firstname', userData.firstname, { shouldValidate: true })
-	setValue('lastname', userData.lastname, { shouldValidate: true })
-	setValue('ci', userData.ci, { shouldValidate: true })
-	setValue('position', userData.position, { shouldValidate: true })
-	setValue('email', userData.email, { shouldValidate: true })
-	setFocus("firstname")
-	}catch(err){
-		console.log(err)
-	}
-  }
+  const request = async () => {
+    try {
+      const res = await getFirstLogin(id || "", token || "");
+      if (!res || res.status >= 400) return navigate("/");
+      const userData: User = res?.data.user;
+      setValue("firstname", userData.firstname, { shouldValidate: true });
+      setValue("lastname", userData.lastname, { shouldValidate: true });
+      setValue("ci", userData.ci, { shouldValidate: true });
+      setValue("position", userData.position, { shouldValidate: true });
+      setValue("email", userData.email, { shouldValidate: true });
+      setFocus("firstname");
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-  const onSubmit:SubmitHandler<FormInput> = async (data) =>{
-	let formData = new FormData()
-	//Confirm password
-	for (const [key, value] of Object.entries(validationPass)) {
-			if (key === "spaces" && value === false) continue;
-			if (value === false)
-				return toast.error(
-					"Complete los requisitos de la contraseña"
-				);
-	}
-	
-	const setPass = userPassword.password === userPassword.compare;
+  const onSubmit: SubmitHandler<FormInput> = async (data) => {
+    if (submit) return;
+    try {
+      let formData = new FormData();
+      //Confirm password
+      for (const [key, value] of Object.entries(validationPass)) {
+        if (key === "spaces" && value === false) continue;
+        if (value === false) {
+          isSubmit(false);
+          return toast.error("Complete los requisitos de la contraseña");
+        }
+      }
 
-	if (!setPass) return toast.error("Las contraseña no coinciden");
-	
-	formData.append(`password`, userPassword.password);
-	formData.append(`verifyPassword`, userPassword.compare)
-	//Check if questions repeat
-	if(data.quests.length < 2) return toast.error('Escribe minimo dos preguntas de seguridad')
-	const newQuestions:string[] = data.quests.map((field)=>field.questions.toLowerCase())
+      const setPass = userPassword.password === userPassword.compare;
 
-	const duplicatedNewQuestions = newQuestions.filter((item:string, index:number) => newQuestions.indexOf(item) !== index)
+      if (!setPass) {
+        isSubmit(false);
+        return toast.error("Las contraseña no coinciden");
+      }
 
-	if(duplicatedNewQuestions.length > 0) return toast.error('Las preguntas no se pueden repetir')
-   
-	//Submit field user
-	for (const [key, value] of Object.entries(data)) {
-		if (key === "avatar") {
-			if (uploadAvatar.file) formData.append("avatar", uploadAvatar.file);
-			continue;
-		}
+      formData.append(`password`, userPassword.password);
+      formData.append(`verifyPassword`, userPassword.compare);
+      //Check if questions repeat
+      if (data.quests.length < 2) {
+        isSubmit(false);
+        return toast.error("Escribe minimo dos preguntas de seguridad");
+      }
+      const newQuestions: string[] = data.quests.map((field) =>
+        field.questions.toLowerCase()
+      );
 
-		formData.append(`${key}`, value);
-	}
+      const duplicatedNewQuestions = newQuestions.filter(
+        (item: string, index: number) => newQuestions.indexOf(item) !== index
+      );
 
-	for (const {questions, answers} of data.quests) {
-		formData.append(`questions`, questions);
-		formData.append(`answers`, answers);
-	}
-	// petition to validate
-	const res = await validateUser(id || '',token || '',formData)
-	if(res && res?.status === 200 ){ 
-		toast.success('Usuario verificado!')
-		navigate('/')
-}
-  }
+      if (duplicatedNewQuestions.length > 0) {
+        isSubmit(false);
+        return toast.error("Las preguntas no se pueden repetir");
+      }
 
-  useEffect(()=>{
-	remove(0) // The remove action is happened after the second render
-	append({
-		questions: "",
-		answers: ""
-	  })
-	request()
-  },[])
+      //Submit field user
+      for (const [key, value] of Object.entries(data)) {
+        if (key === "avatar") {
+          if (uploadAvatar.file) formData.append("avatar", uploadAvatar.file);
+          continue;
+        }
+
+        formData.append(`${key}`, value);
+      }
+
+      for (const { questions, answers } of data.quests) {
+        formData.append(`questions`, questions);
+        formData.append(`answers`, answers);
+      }
+      // petition to validate
+      const res = await validateUser(id || "", token || "", formData);
+      isSubmit(false);
+      if (res && res?.status === 200) {
+        toast.success("Usuario verificado!");
+        navigate("/");
+      }
+    } catch (err) {
+      isSubmit(false);
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    remove(0); // The remove action is happened after the second render
+    append({
+      questions: "",
+      answers: "",
+    });
+    request();
+  }, []);
 
   return (
     <div className="container-fluid user-form">
@@ -474,67 +496,109 @@ const Welcome = () => {
             </p>
 
             {fields.map((field, index) => (
-              <div key={field.id} className="d-flex row position-relative mb-3 pt-4">
+              <div
+                key={field.id}
+                className="d-flex row position-relative mb-3 pt-4"
+              >
                 <div className="col-md-6 d-flex flex-column">
-                  <label htmlFor={`quests.${index}.questions`} className="form-label fw-bold">
+                  <label
+                    htmlFor={`quests.${index}.questions`}
+                    className="form-label fw-bold"
+                  >
                     Pregunta
                   </label>
                   <input
-				  className="form-control"
-          autoComplete="off"
-                    {...register(`quests.${index}.questions` as const,{maxLength:40,required:true})}
+                    className="form-control"
+                    autoComplete="off"
+                    {...register(`quests.${index}.questions` as const, {
+                      maxLength: 40,
+                      required: true,
+                    })}
                   />
-				   <ErrorMessage
-                errors={errors}
-                name={`quests.${index}.questions`}
-                render={({ message }) => (
-                  <small className="text-danger">Introduce la pregunta de seguridad</small>
-                )}
-              />
+                  <ErrorMessage
+                    errors={errors}
+                    name={`quests.${index}.questions`}
+                    render={({ message }) => (
+                      <small className="text-danger">
+                        Introduce la pregunta de seguridad
+                      </small>
+                    )}
+                  />
                 </div>
                 <div className="col-md-6 d-flex flex-column">
-                  <label htmlFor={`quests.${index}.answers`} className="form-label fw-bold">
+                  <label
+                    htmlFor={`quests.${index}.answers`}
+                    className="form-label fw-bold"
+                  >
                     Repuesta
                   </label>
                   <input
-				  className="form-control"
-          autoComplete="off"
-                    {...register(`quests.${index}.answers` as const,{required:true})}
+                    className="form-control"
+                    autoComplete="off"
+                    {...register(`quests.${index}.answers` as const, {
+                      required: true,
+                    })}
                   />
-				   <ErrorMessage
-                errors={errors}
-                name={`quests.${index}.answers`}
-                render={({ message }) => (
-                  <small className="text-danger">
-                    Introduce la respuesta
-                  </small>
-                )}
-              />
+                  <ErrorMessage
+                    errors={errors}
+                    name={`quests.${index}.answers`}
+                    render={({ message }) => (
+                      <small className="text-danger">
+                        Introduce la respuesta
+                      </small>
+                    )}
+                  />
                 </div>
-				{ index !== 0 ? <button className="btn btn-danger" onClick={()=>remove(index)} style={{position:'absolute',top: 0,right: 0, width:40}}><FontAwesomeIcon icon={faTrash} color="#ffffff"/></button> : '' }
+                {index !== 0 ? (
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => remove(index)}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      right: 0,
+                      width: 40,
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faTrash} color="#ffffff" />
+                  </button>
+                ) : (
+                  ""
+                )}
               </div>
             ))}
 
-            {fields.length < 4 ? <button
-              className="btn btn-primary"
-              type="button"
-              style={{
-                width: "205px",
-                marginLeft: "auto",
-                marginRight: "10px",
-              }}
-			  onClick={() =>
-				append({
-				  questions: "",
-				  answers: ""
-				})
-			  }
-            >
-              Añadir nueva pregunta
-            </button> : ''}
+            {fields.length < 4 ? (
+              <button
+                className="btn btn-primary"
+                type="button"
+                style={{
+                  width: "205px",
+                  marginLeft: "auto",
+                  marginRight: "10px",
+                }}
+                onClick={() =>
+                  append({
+                    questions: "",
+                    answers: "",
+                  })
+                }
+              >
+                Añadir nueva pregunta
+              </button>
+            ) : (
+              ""
+            )}
             <hr />
-            <button className="btn btn-primary" type="submit">
-              Enviar datos
+            <button className="btn btn-primary" type="submit" disabled={submit}>
+              {!submit ? "Enviar datos" : ""}
+              {submit ? (
+                <div className="spinner-border" role="status">
+                  <span className="sr-only"></span>
+                </div>
+              ) : (
+                ""
+              )}
             </button>
           </form>
         </div>

@@ -9,7 +9,7 @@ interface Params {
 
 const Password = () => {
 	const { state }: Params = useLocation();
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 
 	const [validationPass, setValidationPass] = useState({
 		numbers: false,
@@ -24,6 +24,8 @@ const Password = () => {
 		password: "",
 		confirmPassword: "",
 	});
+
+	const [submit, isSubmit] = useState(false);
 
 	const validatePassword = async (password: string) => {
 		const regexMinus = new RegExp(/[a-z]/);
@@ -61,17 +63,20 @@ const Password = () => {
 					);
 			}
 
-			const setPass = userPassword.password === userPassword.confirmPassword;
+			const setPass =
+				userPassword.password === userPassword.confirmPassword;
 
 			if (!setPass) return toast.error("Las contraseña no coinciden");
-
-			const res = await recoveryPassword(state?.id,userPassword)
-			if(!res || res.status >= 400) return
-			toast.success('Contraseña restablecida')
-			return navigate('/')
+			isSubmit(true);
+			const res = await recoveryPassword(state?.id, userPassword);
+			isSubmit(false);
+			if (!res || res.status >= 400) return;
+			toast.success("Contraseña restablecida");
+			return navigate("/");
 		} catch (err) {
+			isSubmit(false);
 			console.log(err);
-			toast.error('No se pudo restablecer la contraseña')
+			toast.error("No se pudo restablecer la contraseña");
 		}
 	};
 
@@ -208,8 +213,18 @@ const Password = () => {
 								type="submit"
 								className="btn btn-primary mt-2 mb-2"
 								style={{ minWidth: "110px" }}
+								disabled={submit}
 							>
-								Enviar
+								{submit ? (
+									<div
+										className="spinner-border"
+										role="status"
+									>
+										<span className="sr-only"></span>
+									</div>
+								) : (
+									"Enviar"
+								)}
 							</button>
 						</div>
 					</form>

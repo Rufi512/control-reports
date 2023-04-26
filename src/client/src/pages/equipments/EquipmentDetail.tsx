@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Sidebar } from "../../components/Sidebar";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { Equipment } from "../../types/equipment";
@@ -11,13 +10,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import EquipmentForm from "../../components/equipments/EquipmentForm";
 import ModalConfirmation from "../../components/ModalConfirmation";
+import Loader from "../../components/Loader";
+import ErrorAdvice from "../../components/ErrorAdvice";
+import dateformat from "../../hooks/useDateFormat";
 
 const EquipmentDetail = () => {
 	const { id } = useParams();
 	const navigate = useNavigate();
-	const timer = useRef<NodeJS.Timeout | null>(null);
 	const [load, setLoad] = useState(false);
 	const [edit, setEdit] = useState(false);
+	const [errorRequest,setErrorRequest] = useState(false)
 
 	const [equipment, setEquipment] = useState<Equipment>({
 		model: "",
@@ -69,9 +71,12 @@ const EquipmentDetail = () => {
 
 	const request = async (id: string) => {
 		try {
+			
 			const res = await getEquipment(id);
-			if (res && res.status >= 400)
+			if (res && res.status >= 400){
+				setErrorRequest(true)
 				return toast.error("No se pudo cargar la informacion");
+			}
 			setEquipment({
 				model: res?.data.model,
 				serial: res?.data.serial,
@@ -81,32 +86,18 @@ const EquipmentDetail = () => {
 				created_at: res?.data.created_at,
 				updated_at: res?.data.updated_at,
 			});
+			setErrorRequest(false)
 			setEdit(false);
 			setLoad(true);
 		} catch (error) {
 			setLoad(false);
+			setErrorRequest(true)
 			toast.dismiss();
-			toast.error("No se pudo cargar el equipo :( reintentando en 5 segundos");
-			throw Error("Error al requerir información");
 		}
 	};
 
 	useEffect(() => {
-		const callApi = async () => {
-			try {
-				await request(id || "");
-			} catch (err) {
-				timer.current = setTimeout(() => {
-					request(id || "");
-				}, 5000);
-			}
-		};
-
-		callApi();
-
-		return () => {
-			if (timer.current) clearTimeout(timer.current);
-		};
+		request(id || "");
 	}, []);
 
 	return (
@@ -202,7 +193,7 @@ const EquipmentDetail = () => {
 										<label htmlFor="asset_number">Fecha de creacion</label>
 										<p>
 											{equipment.created_at
-												? String(new Date(equipment.created_at).toUTCString())
+												? dateformat(equipment.created_at)
 												: ""}
 										</p>
 									</div>
@@ -212,7 +203,7 @@ const EquipmentDetail = () => {
 										</label>
 										<p>
 											{equipment.updated_at
-												? String(new Date(equipment.updated_at).toUTCString())
+												? dateformat(equipment.updated_at)
 												: ""}
 										</p>
 									</div>
@@ -251,20 +242,8 @@ const EquipmentDetail = () => {
 							</div>
 						</>
 					) : (
-						<div className="container-fluid d-flex flex-column justify-content-center align-items-center container-page evidences-detail" style={{marginTop:'-70px'}}>
-							<div className="spinner-border mb-3" role="status">
-								<span className="sr-only"></span>
-							</div>
-							<span className="mb-3">Cargando Información...</span>
-
-							<button
-								className="btn btn-primary"
-								onClick={() => {
-									navigate("/equipment/list");
-								}}
-							>
-								Volver a la lista
-							</button>
+						errorRequest ? <div className="d-flex flex-column justify-content-center" style={{height:'75vh'}}><ErrorAdvice action={()=>{request(id || '')}}/></div> : <div className="container-fluid d-flex flex-column justify-content-center align-items-center container-page evidences-detail" style={{marginTop:'-70px'}}>
+							<Loader action={()=>{navigate("/equipment/list");}}/>
 						</div>
 					)}
 					</div>

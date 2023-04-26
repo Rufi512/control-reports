@@ -66,6 +66,8 @@ export const ReportForm = ({
   });
   const [evidencesInSelect, setEvidencesInSelect] = useState([]);
 
+  const [submit,isSubmit] = useState(false)
+
   //Add new object in evidences array
   const handleAddEvidences = () => {
     setEvidences([...evidences, { file: null, description: "", preview: "" }]);
@@ -151,12 +153,21 @@ export const ReportForm = ({
   };
 
   const handleForm = async (continue_register: boolean) => {
+    if(submit) return
+    try{
+    isSubmit(true)
     let formData = new FormData();
-    if(!report.userId) return toast.error('Debes de asignar un usuario')
+    if(!report.userId){ 
+      isSubmit(false)
+      return toast.error('Debes de asignar un usuario')
+  }
     for (const [key, value] of Object.entries(report)) {
 
         if (key === "description") {
-          if(!reportDescription || reportDescription == "") return toast.error('Es necesaria la descripcion!')
+          if(!reportDescription || reportDescription == ""){ 
+            isSubmit(false)
+            return toast.error('Es necesaria la descripcion!')
+        }
           formData.append(`description`, `${reportDescription}`);
         }
         if(key === "record_type" ){
@@ -177,6 +188,11 @@ export const ReportForm = ({
           equipmentsSelected.forEach((elm: Equipment) => {
             formData.append(`${key}`, `${elm._id}`);
           });
+        }
+
+        if(create && equipmentsSelected.length <= 0 || edit && report.equipments.length <= 0 && equipmentsSelected.length <= 0  ){
+          isSubmit(false)
+          return toast.error('Debes de escoger equipos a registrar')
         } 
  
 
@@ -205,6 +221,7 @@ export const ReportForm = ({
     let result;
     if (create) result = await registerReport(formData);
     if (edit) result = await updateReport(id || "", formData);
+    isSubmit(false)
     if (result) {
       console.log(result);
       if (result.status >= 400) {
@@ -239,6 +256,10 @@ export const ReportForm = ({
     }
 
     return navigate("/report/list");
+  }catch(err){
+    isSubmit(false)
+    console.log(err)
+  }
   };
 
   useEffect(() => {
@@ -697,8 +718,14 @@ export const ReportForm = ({
           type="button"
           onClick={(e) => handleForm(false)}
           className="btn btn-primary col-md-4"
+          disabled={submit}
         >
-          {create ? "Registrar Reporte" : "Editar Reporte"}
+          {!submit ? `${create ? "Registrar Reporte" : "Editar Reporte"}` : ''}
+           {submit ? 
+          <div className="spinner-border" role="status">
+            <span className="sr-only"></span>
+          </div>
+          : ''}
         </button>
 
         <button
@@ -706,8 +733,14 @@ export const ReportForm = ({
           onClick={(e) => handleForm(true)}
           className="btn btn-primary col-md-4"
           style={{ display: `${edit ? "none" : "block"}` }}
+          disabled={submit}
         >
-          Registrar y Continuar
+          {!submit ? "Registrar y Continuar" : ''}
+          {submit ? 
+          <div className="spinner-border" role="status">
+            <span className="sr-only"></span>
+          </div>
+          : ''}
         </button>
       </div>
     </form>
