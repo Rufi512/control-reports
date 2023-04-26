@@ -7,9 +7,6 @@ type Props = {
 
 const VerifyRol = ({ allowedRoles }:Props) => {
 	const auth = useAuth()
-	console.log(allowedRoles)
-	console.log(auth)
-	console.log(allowedRoles.includes(auth.rol))
 	return  allowedRoles.includes(auth.rol) ? (
     <Outlet />
   ) : auth?.rol ? (

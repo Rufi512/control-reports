@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import "../../assets/styles/pages/equipment.css";
 import Loader from "../../components/Loader";
+import ErrorAdvice from "../../components/ErrorAdvice";
 const EquipmentList = () => {
   const ref = useRef(window);
   const [width, setWidth] = useState(window.innerWidth);
@@ -32,6 +33,8 @@ const EquipmentList = () => {
   const [equipments, setEquipments] = useState<Equipment[]>([]);
 
   const [isRequest, setIsRequest] = useState(true);
+
+  const [errorRequest, setErrorRequest] = useState(false);
 
   //Handle window width
   const handleResize = () => {
@@ -86,8 +89,8 @@ const EquipmentList = () => {
     try {
       const res = await getEquipments(searchParams);
       setIsRequest(false);
-      if (!res) return;
-      if (res.status >= 400) return;
+      if (!res) return setErrorRequest(true);
+      if (res.status >= 400) return setErrorRequest(true);
       setEquipments(res.data.docs);
       setRequestParams({
         hasPrevPage: res.data.hasPrevPage,
@@ -95,8 +98,10 @@ const EquipmentList = () => {
         totalPages: res.data.totalPages,
         totalDocs: res.data.totalDocs,
       });
+      setErrorRequest(false)
     } catch (err) {
       setIsRequest(false);
+      setErrorRequest(true)
       console.log(err);
     }
   };
@@ -140,7 +145,15 @@ const EquipmentList = () => {
             <Loader/>
           </div>
         ) : (
-          <div>
+          errorRequest ? (
+          <div className="d-flex flex-column justify-content-center">
+            <ErrorAdvice
+              action={() => {
+                request();
+              }}
+            />
+          </div>
+        ) : <div>
             <div
               className="container-links"
               style={{

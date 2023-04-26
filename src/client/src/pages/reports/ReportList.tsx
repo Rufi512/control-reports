@@ -8,6 +8,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Report } from "../../types/report";
 import dateformat from "../../hooks/useDateFormat";
 import Loader from "../../components/Loader";
+import ErrorAdvice from "../../components/ErrorAdvice";
 
 const EquipmentList = () => {
   const ref = useRef(window);
@@ -64,6 +65,7 @@ const EquipmentList = () => {
   };
 
   const [isRequest, setIsRequest] = useState(true);
+  const [errorRequest, setErrorRequest] = useState(false);
 
   useEffect(() => {
     const element = ref.current;
@@ -82,8 +84,8 @@ const EquipmentList = () => {
     try {
       const res = await reportsApi.getReports(searchParams);
       setIsRequest(false);
-      if (!res) return;
-      if (res.status >= 400) return;
+      if (!res) return setErrorRequest(true);
+      if (res.status >= 400) return setErrorRequest(true);
       setReports(res.data.docs);
       setRequestParams({
         hasPrevPage: res.data.hasPrevPage,
@@ -91,7 +93,9 @@ const EquipmentList = () => {
         totalPages: res.data.totalPages,
         totalDocs: res.data.totalDocs,
       });
+      setErrorRequest(false);
     } catch (err) {
+      setErrorRequest(true);
       setIsRequest(false);
       console.log(err);
     }
@@ -132,7 +136,15 @@ const EquipmentList = () => {
             className="container-fluid d-flex flex-column justify-content-center align-items-center"
             style={{ marginTop: "30px" }}
           >
-           <Loader/>
+            <Loader />
+          </div>
+        ) : errorRequest ? (
+          <div className="d-flex flex-column justify-content-center">
+            <ErrorAdvice
+              action={() => {
+                request();
+              }}
+            />
           </div>
         ) : (
           <div>

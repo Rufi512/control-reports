@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { User } from "../../types/user";
 import Loader from "../../components/Loader";
+import ErrorAdvice from "../../components/ErrorAdvice";
 
 const UserList = () => {
   const ref = useRef(window);
@@ -69,6 +70,8 @@ const UserList = () => {
 
   const [isRequest, setIsRequest] = useState(true);
 
+  const [errorRequest, setErrorRequest] = useState(false);
+
   useEffect(() => {
     const element = ref.current;
 
@@ -86,8 +89,8 @@ const UserList = () => {
     try {
       const res = await UsersApi.getUsers(searchParams);
       setIsRequest(false);
-      if (!res) return;
-      if (res.status >= 400) return;
+      if (!res) return setErrorRequest(true);
+      if (res.status >= 400) return setErrorRequest(true);
       setUsers(res.data.docs);
       setRequestParams({
         hasPrevPage: res.data.hasPrevPage,
@@ -95,7 +98,9 @@ const UserList = () => {
         totalPages: res.data.totalPages,
         totalDocs: res.data.totalDocs,
       });
+      setErrorRequest(false);
     } catch (err) {
+      setErrorRequest(true);
       setIsRequest(false);
       console.log(err);
     }
@@ -136,7 +141,15 @@ const UserList = () => {
             className="container-fluid d-flex flex-column justify-content-center align-items-center"
             style={{ marginTop: "30px" }}
           >
-            <Loader/>
+            <Loader />
+          </div>
+        ) : errorRequest ? (
+          <div className="d-flex flex-column justify-content-center">
+            <ErrorAdvice
+              action={() => {
+                request();
+              }}
+            />
           </div>
         ) : (
           <div>

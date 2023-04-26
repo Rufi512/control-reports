@@ -48,6 +48,7 @@ const Login = () => {
 
     try {
       const res = await loginUser({token:captchaUser.token,body:user});
+      let today = new Date()
       if(!res || res.status >= 400) return setIsSubmit(false);
       const first_login = res?.data.first_login
       const id_user = res?.data.user
@@ -58,6 +59,7 @@ const Login = () => {
       Cookies.set('rol',res?.data.user.rol.toLowerCase())
       Cookies.set('avatar',res?.data.user.avatar)
       Cookies.set('id_user',res?.data.user.id)
+      Cookies.set('timeExpire',String(today.setHours(today.getHours() + 8)))
       navigate(`/dashboard`)
       setIsSubmit(false);
     } catch (e) {

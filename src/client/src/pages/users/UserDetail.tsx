@@ -27,7 +27,6 @@ const UserDetail = () => {
 	const [edit, setEdit] = useState(false);
 	const [errorRequest,setErrorRequest] = useState(false)
 	const { id } = useParams();
-	const timer = useRef<NodeJS.Timeout | null>(null);
 
 	const [propertiesModal, setPropertiesModal] = useState({
 		title: "",
@@ -234,7 +233,7 @@ const UserDetail = () => {
 			</div>
 
 			) : (
-				errorRequest ? <div className="d-flex flex-column justify-content-center" style={{height:'75vh'}}><ErrorAdvice action={()=>{request(id || '')}}/></div> : <div className="container-fluid d-flex flex-column justify-content-center align-items-center container-page evidences-detail">
+				errorRequest ? <div className="m-auto d-flex flex-column justify-content-center" style={{height:'75vh'}}><ErrorAdvice action={()=>{request(id || '')}}/></div> : <div className="container-fluid d-flex flex-column justify-content-center align-items-center container-page evidences-detail">
 					<Loader action={()=>{navigate("/user/list");}}/>
 				</div>
 			)}

@@ -1,12 +1,14 @@
 import {useState,useEffect, PropsWithChildren, ReactElement} from 'react'
 import {Navigate} from "react-router-dom"
 import Cookies from 'js-cookie'
+import useAuth from '../hooks/useAuth';
 
 const CheckLogin = ({children}:any) => {
    const [isLogin,setIsLogin] = useState(false)
    const [isLoad,setIsLoad] = useState(false)
+   const auth = useAuth()
    useEffect(() => {
-      if(Cookies.get('accessToken')) return setIsLogin(true);
+      if(auth.accessToken) setIsLogin(true);
       setIsLoad(true)
    }, [])
    if(isLoad){

@@ -6,6 +6,7 @@ import "../../assets/styles/pages/equipment.css";
 import { Log } from "../../types/log";
 import dateformat from "../../hooks/useDateFormat";
 import Loader from "../../components/Loader";
+import ErrorAdvice from "../../components/ErrorAdvice";
 
 const LogList = () => {
   const ref = useRef(window);
@@ -68,6 +69,8 @@ const LogList = () => {
 
   const [isRequest, setIsRequest] = useState(true);
 
+  const [errorRequest, setErrorRequest] = useState(false);
+
   useEffect(() => {
     const element = ref.current;
 
@@ -85,8 +88,8 @@ const LogList = () => {
     try {
       const res = await getLogs(searchParams);
       setIsRequest(false);
-      if (!res) return;
-      if (res.status >= 400) return;
+      if (!res) return setErrorRequest(true);
+      if (res.status >= 400) return setErrorRequest(true);
       setLogs(res.data.docs);
       setRequestParams({
         hasPrevPage: res.data.hasPrevPage,
@@ -94,7 +97,9 @@ const LogList = () => {
         totalPages: res.data.totalPages,
         totalDocs: res.data.totalDocs,
       });
+      setErrorRequest(false);
     } catch (err) {
+      setErrorRequest(true);
       setIsRequest(false);
       console.log(err);
     }
@@ -135,7 +140,15 @@ const LogList = () => {
             className="container-fluid d-flex flex-column justify-content-center align-items-center"
             style={{ marginTop: "30px" }}
           >
-            <Loader/>
+            <Loader />
+          </div>
+        ) : errorRequest ? (
+          <div className="d-flex flex-column justify-content-center">
+            <ErrorAdvice
+              action={() => {
+                request();
+              }}
+            />
           </div>
         ) : (
           <div>

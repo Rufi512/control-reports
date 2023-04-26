@@ -40,9 +40,10 @@ export const refreshToken = async () =>{
     } catch (error) {
         const err = error as AxiosError;
         const message_error: any = err.response?.data;
-        toast.error(
+        if(Cookies.get('refreshToken')) {toast.error(
             message_error?.message || "No se pudo validar el usuario"
         );
+    }
         return err.response;
     }
 }
