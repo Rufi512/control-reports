@@ -10,7 +10,7 @@ const useAuth = () => {
 		//Refresh token if time expire 
 		let today = new Date() 
 		let expireTime = Number(Cookies.get('timeExpire')) 
-		if(today.getTime() >= expireTime || !Cookies.get('accessToken') && Cookies.get('refreshToken') || !expireTime){
+		if(today.getTime() >= expireTime || !Cookies.get('accessToken') || !Cookies.get('refreshToken') || !expireTime){
 			if(error) return navigate('/logout')
 			setAuth({rol:session.rol || '',accessToken:session.accessToken || '' ,refreshToken:session.refreshToken})
 		}
