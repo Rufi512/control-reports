@@ -184,7 +184,7 @@ const Welcome = () => {
       isSubmit(false);
       if (res && res?.status === 200) {
         toast.success("Usuario verificado!");
-        navigate("/");
+        navigate("/logout");
       }
     } catch (err) {
       isSubmit(false);

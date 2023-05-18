@@ -189,15 +189,14 @@ export const ReportForm = ({
             formData.append(`${key}`, `${elm._id}`);
           });
         }
-
-        if(create && equipmentsSelected.length <= 0 || edit && report.equipments.length <= 0 && equipmentsSelected.length <= 0  ){
+        
+        if(create && report.equipments.length <= 0 || edit && report.equipments.length <= 0 && equipmentsSelected.length <= 0 ){
           isSubmit(false)
           return toast.error('Debes de escoger equipos a registrar')
         } 
  
 
       if (key === "register_date_format") {
-        console.log("register:", value);
         formData.append("register_date", `${value}`);
       }
     }
