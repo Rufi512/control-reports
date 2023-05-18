@@ -38,7 +38,7 @@ export const checkRolesExisted = async (req:Request, res:Response, next:NextFunc
 //Register logs from users
 export const registerLog = async (req:RequestUser, reason:string) => {
   try {
-    const userIp = ip.address();
+    const userIp = req.header('x-forwarded-for') || req.socket.remoteAddress || ip.address();
     let userData
     if(req.userId) userData = await user.findById(req.userId)
     if(!userData) return 
