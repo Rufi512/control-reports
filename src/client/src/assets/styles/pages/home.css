@@ -13,3 +13,11 @@
 .container-dashboard .list-group .list-group-item a:hover{
     background-color:#ededed;
 }
+
+.container-dashboard .container-body-content a{
+    transition: all 0.3s ease;
+}
+
+.container-dashboard .container-body-content a:hover{
+    transform:scale(1.1);
+}

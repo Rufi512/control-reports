@@ -318,61 +318,21 @@ const EquipmentDetail = () => {
                     {equipmentsRead.length > 0 ? (
                       equipmentsRead.map((el: Equipment, i: number) => {
                         return (
-                          <div key={i}>
-                            <div className="list-group-item flex-column align-items-start">
-                              <div className="d-flex w-100 flex-column justify-content-between">
-                                <small className="mb-1 ">
-                                  <span
-                                    style={{
-                                      color: "#000",
-                                      fontWeight: "600",
-                                      fontSize: "16px",
-                                    }}
-                                  >
-                                    Numero de bien: 
-                                  </span>
-                                  {el.asset_number}
-                                </small>
-                                <small>
-                                  <span
-                                    style={{
-                                      color: "#000",
-                                      fontWeight: "600",
-                                      fontSize: "14px",
-                                    }}
-                                  >
-                                    Marca:
-                                  </span>
-                                  {el.brand}
-                                </small>
-                                <small>
-                                  <span
-                                    style={{
-                                      color: "#000",
-                                      fontWeight: "600",
-                                      fontSize: "14px",
-                                    }}
-                                  >
-                                    Modelo:
-                                  </span>
-                                  {el.model}
-                                </small>
-                                <small>
-                                  <span
-                                    style={{
-                                      color: "#000",
-                                      fontWeight: "600",
-                                      fontSize: "14px",
-                                    }}
-                                  >
-                                    Serial:
-                                  </span>
-                                  {el.serial}
-                                </small>
-                              </div>
-                            </div>
-                            <hr />
-                          </div>
+                          <div className="list-group-item list-group-item-action flex-column align-items-start" key={i}>
+                  <div className="d-flex w-100 justify-content-between flex-wrap-reverse">
+                    <h6 style={{marginBottom:'0px'}}>Nro de bien: <span className="fs-6">{el.asset_number}</span></h6>
+                    <small>
+                      {el.register_date?.day} / {el.register_date?.month} /{" "}
+                      {el.register_date?.year}
+                    </small>
+                  </div>
+                  <p className="mb-1 p-0">
+                    Modelo y marca: {el.model} - {el.brand}
+                  </p>
+                  <div className="d-flex align-items-start justify-content-between">
+                  <small>Serial: {el.serial}</small>
+                  </div>
+                </div>
                         );
                       })
                     ) : (

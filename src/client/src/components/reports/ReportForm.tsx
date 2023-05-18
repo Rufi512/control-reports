@@ -5,14 +5,14 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFile, faRectangleXmark } from "@fortawesome/free-solid-svg-icons";
+import { faFile, faRectangleXmark, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { registerReport, updateReport } from "../../Api/ReportsApi";
 import AsyncSelect from "react-select/async";
 import makeAnimated from "react-select/animated";
 import { getEquipmentsSelect } from "../../Api/EquipmentsApi";
 import { Equipment } from "../../types/equipment";
 import { getSelectsUsers } from "../../Api/UsersApi";
-import imageDefault from '../../assets/images/notfound.png'
+import imageDefault from "../../assets/images/notfound.png";
 
 const animatedComponents = makeAnimated();
 
@@ -66,7 +66,7 @@ export const ReportForm = ({
   });
   const [evidencesInSelect, setEvidencesInSelect] = useState([]);
 
-  const [submit,isSubmit] = useState(false)
+  const [submit, isSubmit] = useState(false);
 
   //Add new object in evidences array
   const handleAddEvidences = () => {
@@ -89,7 +89,7 @@ export const ReportForm = ({
   const handleSelectUser = (data: any) => {
     setUserSelected({ label: data.label, value: data.value });
     setReport({ ...report, userId: data.value });
-    console.log(data.value)
+    console.log(data.value);
   };
 
   const removeEquipmentsSelected = (position: number) => {
@@ -153,24 +153,23 @@ export const ReportForm = ({
   };
 
   const handleForm = async (continue_register: boolean) => {
-    if(submit) return
-    try{
-    isSubmit(true)
-    let formData = new FormData();
-    if(!report.userId){ 
-      isSubmit(false)
-      return toast.error('Debes de asignar un usuario')
-  }
-    for (const [key, value] of Object.entries(report)) {
-
+    if (submit) return;
+    try {
+      isSubmit(true);
+      let formData = new FormData();
+      if (!report.userId) {
+        isSubmit(false);
+        return toast.error("Debes de asignar un usuario");
+      }
+      for (const [key, value] of Object.entries(report)) {
         if (key === "description") {
-          if(!reportDescription || reportDescription == ""){ 
-            isSubmit(false)
-            return toast.error('Es necesaria la descripcion!')
-        }
+          if (!reportDescription || reportDescription == "") {
+            isSubmit(false);
+            return toast.error("Es necesaria la descripcion!");
+          }
           formData.append(`description`, `${reportDescription}`);
         }
-        if(key === "record_type" ){
+        if (key === "record_type") {
           formData.append(`record_type`, `${value}`);
         }
         if (key === "record_type_custom" && value !== "") {
@@ -189,76 +188,85 @@ export const ReportForm = ({
             formData.append(`${key}`, `${elm._id}`);
           });
         }
-        
-        if(create && report.equipments.length <= 0 || edit && report.equipments.length <= 0 && equipmentsSelected.length <= 0 ){
-          isSubmit(false)
-          return toast.error('Debes de escoger equipos a registrar')
-        } 
- 
 
-      if (key === "register_date_format") {
-        formData.append("register_date", `${value}`);
+        if (
+          (create && report.equipments.length <= 0) ||
+          (edit &&
+            report.equipments.length <= 0 &&
+            equipmentsSelected.length <= 0)
+        ) {
+          isSubmit(false);
+          return toast.error("Debes de escoger equipos a registrar");
+        }
+
+        if (key === "register_date_format") {
+          formData.append("register_date", `${value}`);
+        }
       }
-    }
 
-    formData.append("userId", `${userSelected.value}`);
+      formData.append("userId", `${userSelected.value}`);
 
-    formData.delete("record_type_custom");
-    formData.delete("register_date_format");
-    for (const evidence of evidences) {
-      formData.append("evidences", evidence.file ? evidence.file : Object({}));
-      formData.append(`evidences_description`, `${evidence.description}`);
-    }
-
-    if (evidencesOld.length > 0) {
-      for (const evidence of evidencesOld) {
-        formData.append(`evidences_description_old`, `${evidence.description}`);
+      formData.delete("record_type_custom");
+      formData.delete("register_date_format");
+      for (const evidence of evidences) {
+        formData.append(
+          "evidences",
+          evidence.file ? evidence.file : Object({})
+        );
+        formData.append(`evidences_description`, `${evidence.description}`);
       }
-    }
 
-
-    let result;
-    if (create) result = await registerReport(formData);
-    if (edit) result = await updateReport(id || "", formData);
-    isSubmit(false)
-    if (result) {
-      console.log(result);
-      if (result.status >= 400) {
-        return toast.error("No se pudo registrar el equipo");
+      if (evidencesOld.length > 0) {
+        for (const evidence of evidencesOld) {
+          formData.append(
+            `evidences_description_old`,
+            `${evidence.description}`
+          );
+        }
       }
-      toast.success(result.data.message);
-      setEvidences([]);
-      setEvidencesInSelect([]);
-      setUserSelected({label:'Elegir usuario',value:''})
-      if (request) return request(id || "");
-    }
 
-    if (continue_register) {
-      setReport({
-        description: "",
-        record_type: "informe tecnico",
-        record_type_custom: "",
-        note: "",
-        equipments: [],
-        register_date_format: new Date().toISOString().split("T")[0],
-        register_date: {
-          day: "",
-          month: "",
-          year: "",
-        },
-        userId: "",
-      });
-      setReportDescription("");
-      setReportNote("");
-      
-      return;
-    }
+      let result;
+      if (create) result = await registerReport(formData);
+      if (edit) result = await updateReport(id || "", formData);
+      isSubmit(false);
+      if (result) {
+        console.log(result);
+        if (result.status >= 400) {
+          return toast.error("No se pudo registrar el equipo");
+        }
+        toast.success(result.data.message);
+        setEvidences([]);
+        setEvidencesInSelect([]);
+        setUserSelected({ label: "Elegir usuario", value: "" });
+        if (request) return request(id || "");
+      }
 
-    return navigate("/report/list");
-  }catch(err){
-    isSubmit(false)
-    console.log(err)
-  }
+      if (continue_register) {
+        setReport({
+          description: "",
+          record_type: "informe tecnico",
+          record_type_custom: "",
+          note: "",
+          equipments: [],
+          register_date_format: new Date().toISOString().split("T")[0],
+          register_date: {
+            day: "",
+            month: "",
+            year: "",
+          },
+          userId: "",
+        });
+        setReportDescription("");
+        setReportNote("");
+
+        return;
+      }
+
+      return navigate("/report/list");
+    } catch (err) {
+      isSubmit(false);
+      console.log(err);
+    }
   };
 
   useEffect(() => {
@@ -279,7 +287,7 @@ export const ReportForm = ({
         month: "",
         year: "",
       },
-      userId: report_detail?.user?._id || '',
+      userId: report_detail?.user?._id || "",
     });
 
     if (report_detail) {
@@ -294,7 +302,12 @@ export const ReportForm = ({
     setReportDescription(report_detail?.description || "");
     setReportNote(report_detail?.note || "");
     setEvidencesOld(report_evidences || []);
-    setUserSelected({label:report_detail?.user ? `${report_detail.user?.ci} - ${report_detail.user?.firstname} - ${report_detail.user?.lastname} - ${report_detail.user?.position}` : 'Elige un usuario', value:report_detail?.user?._id || ''})
+    setUserSelected({
+      label: report_detail?.user
+        ? `${report_detail.user?.ci} - ${report_detail.user?.firstname} - ${report_detail.user?.lastname} - ${report_detail.user?.position}`
+        : "Elige un usuario",
+      value: report_detail?.user?._id || "",
+    });
   }, [report_detail]);
 
   const requestOptionsSelect = async (search: string) => {
@@ -383,42 +396,32 @@ export const ReportForm = ({
       {edit ? (
         <div className="form-group">
           <h5>Equipos registrados</h5>
-          <div className="mt-3 mb-3">
+          <div className="mt-3 mb-3 list-group">
             {equipmentsSelected.map((el, i) => {
               return (
-                <div
-                  className="d-flex badge bg-primary mb-3"
-                  style={{ maxWidth: "max-content" }}
-                  key={i}
-                >
-                  <span
-                    style={{
-                      fontSize: "14px",
-                      overflow: "hidden",
-                      whiteSpace: "nowrap",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    {el.asset_number} - {el.model} - {el.brand} - {el.serial}
-                  </span>
+                <div className="list-group-item list-group-item-action flex-column align-items-start">
+                  <div className="d-flex w-100 justify-content-between flex-wrap-reverse">
+                    <h6 style={{marginBottom:'0px'}}>Nro de bien: <span className="fs-6">{el.asset_number}</span></h6>
+                    <small>
+                      {el.register_date?.day} / {el.register_date?.month} /{" "}
+                      {el.register_date?.year}
+                    </small>
+                  </div>
+                  <p className="mb-1 p-0">
+                    Modelo y marca: {el.model} - {el.brand}
+                  </p>
+                  <div className="d-flex align-items-start justify-content-between">
+                  <small>Serial: {el.serial}</small>
                   <button
                     type="button"
-                    style={{
-                      border: "none",
-                      background: "none",
-                      margin: "0",
-                      marginLeft: "10px",
-                      padding: "0 5px",
-                    }}
+                    className="btn btn-danger"
                     onClick={(e) => {
                       removeEquipmentsSelected(i);
                     }}
                   >
-                    <FontAwesomeIcon
-                      style={{ color: "#fff" }}
-                      icon={faRectangleXmark}
-                    />
+                    <FontAwesomeIcon icon={faTrash} />
                   </button>
+                  </div>
                 </div>
               );
             })}
@@ -428,7 +431,9 @@ export const ReportForm = ({
         ""
       )}
       <div className="form-group">
-      <label style={{ marginBottom: "10px" }}>Elegir equipos a reportar</label>
+        <label style={{ marginBottom: "10px" }}>
+          Elegir equipos a reportar
+        </label>
         <AsyncSelect
           isMulti
           components={animatedComponents}
@@ -436,7 +441,9 @@ export const ReportForm = ({
           onChange={handleChangeSelect2}
           value={evidencesInSelect}
         />
-        <small className="text-muted">Escribe en el campo para seleccionar equipo</small>
+        <small className="text-muted">
+          Escribe en el campo para seleccionar equipo
+        </small>
       </div>
       <div className="form-group fields-container">
         <label style={{ marginBottom: "10px" }}>Descripcion del registro</label>
@@ -519,7 +526,9 @@ export const ReportForm = ({
             onChange={handleSelectUser}
             value={userSelected}
           />
-          <small className="text-muted pt-3 mt-3">Escribe en el campo para seleccionar usuario</small>
+          <small className="text-muted pt-3 mt-3">
+            Escribe en el campo para seleccionar usuario
+          </small>
         </div>
       </div>
       <hr />
@@ -630,7 +639,9 @@ export const ReportForm = ({
                         <img
                           className="img img-thumbnail"
                           src={evidences[i].preview || ""}
-                          onError={(e)=>{e.currentTarget.src = imageDefault}}
+                          onError={(e) => {
+                            e.currentTarget.src = imageDefault;
+                          }}
                           alt="prev"
                         />
                       ) : evidences[i].preview === "" && evidences[i].file ? (
@@ -719,12 +730,14 @@ export const ReportForm = ({
           className="btn btn-primary col-md-4"
           disabled={submit}
         >
-          {!submit ? `${create ? "Registrar Reporte" : "Editar Reporte"}` : ''}
-           {submit ? 
-          <div className="spinner-border" role="status">
-            <span className="sr-only"></span>
-          </div>
-          : ''}
+          {!submit ? `${create ? "Registrar Reporte" : "Editar Reporte"}` : ""}
+          {submit ? (
+            <div className="spinner-border" role="status">
+              <span className="sr-only"></span>
+            </div>
+          ) : (
+            ""
+          )}
         </button>
 
         <button
@@ -734,12 +747,14 @@ export const ReportForm = ({
           style={{ display: `${edit ? "none" : "block"}` }}
           disabled={submit}
         >
-          {!submit ? "Registrar y Continuar" : ''}
-          {submit ? 
-          <div className="spinner-border" role="status">
-            <span className="sr-only"></span>
-          </div>
-          : ''}
+          {!submit ? "Registrar y Continuar" : ""}
+          {submit ? (
+            <div className="spinner-border" role="status">
+              <span className="sr-only"></span>
+            </div>
+          ) : (
+            ""
+          )}
         </button>
       </div>
     </form>
