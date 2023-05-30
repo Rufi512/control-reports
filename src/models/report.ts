@@ -49,6 +49,11 @@ const reportSchema = new Schema(
       ref:'user',
       type:Schema.Types.ObjectId,
       required:true
+    },
+    hq:{
+      ref:'headquarter',
+      type:Schema.Types.ObjectId,
+      required:true
     }
   },
   {

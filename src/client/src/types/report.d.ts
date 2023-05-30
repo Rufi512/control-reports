@@ -1,3 +1,4 @@
+import { Headquarter } from "./headquarter"
 import { User } from "./user"
 
 export interface Report {
@@ -11,6 +12,7 @@ export interface Report {
     equipments:string[] | Equipment[]
     note:string,
     user?:User
+    hq?:Headquarter
     evidences?:[{file:string,description:string}]
     id?:string
     _id?:string

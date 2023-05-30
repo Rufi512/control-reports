@@ -246,6 +246,9 @@ const EquipmentDetail = () => {
 							<Loader action={()=>{navigate("/equipment/list");}}/>
 						</div>
 					)}
+					<div className="m-1 d-flex container-buttons row align-items-start p-2 justify-content-end">
+          <button type="button" className="btn btn-secondary m-0" style={{display:!edit ? 'block' : 'none'}} onClick={()=>{navigate('/equipment/list')}}>Volver</button>
+          </div>
 					</div>
 				</div>
 		</>

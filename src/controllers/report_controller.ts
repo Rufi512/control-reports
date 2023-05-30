@@ -9,6 +9,7 @@ import equipment from "../models/equipment";
 import moment from "moment";
 import user from "../models/user";
 import { registerLog } from "../middlewares/verifySignup";
+import headquarter from "../models/headquarter";
 
 
 export const list = async (req: Request, res: Response) => {
@@ -59,7 +60,7 @@ export const getReport = async (req: Request, res: Response) => {
     console.log(id);
     const validId = mongoose.Types.ObjectId.isValid(id);
     if (!validId) return res.status(402).json("Identificador no valido");
-    const reportFound = await report.findOne({ id: id }).populate("equipments").populate("user",{firstname:1,ci:1,lastname:1,position:1});
+    const reportFound = await report.findOne({ id: id }).populate("equipments").populate("user",{firstname:1,ci:1,lastname:1,position:1}).populate("hq");
     if (!reportFound)
       return res.status(404).json({ message: "Reporte no encontrado" });
     return res.json(reportFound);
@@ -78,12 +79,17 @@ export const registerReport = async (req: any, res: Response) => {
       equipments,
       evidences_description,
       note,
-      userId
+      userId,
+      hqId
     } = req.body as ReportModel;
     
     const foundUser = await user.findOne({_id:userId})
 
     if(!foundUser) return res.status(404).json({message:'No se ha podido asignar al usuario'})
+
+    const foundHq = await headquarter.findOne({_id:hqId})
+
+    if(!foundHq) return res.status(404).json({message:'No se ha podido asignar a la sede'})
 
     const evidences = req.files as Express.Multer.File[];
 
@@ -136,7 +142,8 @@ export const registerReport = async (req: any, res: Response) => {
         year: dateSplit[0],
       }),
       note,
-      user:userId
+      user:userId,
+      hq:hqId
     });
     await createReport.save();
     await registerLog(req,`Registro reporte: ${createReport.record_type}`);
@@ -157,7 +164,8 @@ export const updateReport = async (req: any, res: Response) => {
       evidences_description,
       evidences_description_old,
       note,
-      userId
+      userId,
+      hqId
     } = req.body as ReportModel;
 
     const reportFound = await report.findOne({ id: req.params.id });
@@ -168,6 +176,10 @@ export const updateReport = async (req: any, res: Response) => {
     const foundUser = await user.findOne({_id:userId})
 
     if(!foundUser) return res.status(404).json({message:'No se ha podido asignar al usuario'})
+
+    const foundHq = await headquarter.findOne({_id:hqId})
+
+    if(!foundHq) return res.status(404).json({message:'No se ha podido asignar a la sede'})
 
     const dateSplit = register_date.split("-").map((el: string) => Number(el));
 
@@ -245,7 +257,8 @@ export const updateReport = async (req: any, res: Response) => {
           }),
           updated_at: new Date(),
           evidences: evidencesUpdate,
-          user:userId
+          user:userId,
+          hq:hqId
         },
       }
     );
@@ -268,14 +281,14 @@ export const deleteEvidences = async (req: Request, res: Response) => {
     if (!reportFound) {
       return res.status(404).json({
         status: 404,
-        message: "Equipment not found",
+        message: "Reporte no encontrado",
       });
     }
 
     if (!Array.isArray(deleteEvidences)) {
       console.log(deleteEvidences);
       return res.status(400).json({
-        message: "The evidences position must be an array of numbers",
+        message: "Error",
       });
     }
 

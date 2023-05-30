@@ -13,6 +13,7 @@ import { getEquipmentsSelect } from "../../Api/EquipmentsApi";
 import { Equipment } from "../../types/equipment";
 import { getSelectsUsers } from "../../Api/UsersApi";
 import imageDefault from "../../assets/images/notfound.png";
+import { getSelectsHq } from "../../Api/HQApi";
 
 const animatedComponents = makeAnimated();
 
@@ -26,6 +27,7 @@ type Props = {
 
 interface ReportForm extends Report {
   userId: string;
+  hqId:string
 }
 
 export const ReportForm = ({
@@ -51,6 +53,7 @@ export const ReportForm = ({
       year: "",
     },
     userId: "",
+    hqId:"",
   });
 
   const [reportDescription, setReportDescription] = useState("");
@@ -64,6 +67,12 @@ export const ReportForm = ({
     label: "Elegir usuario",
     value: "",
   });
+
+  const [hqSelected, setHqSelected] = useState({
+    label: "Elige la sede",
+    value: "",
+  });
+
   const [evidencesInSelect, setEvidencesInSelect] = useState([]);
 
   const [submit, isSubmit] = useState(false);
@@ -89,6 +98,13 @@ export const ReportForm = ({
   const handleSelectUser = (data: any) => {
     setUserSelected({ label: data.label, value: data.value });
     setReport({ ...report, userId: data.value });
+    console.log(data.value);
+  };
+
+  const handleSelectHq = (data: any) => {
+    setHqSelected({label: data.label, value: data.value })
+    setReport({ ...report, hqId: data.value });
+
     console.log(data.value);
   };
 
@@ -142,7 +158,7 @@ export const ReportForm = ({
     setEvidences(evidencesFilter);
   };
 
-  const handleSelect = (e: ChangeEvent<HTMLSelectElement>) => {
+  const handleTypeReport = (e: ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     if (value === "custom") {
       setReport({ ...report, [name]: "custom" });
@@ -160,6 +176,11 @@ export const ReportForm = ({
       if (!report.userId) {
         isSubmit(false);
         return toast.error("Debes de asignar un usuario");
+      }
+
+      if (!report.hqId) {
+        isSubmit(false);
+        return toast.error("Debes de asignar una sede en el reporte");
       }
       for (const [key, value] of Object.entries(report)) {
         if (key === "description") {
@@ -205,7 +226,7 @@ export const ReportForm = ({
       }
 
       formData.append("userId", `${userSelected.value}`);
-
+      formData.append("hqId", `${hqSelected.value}`);
       formData.delete("record_type_custom");
       formData.delete("register_date_format");
       for (const evidence of evidences) {
@@ -224,7 +245,7 @@ export const ReportForm = ({
           );
         }
       }
-
+      // When validate all data procced to send the form
       let result;
       if (create) result = await registerReport(formData);
       if (edit) result = await updateReport(id || "", formData);
@@ -255,6 +276,7 @@ export const ReportForm = ({
             year: "",
           },
           userId: "",
+          hqId:""
         });
         setReportDescription("");
         setReportNote("");
@@ -288,6 +310,7 @@ export const ReportForm = ({
         year: "",
       },
       userId: report_detail?.user?._id || "",
+      hqId: report_detail?.hq?._id || ""
     });
 
     if (report_detail) {
@@ -307,6 +330,12 @@ export const ReportForm = ({
         ? `${report_detail.user?.ci} - ${report_detail.user?.firstname} - ${report_detail.user?.lastname} - ${report_detail.user?.position}`
         : "Elige un usuario",
       value: report_detail?.user?._id || "",
+    });
+    setHqSelected({
+      label: report_detail?.hq
+        ? `${report_detail.hq?.name} - ${report_detail.hq?.state} - ${report_detail.hq?.city} - ${report_detail.hq?.municipality}`
+        : "Elige una sede",
+      value: report_detail?.hq?._id || "",
     });
   }, [report_detail]);
 
@@ -341,6 +370,18 @@ export const ReportForm = ({
     }
   };
 
+  const requestHqSelect = async (search: string) => {
+    try {
+      const res = await getSelectsHq(search || "");
+      if (res && res.status >= 400)
+        return toast.error("Error al requerir lista de equipos");
+      return res?.data || [];
+    } catch (err) {
+      console.log(err);
+      return;
+    }
+  };
+
   return (
     <form
       className="container-fluid form-equipment"
@@ -353,7 +394,7 @@ export const ReportForm = ({
             className="form-select"
             id="record_type"
             name="record_type"
-            onChange={handleSelect}
+            onChange={handleTypeReport}
             value={
               (report.record_type && report.record_type === "diagnostico") ||
               report.record_type === "informe tecnico" ||
@@ -399,7 +440,7 @@ export const ReportForm = ({
           <div className="mt-3 mb-3 list-group">
             {equipmentsSelected.map((el, i) => {
               return (
-                <div className="list-group-item list-group-item-action flex-column align-items-start">
+                <div className="list-group-item list-group-item-action flex-column align-items-start" key={i}>
                   <div className="d-flex w-100 justify-content-between flex-wrap-reverse">
                     <h6 style={{marginBottom:'0px'}}>Nro de bien: <span className="fs-6">{el.asset_number}</span></h6>
                     <small>
@@ -440,6 +481,7 @@ export const ReportForm = ({
           loadOptions={requestOptionsSelect}
           onChange={handleChangeSelect2}
           value={evidencesInSelect}
+          defaultOptions
         />
         <small className="text-muted">
           Escribe en el campo para seleccionar equipo
@@ -525,6 +567,23 @@ export const ReportForm = ({
             loadOptions={requestUserSelect}
             onChange={handleSelectUser}
             value={userSelected}
+            defaultOptions
+          />
+          <small className="text-muted pt-3 mt-3">
+            Escribe en el campo para seleccionar usuario
+          </small>
+        </div>
+      </div>
+
+      <div className="form-group fields-container">
+        <label>Sede del reporte:</label>
+        <div className="form-group">
+          <AsyncSelect
+            components={animatedComponents}
+            loadOptions={requestHqSelect}
+            onChange={handleSelectHq}
+            value={hqSelected}
+            defaultOptions
           />
           <small className="text-muted pt-3 mt-3">
             Escribe en el campo para seleccionar usuario
@@ -726,28 +785,11 @@ export const ReportForm = ({
       >
         <button
           type="button"
-          onClick={(e) => handleForm(false)}
+          onClick={(e) => handleForm(true)}
           className="btn btn-primary col-md-4"
           disabled={submit}
         >
           {!submit ? `${create ? "Registrar Reporte" : "Editar Reporte"}` : ""}
-          {submit ? (
-            <div className="spinner-border" role="status">
-              <span className="sr-only"></span>
-            </div>
-          ) : (
-            ""
-          )}
-        </button>
-
-        <button
-          type="button"
-          onClick={(e) => handleForm(true)}
-          className="btn btn-primary col-md-4"
-          style={{ display: `${edit ? "none" : "block"}` }}
-          disabled={submit}
-        >
-          {!submit ? "Registrar y Continuar" : ""}
           {submit ? (
             <div className="spinner-border" role="status">
               <span className="sr-only"></span>

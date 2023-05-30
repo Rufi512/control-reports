@@ -33,6 +33,21 @@ export const getHeadquarter = async (id:string) => {
     }
 };
 
+export const getSelectsHq = async (search = "") => {
+    try {
+        const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
+        const res = await axios.get(
+            HQ_API + `/list/select?search=${search}`,
+            config
+        );
+        return res;
+    } catch (error) {
+        const err = error as AxiosError;
+        console.log(err.response?.data);
+        return err.response;
+    }
+};
+
 export const registerHeadquarter = async (body:any) => {
     try {
         const config = {headers:{"x-access-token":Cookies.get('accessToken')}}

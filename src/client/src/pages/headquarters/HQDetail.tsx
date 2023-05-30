@@ -41,7 +41,6 @@ const HQDetail = () => {
   const request = async (id: string) => {
     try {
       const res = await getHeadquarter(id);
-      console.log(res);
       setHeadquarters({
         name: res?.data.name,
         state: res?.data.state,
@@ -229,6 +228,9 @@ const HQDetail = () => {
               />
             </div>
           )}
+          <div className="m-1 d-flex container-buttons row align-items-start p-2 justify-content-end">
+          <button type="button" className="btn btn-secondary m-0" style={{display:!edit ? 'block' : 'none'}} onClick={()=>{navigate('/hq/list')}}>Volver</button>
+          </div>
         </div>
       </div>
     </>

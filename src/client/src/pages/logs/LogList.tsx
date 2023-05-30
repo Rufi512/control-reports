@@ -158,7 +158,7 @@ const LogList = () => {
                   <tr>
                     <th scope="col">Direccion IP</th>
                     <th scope="col">Usuario</th>
-                    <th scope="col">Razon</th>
+                    <th scope="col">Accion</th>
                     <th scope="col">Realizado</th>
                   </tr>
                 </thead>
@@ -216,7 +216,7 @@ const LogList = () => {
                         </small>
                         <br />
                         <small>
-                          <span style={{ fontWeight: "600" }}>Razon: </span>
+                          <span style={{ fontWeight: "600" }}>Accion: </span>
                           {el.reason}
                         </small>
                         <br />

@@ -3,6 +3,7 @@ import { IEquipment, ReportModel } from "../types/types";
 import mongoose from "mongoose";
 import equipment from "../models/equipment";
 import user from "../models/user";
+import headquarter from "../models/headquarter";
 
 export const validateEmail = (mail: string) => {
     if (
@@ -220,6 +221,12 @@ export const verifyReport = async (data: ReportModel) => {
     const foundUser = user.findOne({_id:data.user})
     if(!foundUser){
         error = 'No se encontro al usuario a asignar'
+        return error
+    }
+
+    const foundHq = headquarter.findOne({_id:data.hq})
+    if(!foundHq){
+        error = 'No se encontro la sede a asignar'
         return error
     }
 
