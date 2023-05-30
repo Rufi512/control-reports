@@ -22,6 +22,9 @@ import Recovery from "./pages/Recovery";
 import Quests from "./pages/Recovery/Quests";
 import Password from "./pages/Recovery/Password";
 import VerifyRol from "./components/VerifyRol";
+import HQList from "./pages/headquarters/HQList";
+import HQDetail from "./pages/headquarters/HQDetail";
+import HQRegister from "./pages/headquarters/HQRegister";
 
 function App() {
   return (
@@ -72,6 +75,11 @@ function App() {
             <Route path="report/list" element={<ReportList />} />
             <Route path="report/detail/:id" element={<ReportDetail />} />
 
+            {/*HQ pages*/}
+
+            <Route path="hq/list" element={<HQList/>} />
+            <Route path="hq/detail/:id" element={<HQDetail />} />
+            <Route path="hq/register" element={<HQRegister />} />
             {/*Users Pages (admin only)*/}
             <Route path="user/*" element={<VerifyRol allowedRoles={['admin']}/>}>
              <Route path="list" element={<UserList />} />

@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
+  faBuildingFlag,
   faDesktop,
   faFlag,
   faHouse,
@@ -116,7 +117,7 @@ export const Sidebar = (props: Props) => {
               }`}
             >
               <FontAwesomeIcon icon={faDesktop} />
-              <p>Lista de equipos</p>
+              <p>Equipos</p>
             </Link>
           </li>
           <li className="nav-item" onClick={() => setMobileSidebar(false)}>
@@ -127,7 +128,19 @@ export const Sidebar = (props: Props) => {
               }`}
             >
               <FontAwesomeIcon icon={faFlag} />
-              <p>Lista de reportes</p>
+              <p>Reportes</p>
+            </Link>
+          </li>
+
+          <li className="nav-item" onClick={() => setMobileSidebar(false)}>
+            <Link
+              to="/hq/list"
+              className={`nav-link ${
+                props.page === "hq" ? "active" : "link-dark"
+              }`}
+            >
+              <FontAwesomeIcon icon={faBuildingFlag} />
+              <p>Sedes</p>
             </Link>
           </li>
           {nameRol === "admin" ? (

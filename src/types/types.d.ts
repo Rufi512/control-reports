@@ -51,6 +51,16 @@ export interface UserModel{
     userId?:string
 }
 
+export interface headquarterModel{
+    name:string,
+    state:string,
+    location:string,
+    municipality:string,
+    city:string,
+    phone:string,
+    circuit_number:string
+}
+
 export interface QuestModel{
     user:mongoose.Types.ObjectId
     question:string,

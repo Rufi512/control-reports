@@ -1,23 +1,99 @@
 import quest from "../models/quest";
 import roles from "../models/role";
 import user from "../models/user";
+import headquarter from "../models/headquarter";
 export const initialSetup = async () => {
   try {
     //Create rols
     const count = await roles.estimatedDocumentCount();
 
-    if (count <= 0){
-         await Promise.all([
-      new roles({ name: "admin" }).save(),
-      new roles({ name: "moderator" }).save(),
-      new roles({ name: "user" }).save(),
-    ]);
-    console.log("Roles creados");
-         
+    if (count <= 0) {
+      await Promise.all([
+        new roles({ name: "admin" }).save(),
+        new roles({ name: "moderator" }).save(),
+        new roles({ name: "user" }).save(),
+      ]);
+      console.log("Roles creados");
     }
 
-   
 
+    //Create headquarter
+
+    const findHq =  await headquarter.find()
+
+    if(findHq.length <= 0){
+      await Promise.all([
+        new headquarter({
+          name:'SEDE PRINCIPAL SUPERIOR',
+          location:'EDF. SEDE DEL MINISTERIO PUBLICO, AV. MANAURE CON AV. RUIZ PINEDA, FRENTE DIARIO EL AMANECER',
+          municipality:'Miranda',
+          city:'Coro',
+          state:'Falcón',
+          circuit_number:2002
+        }).save(),
+
+        new headquarter({
+          name:'SEDE EDIF. EMPRESARIAL',
+          location:'EDIF. EMPRESARIAL AV. MANAURE ENTRE CALLE CHURUGUARA Y GARCES',
+          municipality:'Miranda',
+          city:'Coro',
+          state:'Falcón',
+          circuit_number:1926
+        }).save(),
+
+        new headquarter({
+          name:'SEDE MUNICIPAL TERCERA',
+          location:'SEDE DEL MINISTERIO PUBLICO AV. LIBERTADOR CON AV. INDEPENDENCIA',
+          municipality:'Miranda',
+          city:'Coro',
+          state:'Falcón'
+        }).save(),
+
+        new headquarter({
+          name:'SEDE NUEVO PUEBLO',
+          location:'EDF. MINISTERIO PÚBLICO, NUEVO PUEBLO, CALLE EL CAMBUR',
+          municipality:'CARIRUBANA',
+          city:'Punto Fijo',
+          state:'Falcón'
+        }).save(),
+        
+        new headquarter({
+          name:'SEDE ARISMENDI',
+          location:'CALLE ECUADOR CON CALLE ARISMENDI',
+          municipality:'Carirubana',
+          city:'Punto Fijo',
+          state:'Falcón',
+          circuit_number:3495
+        }).save(),
+
+        new headquarter({
+          name:'MUNICIPAL PRIMERA',
+          location:'SEDE EL MINISTERIO PÚBLICO DE JAYANA, LOS TÁQUES.',
+          municipality:'Los Taques',
+          city:'Punto Fijo',
+          state:'Falcón',
+          circuit_number:2002
+        }).save(),
+
+        new headquarter({
+          name:'Capatarida',
+          location:'SEDE MINISTERIO PUBLICO, CALLE LIBERTAD, ENTRE FEDERACION Y BUCHIVACOA',
+          municipality:'Buchivacoa',
+          state:'Falcón',
+          city:'Buchivacoa'
+        }).save(),
+
+        new headquarter({
+          name:'Tucacas',
+          location:'EDF. MINISTERIO PÚBLICO, CARRETERA NACIONAL MORÓN-CORO, CALLE MARINTUSA',
+          municipality:'Jose Laurencio Silva',
+          state:'Falcón',
+          city:'Tucacas'
+        }).save()
+      ])
+
+      console.log('Sedes creadas!')
+    }
 
     //Create user admin
     const findUser = await user.findOne({ ci: 12345 });
@@ -38,7 +114,7 @@ export const initialSetup = async () => {
         lastname: "Herrera",
         email: "raulherrera@mail.com",
         first_login: false,
-        position:"Administrador",
+        position: "Administrador",
         password: await user.encryptPassword("12345"),
         rol: rolFind,
       });

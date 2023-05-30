@@ -348,7 +348,7 @@ export const ReportForm = ({
     >
       <div className="form-row row fields-container">
         <div className="form-group col-md-6">
-          <label htmlFor="record_type">Tipo de registro</label>
+          <label htmlFor="record_type">Tipo de registro  <span className="text-danger fs-6">*</span></label>
           <select
             className="form-select"
             id="record_type"
@@ -379,7 +379,7 @@ export const ReportForm = ({
           />
         </div>
         <div className="form-group col-md-6">
-          <label htmlFor="register_date">Fecha de registro</label>
+          <label htmlFor="register_date">Fecha de registro  <span className="text-danger fs-6">*</span></label>
           <input
             type="date"
             className="form-control"
@@ -432,7 +432,7 @@ export const ReportForm = ({
       )}
       <div className="form-group">
         <label style={{ marginBottom: "10px" }}>
-          Elegir equipos a reportar
+          Elegir equipos a reportar  <span className="text-danger fs-6">*</span>
         </label>
         <AsyncSelect
           isMulti
@@ -446,7 +446,7 @@ export const ReportForm = ({
         </small>
       </div>
       <div className="form-group fields-container">
-        <label style={{ marginBottom: "10px" }}>Descripcion del registro</label>
+        <label style={{ marginBottom: "10px" }}>Descripcion del registro  <span className="text-danger fs-6">*</span></label>
         <CKEditor
           editor={ClassicEditor}
           config={{
@@ -518,7 +518,7 @@ export const ReportForm = ({
       </div>
 
       <div className="form-group fields-container">
-        <label>Asignar al usuario</label>
+        <label>Usuario que reporta:</label>
         <div className="form-group">
           <AsyncSelect
             components={animatedComponents}

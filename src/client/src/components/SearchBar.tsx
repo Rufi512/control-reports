@@ -81,7 +81,7 @@ const SearchBar = (props:Props) => {
             </select>
           </div>
 
-          <div className="mt-3">
+          <div className="mt-3" style={{display:props.searchParams.date ? 'block' : 'none'}}>
             <div className="form-check">
               <input
                 className="form-check-input"

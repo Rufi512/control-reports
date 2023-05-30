@@ -101,7 +101,7 @@ const EquipmentForm = ({
     >
       <div className="form-row row fields-container">
         <div className="form-group col-md-6">
-          <label htmlFor="model">Modelo del equipo</label>
+          <label htmlFor="model">Modelo del equipo  <span className="text-danger fs-6">*</span></label>
          <input
               type="text"
               className="form-control"
@@ -124,7 +124,7 @@ const EquipmentForm = ({
             />
         </div>
         <div className="form-group col-md-6">
-          <label htmlFor="serial">Serial del equipo</label>
+          <label htmlFor="serial">Serial del equipo  <span className="text-danger fs-6">*</span></label>
           <input
               type="text"
               className="form-control"
@@ -150,7 +150,7 @@ const EquipmentForm = ({
       </div>
       <div className="form-row row fields-container">
         <div className="form-group col-md-6">
-          <label htmlFor="brand">Marca del equipo</label>
+          <label htmlFor="brand">Marca del equipo  <span className="text-danger fs-6">*</span></label>
           <input
               type="text"
               className="form-control"
@@ -173,7 +173,7 @@ const EquipmentForm = ({
             />
         </div>
         <div className="form-group col-md-6">
-          <label htmlFor="asset_number">Numero del bien</label>
+          <label htmlFor="asset_number">Numero del bien  <span className="text-danger fs-6">*</span></label>
           <input
               type="text"
               className="form-control"

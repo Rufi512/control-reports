@@ -337,7 +337,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 				)}
 				<div className="form-row row fields-container">
 					<div className="form-group col-md-6 fields-container">
-						<label htmlFor="ci">Cedula</label>
+						<label htmlFor="ci">Cedula  <span className="text-danger fs-6">*</span></label>
 						<input
 							className="form-control"
 							placeholder="012345678"
@@ -360,7 +360,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 						/>
 					</div>
 					<div className="form-group col-md-6 fields-container">
-						<label htmlFor="email">Email</label>
+						<label htmlFor="email">Email  <span className="text-danger fs-6">*</span></label>
 						<input
 							type="text"
 							className="form-control"
@@ -384,7 +384,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 				</div>
 				<div className="form-row row fields-container">
 					<div className="form-group col-md-6">
-						<label>Nombre</label>
+						<label>Nombre  <span className="text-danger fs-6">*</span></label>
 						<input
 							type="text"
 							className="form-control"
@@ -407,7 +407,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 						/>
 					</div>
 					<div className="form-group col-md-6">
-						<label>Apellido</label>
+						<label>Apellido  <span className="text-danger fs-6">*</span></label>
 						<input
 							type="text"
 							className="form-control"
@@ -432,7 +432,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 				</div>
 				<div className="form-row row fields-container">
 					<div className="form-group col-md-6">
-						<label>Rol</label>
+						<label>Rol  <span className="text-danger fs-6">*</span></label>
 						<select
 							className="form-control"
 							{...register("rolAssign", { required: true })}
@@ -451,11 +451,11 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 						/>
 					</div>
 					<div className="form-group col-md-6">
-						<label>Posicion</label>
+						<label htmlFor="position">Cargo  <span className="text-danger fs-6">*</span></label>
 						<input
 							type="text"
 							className="form-control"
-							placeholder="Posicion"
+							placeholder="Cargo"
 							autoComplete="off"
 							{...register("position", {
 								required: true,
@@ -476,7 +476,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 
 				<div className="form-row row fields-container">
 					<div className="form-group col-md-6">
-						<label>Contraseña</label>
+						<label>Contraseña <span className="text-danger fs-6">*</span></label>
 						<input
 							type="text"
 							className="form-control"
@@ -489,7 +489,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 						/>
 					</div>
 					<div className="form-group col-md-6">
-						<label>Confirmar Contraseña</label>
+						<label>Confirmar Contraseña <span className="text-danger fs-6">*</span></label>
 						<input
 							type="password"
 							className="form-control"
