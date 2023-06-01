@@ -125,7 +125,7 @@ const HQList = () => {
             pagesHandle,
             searchDateHandle,
           }}
-          placeholder="Cedula | Nombre | Apellido"
+          placeholder="Nombre de la sede | Estado | Ciudad | Municipio"
           totalPages={requestParams.totalPages}
           totalDocs={requestParams.totalDocs}
           request={request}

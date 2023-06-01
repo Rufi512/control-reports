@@ -9,8 +9,16 @@ import { Report } from "../../types/report";
 import dateformat from "../../hooks/useDateFormat";
 import Loader from "../../components/Loader";
 import ErrorAdvice from "../../components/ErrorAdvice";
+import AsyncSelect from "react-select/async";
+import { getSelectsHq } from "../../Api/HQApi";
+import { toast } from "react-toastify";
 
-const EquipmentList = () => {
+interface Props {
+  HqData: boolean;
+  HqId: string;
+}
+
+const ReportList = ({ HqData, HqId }: Props) => {
   const ref = useRef(window);
   const [width, setWidth] = useState(window.innerWidth);
   const [searchBarParams] = useSearchParams();
@@ -24,6 +32,7 @@ const EquipmentList = () => {
       `${new Date().getFullYear()}-${
         new Date().getUTCMonth() + 1 < 10 ? "0" : ""
       }${new Date().getUTCMonth() + 1}`,
+    hq: HqId || "",
   });
   const [requestParams, setRequestParams] = useState({
     hasPrevPage: false,
@@ -66,6 +75,10 @@ const EquipmentList = () => {
 
   const [isRequest, setIsRequest] = useState(true);
   const [errorRequest, setErrorRequest] = useState(false);
+  const [hqSelected, setHqSelected] = useState({
+    label: "Elige la sede",
+    value: "",
+  });
 
   useEffect(() => {
     const element = ref.current;
@@ -101,19 +114,59 @@ const EquipmentList = () => {
     }
   };
 
+  const requestHqSelect = async (search: string) => {
+    try {
+      const res = await getSelectsHq(search || "");
+      if (res && res.status >= 400) {
+        toast.error("Error al requerir lista de equipos")
+        return []
+    };
+      const data = res?.data || {label:'',value:''};
+      return [{label:'Todas las sedes', value:''},...data] || [];
+    } catch (err) {
+      console.log(err);
+      return [];
+    }
+  };
+
+  const handleSelectHq = (data: any) => {
+    setSearchParams({ ...searchParams, hq: data.value });
+    setHqSelected({ label: data.label, value: data.value });
+  };
+
   useEffect(() => {
     request();
   }, [searchParams]);
 
   return (
-    <div className="container-fluid d-flex flex-column container-page container-list">
-      <div className="header-page">
-        <h2 style={{ textAlign: "right", marginTop: "10px" }}>
-          Lista de reportes
-        </h2>
-        <hr />
-      </div>
-      <div className="container-fluid container-body-content">
+    <div
+      className={`${!HqData ? "container-fluid" : ""} d-flex flex-column ${
+        !HqData ? "container-page" : ""
+      } container-list`}
+    >
+      {!HqData ? (
+        <div className="header-page">
+          <h2 style={{ textAlign: "right", marginTop: "10px" }}>
+            Lista de reportes
+          </h2>
+          <hr />
+        </div>
+      ) : (
+        ""
+      )}
+      <div
+        className={`${!HqData ? "container-fluid" : ""} container-body-content`}
+      >
+      {!HqData ? <div className="form-group" style={{marginBottom:'15px'}}>
+          <label style={{fontWeight:'600'}}>Sede del reporte</label>
+
+          <AsyncSelect
+            loadOptions={requestHqSelect}
+            onChange={handleSelectHq}
+            value={hqSelected}
+            defaultOptions
+          />
+        </div> : ''}
         <SearchBar
           searchParams={{
             limit: 10,
@@ -131,6 +184,7 @@ const EquipmentList = () => {
           totalDocs={requestParams.totalDocs}
           request={request}
         />
+
         {isRequest ? (
           <div
             className="container-fluid d-flex flex-column justify-content-center align-items-center"
@@ -148,19 +202,23 @@ const EquipmentList = () => {
           </div>
         ) : (
           <div>
-            <div
-              className="container-links"
-              style={{
-                margin: "10px 0",
-                display: "flex",
-                justifyContent: "flex-end",
-              }}
-            >
-              <Link to={"/report/register"} className="btn btn-primary">
-                <FontAwesomeIcon icon={faPlus} />
-                <span>Agregar reporte</span>
-              </Link>
-            </div>
+            {!HqData ? (
+              <div
+                className="container-links"
+                style={{
+                  margin: "10px 0",
+                  display: "flex",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <Link to={"/report/register"} className="btn btn-primary">
+                  <FontAwesomeIcon icon={faPlus} />
+                  <span>Agregar reporte</span>
+                </Link>
+              </div>
+            ) : (
+              ""
+            )}
             {width > 1024 ? (
               <table className="table table-bordered table-equipments">
                 <thead>
@@ -296,4 +354,4 @@ const EquipmentList = () => {
   );
 };
 
-export default EquipmentList;
+export default ReportList;

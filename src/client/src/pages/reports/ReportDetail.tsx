@@ -18,7 +18,7 @@ import dateformat from "../../hooks/useDateFormat";
 import Loader from "../../components/Loader";
 import ErrorAdvice from "../../components/ErrorAdvice";
 
-const EquipmentDetail = () => {
+const ReportDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const ref = useRef(window);
@@ -632,4 +632,4 @@ const EquipmentDetail = () => {
   );
 };
 
-export default EquipmentDetail;
+export default ReportDetail;

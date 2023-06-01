@@ -10,6 +10,7 @@ import ErrorAdvice from "../../components/ErrorAdvice";
 import Loader from "../../components/Loader";
 import { deleteHeadquarter, getHeadquarter } from "../../Api/HQApi";
 import HQForm from "../../components/headquarters/HQForm";
+import ReportList from "../reports/ReportList";
 
 const HQDetail = () => {
   const { id } = useParams();
@@ -53,7 +54,7 @@ const HQDetail = () => {
         updated_at: res?.data.updated_at,
       });
       setLoad(true);
-      setEdit(false)
+      setEdit(false);
     } catch (err) {
       console.log(err);
       setLoad(true);
@@ -73,12 +74,12 @@ const HQDetail = () => {
     }
     try {
       if (propertiesModal.action_name === "delete_hq") {
-				const delete_hq = await deleteHeadquarter(id || "");
-				if (delete_hq && delete_hq.status >= 400)
-					return toast.error("No se pudo eliminar el equipo");
-				toast.success("Sede eliminada!");
-				return navigate("/hq/list");
-			}
+        const delete_hq = await deleteHeadquarter(id || "");
+        if (delete_hq && delete_hq.status >= 400)
+          return toast.error("No se pudo eliminar el equipo");
+        toast.success("Sede eliminada!");
+        return navigate("/hq/list");
+      }
     } catch (err) {
       console.log(err);
       toast.error("Ocurrio un error al realizar la peticion");
@@ -145,7 +146,13 @@ const HQDetail = () => {
               </div>
 
               {/*Form HQ*/}
-              <HQForm edit={edit} create={false} hq_detail={headquarters} id={id} request={request} />
+              <HQForm
+                edit={edit}
+                create={false}
+                hq_detail={headquarters}
+                id={id}
+                request={request}
+              />
               <div
                 className="container-fluid form-equipment equipment-detail"
                 style={{ display: edit ? "none" : "block" }}
@@ -183,6 +190,11 @@ const HQDetail = () => {
                     <p>{headquarters.circuit_number || "Sin identificar"}</p>
                   </div>
                 </div>
+
+                <div className="form-group col-md-12">
+                    <label htmlFor="location">Localidad</label>
+                    <p>{headquarters.location || "Sin identificar"}</p>
+                  </div>
                 <div className="form-row row fields-container">
                   <div className="form-group col-md-6">
                     <label htmlFor="asset_number">Fecha de creacion</label>
@@ -203,7 +215,34 @@ const HQDetail = () => {
                     </p>
                   </div>
                 </div>
+                     <hr />   
+                {!edit ? (
+                  <>
+                    <div className="d-flex flex-column justify-content-start p-1">
+                      <h4 className="text-start p-0">
+                        Reportes registrados en la sede
+                      </h4>
+                        <ReportList HqData={true} HqId={id || ""} />
+                      <hr />
+                    </div>
+                  </>
+                ) : (
+                  <></>
+                )}
               </div>
+              <div className="m-1 d-flex container-buttons row align-items-start p-2 justify-content-end">
+                <button
+                  type="button"
+                  className="btn btn-secondary m-0"
+                  style={{ display: !edit ? "block" : "none" }}
+                  onClick={() => {
+                    navigate("/hq/list");
+                  }}
+                >
+                  Volver
+                </button>
+              </div>
+              
             </>
           ) : errorRequest ? (
             <div
@@ -228,9 +267,6 @@ const HQDetail = () => {
               />
             </div>
           )}
-          <div className="m-1 d-flex container-buttons row align-items-start p-2 justify-content-end">
-          <button type="button" className="btn btn-secondary m-0" style={{display:!edit ? 'block' : 'none'}} onClick={()=>{navigate('/hq/list')}}>Volver</button>
-          </div>
         </div>
       </div>
     </>

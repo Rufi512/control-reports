@@ -35,7 +35,7 @@ const SearchBar = (props:Props) => {
           value={props.searchParams.searchValue}
         />
         <div className="input-group-append">
-          <button className="btn btn-outline-secondary" type="button" onClick={()=>props.request()}>
+          <button className="btn btn-outline-secondary" style={{zIndex:0}} type="button" onClick={()=>props.request()}>
             Buscar
           </button>
         </div>

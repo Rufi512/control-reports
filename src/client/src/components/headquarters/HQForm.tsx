@@ -192,7 +192,6 @@ const HQForm = ({ edit, create, hq_detail, id, request }: Props) => {
             {...register("municipality", {
               required: true,
               maxLength: 40,
-              pattern: /^[A-Za-z áéíóúñ'`]+$/i,
             })}
             autoComplete="off"
           />
@@ -202,7 +201,7 @@ const HQForm = ({ edit, create, hq_detail, id, request }: Props) => {
             render={({ message }) => (
               <small className="text-danger">
                 El campo es requerido! y no debe contener numeros ni pasar los
-                40 caracteres
+                150 caracteres
               </small>
             )}
           />
@@ -212,11 +211,10 @@ const HQForm = ({ edit, create, hq_detail, id, request }: Props) => {
           <input
             type="text"
             className="form-control"
-            placeholder="0000..."
+            placeholder="Localidad..."
             {...register("location", {
               required: true,
-              maxLength: 40,
-              pattern: /^[A-Za-z0-9 áéíóúñ'`]+$/i,
+              maxLength: 150,
             })}
             autoComplete="off"
           />

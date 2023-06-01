@@ -32,13 +32,13 @@ export const list = async (req: Request, res: Response) => {
       sort:{created_at:-1},
       populate: 'equipments'
     };
-
+    console.log(req.query.hq)
     const search = req.query.search || ''
     const reports = await report.paginate({
       $or: [
-          { record_type: new RegExp(String(search), "gi")},
+          { record_type: new RegExp(String(search), "gi")}
       ],
-      $and: [date ? { 'register_date.year': {$in: [Number(date[0])]}, 'register_date.month':{$in:[Number(date[1])]} } : {}],
+      $and: [date ? { 'register_date.year': {$in: [Number(date[0])]}, 'register_date.month':{$in:[Number(date[1])]} } : {},  req.query.hq ? { hq: req.query.hq } : {}],
   },
   optionsPagination);
   
