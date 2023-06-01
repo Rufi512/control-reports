@@ -13,7 +13,7 @@ import AsyncSelect from "react-select/async";
 import { getSelectsHq } from "../../Api/HQApi";
 import { toast } from "react-toastify";
 
-interface Props {
+type Props = {
   HqData: boolean;
   HqId: string;
 }
