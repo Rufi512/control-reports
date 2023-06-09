@@ -14,8 +14,8 @@ import { getSelectsHq } from "../../Api/HQApi";
 import { toast } from "react-toastify";
 
 type Props = {
-  HqData: boolean;
-  HqId: string;
+  HqData?: boolean;
+  HqId?: string;
 }
 
 const ReportList = ({ HqData, HqId }: Props) => {
