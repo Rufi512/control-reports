@@ -14,6 +14,7 @@ import { getResumen } from "../Api/LogsApi";
 import { Log } from "../types/log";
 import Cookies from "js-cookie";
 import useAuth from "../hooks/useAuth";
+import dateformat from "../hooks/useDateFormat";
 const Home = () => {
   const ref = useRef(window);
   const auth = useAuth();
@@ -272,7 +273,7 @@ const Home = () => {
                           <td>
                             <Link
                               to={`/report/detail/${el.id}`}
-                            >{`${el.updated_at}`}</Link>
+                            >{dateformat(`${el.updated_at}` || '')}</Link>
                           </td>
                         </tr>
                       );
@@ -558,7 +559,7 @@ const Home = () => {
                               <span>{el.reason}</span>
                             </td>
                             <td className="p-2">
-                              <span>{el.created_at}</span>
+                              <span>{dateformat(`${el.created_at}` || '')}</span>
                             </td>
                           </tr>
                         );
@@ -591,7 +592,7 @@ const Home = () => {
                           <div className="d-flex w-100 justify-content-between">
                             <h5 className="mb-1">{el.ip}</h5>
 
-                            <small>{el.created_at}</small>
+                            <small>{dateformat(`${el.created_at}` || '')}</small>
                           </div>
                           <small className="text-capitalize">
                             {el.user ? "" : "Desconocido"} {el.user?.firstname}{" "}

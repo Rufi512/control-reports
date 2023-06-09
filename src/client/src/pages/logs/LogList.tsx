@@ -203,7 +203,7 @@ const LogList = () => {
                   logs.map((el: Log, i: number) => {
                     return (
                       <span
-                        className="list-group-item list-group-item-action flex-column align-items-start"
+                        className="list-group-item flex-column align-items-start"
                         key={i}
                       >
                         <div className="d-flex w-100 justify-content-between">

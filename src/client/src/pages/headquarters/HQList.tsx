@@ -8,7 +8,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import Loader from "../../components/Loader";
 import ErrorAdvice from "../../components/ErrorAdvice";
 import { Headquarter } from "../../types/headquarter";
-import dateformat from "dateformat";
+import dateformat from "../../hooks/useDateFormat";
 import { getHeadquarters } from "../../Api/HQApi";
 
 const HQList = () => {
@@ -193,7 +193,7 @@ const HQList = () => {
                             <Link to={`/hq/detail/${el._id}`}>{el.circuit_number || 'Sin identificar'}</Link>
                           </td>
                           <td>
-                            <Link to={`/hq/detail/${el._id}`}>{dateformat(el.created_at)}</Link>
+                            <Link to={`/hq/detail/${el._id}`}>{dateformat(el.created_at || '')}</Link>
                           </td>
                         </tr>
                       );
@@ -243,7 +243,7 @@ const HQList = () => {
                         </small>
                         <br/>
                         <small>
-                            Fecha de registro: {dateformat(el.created_at)}
+                            Fecha de registro: {dateformat(el.created_at || '')}
                           </small>
                       </Link>
                     );
