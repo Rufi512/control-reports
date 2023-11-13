@@ -144,7 +144,6 @@ const Recovery = () => {
 								<option value={0}>
 									Preguntas de seguridad
 								</option>
-								<option value={1}>Correo electronico</option>
 							</select>
 							<ErrorMessage
 								errors={errors}
