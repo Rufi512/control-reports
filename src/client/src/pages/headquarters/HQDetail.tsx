@@ -11,13 +11,15 @@ import Loader from "../../components/Loader";
 import { deleteHeadquarter, getHeadquarter } from "../../Api/HQApi";
 import HQForm from "../../components/headquarters/HQForm";
 import ReportList from "../reports/ReportList";
-
+import useAuth from "../../hooks/useAuth";
 const HQDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [load, setLoad] = useState(true);
   const [edit, setEdit] = useState(false);
   const [errorRequest, setErrorRequest] = useState(false);
+  const auth = useAuth()
+  const [nameRol,setNameRol] = useState("")
 
   const [headquarters, setHeadquarters] = useState<Headquarter>({
     name: "",
@@ -90,6 +92,11 @@ const HQDetail = () => {
     request(id || "");
   }, []);
 
+  useEffect(() => {
+    setNameRol(auth.rol)
+
+  }, []);
+
   return (
     <>
       <ModalConfirmation
@@ -108,7 +115,7 @@ const HQDetail = () => {
         <div className="container-body-content">
           {load ? (
             <>
-              <div
+              { nameRol == 'admin' ? (<div
                 className="container-actions-buttons"
                 style={{ padding: "0 12px" }}
               >
@@ -143,7 +150,7 @@ const HQDetail = () => {
                     Editar sede
                   </label>
                 </div>
-              </div>
+              </div>) : ''}
 
               {/*Form HQ*/}
               <HQForm

@@ -163,6 +163,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 
 			if (edit && confirmPassword) {
 				formData.append("password", userPassword.password);
+				formData.append("verifyPassword", userPassword.compare);
 				formData.append("allowPassword", `${confirmPassword}`);
 			}
 
@@ -210,18 +211,19 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 
 			if (edit && request && res && res.status === 200) {
 				setUserPassword({ password: "", compare: "" });
+				setValidationPass({
+					numbers: false,
+					mayus: false,
+					minus: false,
+					spaces: false,
+					specials: false,
+					lengthWords: false,
+				});
 				setConfirmPassword(false);
 				request(userRead?._id || "");
 			}
 
-			setValidationPass({
-				numbers: false,
-				mayus: false,
-				minus: false,
-				spaces: false,
-				specials: false,
-				lengthWords: false,
-			});
+			
 		} catch (err) {
 			isSubmit(false);
 			toast.error("No se pudo enviar la informacion");

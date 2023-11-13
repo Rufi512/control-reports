@@ -156,7 +156,7 @@ export const createUser = async (req: any, res: Response) => {
     try {
         const { ci, firstname, lastname, email, password, rol, position } =
             req.body;
-        const checkRegister = await verifyCreateUser(req.body, false, "");
+        const checkRegister = await verifyCreateUser(req.body, false, "","");
 
         if (checkRegister)
             return res.status(400).json({ message: checkRegister.message });
@@ -255,7 +255,8 @@ export const validateUser = async (req: any, res: Response) => {
         const checkRegister = await verifyCreateUser(
             req.body,
             true,
-            req.userId
+            req.userId,
+            ""
         );
         const userFound = await user.findById(req.params.id)
 
@@ -346,7 +347,8 @@ export const updateUser = async (req: any, res: Response) => {
         const checkRegister = await verifyCreateUser(
             req.body,
             req.body.allowPassword || false,
-            req.userId
+            req.userId,
+            req.params.id 
         );
         if (checkRegister)
             return res.status(400).json({ message: checkRegister.message });

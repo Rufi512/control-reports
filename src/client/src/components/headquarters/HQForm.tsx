@@ -290,7 +290,7 @@ const HQForm = ({ edit, create, hq_detail, id, request }: Props) => {
           className="btn btn-primary col-md-4"
           disabled={submit}
         >
-          {!submit ? `${create ? "Registrar Equipo" : "Editar Equipo"}` : ""}
+          {!submit ? `${create ? "Registrar Sede" : "Editar Sede"}` : ""}
           {submit ? (
             <div className="spinner-border" role="status">
               <span className="sr-only"></span>

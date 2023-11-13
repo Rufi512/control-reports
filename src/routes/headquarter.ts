@@ -1,18 +1,18 @@
 import { Router } from "express";
 import { deleteHq, infoHq, listHq, registerHq, updateHq, listSelectHq } from "../controllers/headquarters_controller";
-
+import { isAdmin, verifyToken } from "../middlewares/authJwt";
 const router = Router()
 
-router.get('/list',listHq) 
+router.get('/list',[verifyToken],listHq) 
 
-router.get('/info/:id',infoHq)
+router.get('/info/:id',[verifyToken],infoHq)
 
-router.get('/list/select',listSelectHq)
+router.get('/list/select',[verifyToken],listSelectHq)
 
-router.post('/register',registerHq)
+router.post('/register',[verifyToken,isAdmin],registerHq)
 
-router.put('/update/:id',updateHq)
+router.put('/update/:id',[verifyToken,isAdmin],updateHq)
 
-router.delete('/delete/:id',deleteHq)
+router.delete('/delete/:id',[verifyToken,isAdmin],deleteHq)
 
 export default router

@@ -10,11 +10,13 @@ import ErrorAdvice from "../../components/ErrorAdvice";
 import { Headquarter } from "../../types/headquarter";
 import dateformat from "../../hooks/useDateFormat";
 import { getHeadquarters } from "../../Api/HQApi";
+import useAuth from "../../hooks/useAuth";
 
 const HQList = () => {
   const ref = useRef(window);
   const [width, setWidth] = useState(window.innerWidth);
   const [searchBarParams] = useSearchParams();
+  const auth = useAuth()
   const [searchParams, setSearchParams] = useState({
     limit: 10 || Number(searchBarParams.get("limit")),
     page: 1 || Number(searchBarParams.get("page")),
@@ -66,7 +68,10 @@ const HQList = () => {
 
   const [errorRequest, setErrorRequest] = useState(false);
 
+  const [nameRol,setNameRol] = useState("")
+
   useEffect(() => {
+    
     const element = ref.current;
 
     element.addEventListener("resize", handleResize);
@@ -76,6 +81,11 @@ const HQList = () => {
       element.removeEventListener("resize", handleResize);
     };
   }, [window]);
+
+  useEffect(() => {
+    setNameRol(auth.rol)
+
+  }, []);
 
   // Request Data
   const request = async () => {
@@ -147,6 +157,7 @@ const HQList = () => {
           </div>
         ) : (
           <div>
+            {nameRol === "admin" ? (
             <div
               className="container-links"
               style={{
@@ -157,9 +168,10 @@ const HQList = () => {
             >
               <Link to={"/hq/register"} className="btn btn-primary">
                 <FontAwesomeIcon icon={faPlus} />
-                <span>Agregar Usuario</span>
+                <span>Agregar Sede</span>
               </Link>
             </div>
+            ) : ''}
             {width > 1024 ? (
               <table className="table table-bordered table-equipments">
                 <thead>

@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import equipment from "../models/equipment";
 import user from "../models/user";
 import headquarter from "../models/headquarter";
+import role from "../models/role";
 
 export const validateEmail = (mail: string) => {
     if (
@@ -105,7 +106,7 @@ export const validatePassword = async (password:string) =>{
      return error
 }
 
-export const verifyCreateUser = async (data: any, validatePassword:boolean , userId:string) => {
+export const verifyCreateUser = async (data: any, validatePassword:boolean , userId:string, userChange:string) => {
     const { ci, firstname, lastname, position ,password, verifyPassword, email } = data;
     console.log('datos:',data)
     if (
@@ -147,8 +148,27 @@ export const verifyCreateUser = async (data: any, validatePassword:boolean , use
     //verify ci
     const foundCi = await user.findOne({ ci: ci });
 
-    if (foundCi && userId && foundCi.id !== userId)
-        return { message: "La cedula ya pertenece a otra persona" };
+    //Verify if change for user admin
+
+    const userAdmin = await user.findById(userId);
+    if (userAdmin && foundCi && foundCi.id !== userId){
+        const rol = await role.find({ _id: { $in: userAdmin.rol } });
+        console.log(userAdmin)
+        console.log(rol[0].name)
+        if (rol[0].name !== "admin") {
+            if(foundCi && userId && foundCi.id !== userId){
+                return { message: "La cedula ya pertenece a otra persona" };
+            }
+        }else{
+            if(foundCi && userChange !== foundCi.id){
+                return { message: "La cedula ya pertenece a otra persona" };
+            }
+        }
+    }
+    
+
+
+    
 
     //Verify password
     if (password !== verifyPassword && validatePassword)
@@ -157,8 +177,21 @@ export const verifyCreateUser = async (data: any, validatePassword:boolean , use
     //Verify Email exits
     const foundEmail = await user.findOne({ email: email });
 
-    if (foundEmail && userId && foundEmail.id !== userId)
-        return { message: "El email ya pertenece a un usuario" };
+    if (userAdmin && foundEmail && foundEmail.id !== userId){
+        const rol = await role.find({ _id: { $in: userAdmin.rol } });
+        console.log(userAdmin)
+        console.log(rol[0].name)
+        if (rol[0].name !== "admin") {
+          if (foundEmail && userId && foundEmail.id !== userId)
+            return { message: "El email ya pertenece a un usuario" };
+          }else{
+            if(foundEmail && userChange !== foundEmail.id){
+                return { message: "El email ya pertenece a otra persona" };
+            }
+         }
+        }
+
+    
 
     return false;
 };
