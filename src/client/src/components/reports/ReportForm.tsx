@@ -259,6 +259,8 @@ export const ReportForm = ({
         setEvidences([]);
         setEvidencesInSelect([]);
         setUserSelected({ label: "Elegir usuario", value: "" });
+        setHqSelected({label: "Elige la sede", value: ""})
+        setCustomSelect(false);
         if (request) return request(id || "");
       }
 

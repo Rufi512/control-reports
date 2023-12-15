@@ -286,7 +286,7 @@ const ReportDetail = () => {
             <div className="form-row row fields-container">
               <div className="form-group col-md-6">
                 <label htmlFor="record_type">Tipo de registro</label>
-                <p>{report.record_type}</p>
+                <p style={{textTransform:"capitalize"}}>{report.record_type}</p>
               </div>
               <div className="form-group col-md-6">
                 <label htmlFor="register_date">Fecha de registro</label>

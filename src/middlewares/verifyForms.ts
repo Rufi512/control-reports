@@ -148,25 +148,32 @@ export const verifyCreateUser = async (data: any, validatePassword:boolean , use
     //verify ci
     const foundCi = await user.findOne({ ci: ci });
 
-    //Verify if change for user admin
+    //Verify if change for user admin and edit
 
-    const userAdmin = await user.findById(userId);
-    if (userAdmin && foundCi && foundCi.id !== userId){
-        const rol = await role.find({ _id: { $in: userAdmin.rol } });
-        console.log(userAdmin)
-        console.log(rol[0].name)
-        if (rol[0].name !== "admin") {
-            if(foundCi && userId && foundCi.id !== userId){
-                return { message: "La cedula ya pertenece a otra persona" };
-            }
-        }else{
-            if(foundCi && userChange !== foundCi.id){
-                return { message: "La cedula ya pertenece a otra persona" };
+    if(userId){
+        const userAdmin = await user.findById(userId);
+        if (userAdmin && foundCi && foundCi.id !== userId){
+            const rol = await role.find({ _id: { $in: userAdmin.rol } });
+            console.log(userAdmin)
+            console.log(rol[0].name)
+            if (rol[0].name !== "admin") {
+                if(foundCi && userId && foundCi.id !== userId){
+                    return { message: "La cedula ya pertenece a otra persona" };
+                }
+            }else{
+                if(foundCi && userChange !== foundCi.id){
+                    return { message: "La cedula ya pertenece a otra persona" };
+                }
             }
         }
-    }
     
+    }
 
+    //Check data new user
+
+    if(!userId && foundCi){
+        return { message: "La cedula ya pertenece a otra persona" }
+    }
 
     
 
@@ -177,6 +184,8 @@ export const verifyCreateUser = async (data: any, validatePassword:boolean , use
     //Verify Email exits
     const foundEmail = await user.findOne({ email: email });
 
+    if(userId){
+    const userAdmin = await user.findById(userId);
     if (userAdmin && foundEmail && foundEmail.id !== userId){
         const rol = await role.find({ _id: { $in: userAdmin.rol } });
         console.log(userAdmin)
@@ -190,7 +199,11 @@ export const verifyCreateUser = async (data: any, validatePassword:boolean , use
             }
          }
         }
+    }
 
+    if(!userId && foundEmail){
+        return { message: "El email ya pertenece a otra persona" };
+    }
     
 
     return false;

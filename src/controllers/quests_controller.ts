@@ -24,11 +24,11 @@ export const listQuests = async (req: Request, res: Response) => {
 export const setQuestions = async (req: Request, res: Response) => {
 	try {
 		const {quests}:bodyForm = req.body
-		console.log(req.body)
 		const userFound = await user.findById(req.params.id);
-
 		if (!userFound)
 			return res.status(404).json({ message: "Usuario no encontrado" });
+
+		if(userFound.first_login) return res.status(403).json({ message: "El usuario no ha verificado su cuenta" });
 
 		const questsFound:QuestModel[] = await quest.find({ user: userFound.id }, { answer: 0 });
 

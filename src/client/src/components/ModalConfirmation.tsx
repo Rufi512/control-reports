@@ -38,6 +38,7 @@ const ModalConfirmation = (props: Props) => {
               data-dismiss="modal"
               aria-label="Close"
               style={{background:'none',border:'none',display:'flex',alignItems:'center'}}
+              onClick={()=>{props.action(true)}}
             >
               <span aria-hidden="true" style={{fontSize:'24px'}}>&times;</span>
             </button>

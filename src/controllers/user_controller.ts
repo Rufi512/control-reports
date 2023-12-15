@@ -181,6 +181,7 @@ export const createUser = async (req: any, res: Response) => {
             return res.status(400).json({
                 message: "El usuario necesita una contraseña para ser creado!",
             });
+        console.log('here')
         //Creamos el usuario
         const newUser = new user({
             ci,

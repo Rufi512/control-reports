@@ -207,6 +207,14 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 			if (res && res.status === 200 && create) {
 				if (create) reset();
 				setUserPassword({ password: "", compare: "" });
+				setValidationPass({
+					numbers: false,
+					mayus: false,
+					minus: false,
+					spaces: false,
+					specials: false,
+					lengthWords: false,
+				});
 			}
 
 			if (edit && request && res && res.status === 200) {
