@@ -1,10 +1,10 @@
 import { describe, beforeAll } from "@jest/globals";
-import app from "../src/app";
+import app from "../app";
 import request from "supertest";
-import "../src/database";
+import "../database";
 import mongoose from "mongoose";
-import user from "../src/models/user";
-import quest from "../src/models/quest";
+import user from "../models/user";
+import quest from "../models/quest";
 let token: string;
 let id_user: string;
 let token_new_user: string

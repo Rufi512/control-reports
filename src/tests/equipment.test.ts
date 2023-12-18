@@ -1,9 +1,9 @@
 import { describe, beforeAll } from "@jest/globals";
-import app from "../src/app";
+import app from "../app";
 import request from "supertest";
-import "../src/database";
+import "../database";
 import mongoose from "mongoose";
-import equipment from "../src/models/equipment";
+import equipment from "../models/equipment";
 let token: string;
 let id_equip: string;
 
