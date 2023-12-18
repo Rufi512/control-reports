@@ -15,6 +15,7 @@ export const getQuests = async (req:Request,res:Response) =>{
         const userFound = await user.findOne({
             $or: [{ email: req.body.user }, { ci: req.body.user }],
         });
+        
         if(!userFound) return res.status(404).json({message:'Usuario no encontrado'})
 
         const quests = await quest.find({ user: userFound.id },{answer:0,_id:0,user:0});
@@ -31,7 +32,7 @@ export const getQuests = async (req:Request,res:Response) =>{
 export const checkQuestions = async (req:Request, res:Response) => {
     try {
         let i = 0;
-        console.log(req.body)
+
         //Search user by ci or email
         const userFound = await user.findOne({_id:req.params.id});
 

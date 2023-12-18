@@ -6,6 +6,8 @@ const router = Router()
 
 router.post('/questions',[verifyCaptcha],getQuests)
 
+router.post('/questions/test',getQuests)
+
 router.post('/questions/:id',checkQuestions)
 
 router.post('/unblock/user/:id',unblockedUser)

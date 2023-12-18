@@ -360,11 +360,6 @@ export const updateUser = async (req: any, res: Response) => {
 
         const rolFind = await role.findOne({ name: { $in: req.body.rol } });
 
-        if (!rolFind)
-            return res
-                .status(404)
-                .json({ message: "No se puede asignar el rol" });
-
         // Check if email or ci is in used to other user
         const userFind = await user.findOne({
             $or: [{ email: req.body.email }, { ci: req.body.ci }],
@@ -392,7 +387,7 @@ export const updateUser = async (req: any, res: Response) => {
                         lastname: req.body.lastname,
                         email: req.body.email,
                         password: req.body.allowPassword ? await user.encryptPassword(req.body.password) : userFound.password,
-                        rol: rolFind._id,
+                        rol: rolFind?._id || userFound.rol,
                         avatar:avatar || userFound.avatar,
                         position:req.body.position
                     },

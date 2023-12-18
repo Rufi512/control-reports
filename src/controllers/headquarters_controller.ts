@@ -122,7 +122,7 @@ export const registerHq = async (req: Request, res: Response) => {
 
     await newHq.save();
 
-    return res.json({ message: "Sede registrada!" });
+    return res.json({ message: "Sede registrada!", headquarter:newHq });
   } catch (err) {
     console.log(err);
     return res
