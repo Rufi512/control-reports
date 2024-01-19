@@ -109,7 +109,7 @@ const EquipmentForm = ({
               {...register("model", {
                 required: true,
                 maxLength:40,
-                pattern: /^[A-Za-z0-9 áéíóúñ'`]+$/i,
+                pattern: /^[A-Za-z0-9 áéíóúñ'`,[{}-]+$/i,
               })}
               autoComplete="off"
             />
