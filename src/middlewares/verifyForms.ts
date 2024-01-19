@@ -28,15 +28,15 @@ export const validateDate = async (date: string) => {
 };
 
 export const validateFieldEquipment = async (field: string, value: string) => {
-    if (!/^[A-Za-z0-9 áéíóúñ'`,[{}-]+$/.test(value) || value.length > 30) {
-        return `El campo ${field} es invalido: (debe tener 30 caracteres maximo y sin espacios)`;
+    if (!/^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/.test(value) || value.length > 30) {
+        return `El campo ${field} es invalido: (debe tener 30 caracteres maximo)`;
     }
     return "";
 };
 
 export const validateFieldReport = async (field: string, value: string) => {
     console.log(value)
-    if (!/^[a-zA-Z0-9áéíóúñ'`\s]+$/.test(value) || value.length > 30) {
+    if (!/^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/.test(value) || value.length > 30) {
         return `El campo ${field} es invalido: (debe tener 30 caracteres maximo)`;
     }
     return "";
@@ -65,13 +65,13 @@ export const validateEquipments = async (equipments: string[]) => {
 export const validateDescriptions = async (value: any) => {
     let error = "";
     if (!Array.isArray(value)) {
-        if (!/^[a-zA-Z0-9áéíóúñ ]+$/.test(value) || value.length > 200)
+        if (!/^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/.test(value) || value.length > 200)
             return (error =
                 "la descripcion debe tener un maximo de 200 caracteres");
         return "";
     }
     value.forEach((el: string) => {
-        if (!/^[a-zA-Z0-9áéíóúñ ]+$/.test(el) || el.length > 200)
+        if (!/^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/.test(el) || el.length > 200)
             return (error =
                 "la descripcion debe tener un maximo de 200 caracteres");
         return;
