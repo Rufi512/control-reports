@@ -55,6 +55,8 @@ export const registerEquipment = async (
       model,
       serial,
       brand,
+      created_at:new Date(),
+      updated_at: new Date()
     });
 
     await registerEquipment.save();

@@ -142,6 +142,8 @@ export const registerReport = async (req: any, res: Response) => {
         year: dateSplit[0],
       }),
       note,
+      created_at:new Date(),
+      updated_at: new Date(),
       user:userId,
       hq:hqId
     });

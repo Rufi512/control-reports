@@ -117,7 +117,8 @@ export const registerHq = async (req: Request, res: Response) => {
       city,
       phone,
       circuit_number,
-      created_at:Date.now()
+      created_at:Date.now(),
+      updated_at: new Date()
     });
 
     await newHq.save();
