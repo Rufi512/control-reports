@@ -78,7 +78,7 @@ const HQDetail = () => {
       if (propertiesModal.action_name === "delete_hq") {
         const delete_hq = await deleteHeadquarter(id || "");
         if (delete_hq && delete_hq.status >= 400)
-          return toast.error("No se pudo eliminar el equipo");
+          return toast.error("No se pudo eliminar la sede");
         toast.success("Sede eliminada!");
         return navigate("/hq/list");
       }

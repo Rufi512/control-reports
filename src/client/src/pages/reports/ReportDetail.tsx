@@ -160,9 +160,9 @@ const ReportDetail = () => {
       if (propertiesModal.action_name === "delete_equipment") {
         const delete_equipment = await reportsApi.deleteReport(id || "");
         if (delete_equipment && delete_equipment.status >= 400)
-          return toast.error("No se pudo eliminar el equipo");
-        toast.success("Equipo eliminado");
-        return navigate("/equipment/list");
+          return toast.error("No se pudo eliminar el reporte");
+        toast.success("Reporte eliminado");
+        return navigate("/report/list");
       }
       setPropertiesModal({
         title: "",
