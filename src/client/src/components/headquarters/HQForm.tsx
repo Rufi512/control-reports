@@ -87,12 +87,12 @@ const HQForm = ({ edit, create, hq_detail, id, request }: Props) => {
       }
 
       if (create) {
-        toast.success("Equipo registrado!");
+        toast.success("Sede registrada!");
         return reset();
       }
 
       if (edit && request) {
-        toast.success("Equipo modificado!");
+        toast.success("Sede modificada!");
         request(id || "");
         return;
       }
