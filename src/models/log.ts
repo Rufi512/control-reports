@@ -7,7 +7,7 @@ interface LogDocument extends mongoose.PaginateModel<LogModel> {}
 
 const logSchema = new Schema(
   {
-    user: { type: Schema.Types.ObjectId, ref: "user", required: true },
+    user: { type: Object, required: true },
     ip: { type: String, required: true },
     reason: { type: String, required: true },
     created_at: { type: Date, default: new Date(), required: true },

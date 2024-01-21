@@ -96,7 +96,7 @@ export const initialSetup = async () => {
     }
 
     //Create user admin
-    const findUser = await user.findOne({ ci: 12345 });
+    const findUser = await user.findOne({ ci: 7689546 });
     const foundRoles = await roles.find({ name: { $in: "admin" } });
     if (!findUser) {
       let rolFind = null;
@@ -109,13 +109,13 @@ export const initialSetup = async () => {
       }
 
       const newUser = new user({
-        ci: "12345",
-        firstname: "Raul",
-        lastname: "Herrera",
-        email: "raulherrera@mail.com",
+        ci: "7689546",
+        firstname: "Admin",
+        lastname: "MP",
+        email: "mp_email@gob.com.ve",
         first_login: false,
         position: "Administrador",
-        password: await user.encryptPassword("12345"),
+        password: await user.encryptPassword("Ministerio68@"),
         rol: rolFind,
       });
       const userCreated = await newUser.save();

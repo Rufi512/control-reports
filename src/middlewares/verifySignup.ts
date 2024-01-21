@@ -43,7 +43,7 @@ export const registerLog = async (req:RequestUser, reason:string) => {
     if(req.userId) userData = await user.findById(req.userId)
     if(!userData) return 
     const newLog = new log({
-      user:userData.id,
+      user:{firstname:userData.firstname, lastname: userData.lastname},
       ip:userIp,
       reason,
       created_at:new Date()
