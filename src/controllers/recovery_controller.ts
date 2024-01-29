@@ -38,6 +38,8 @@ export const checkQuestions = async (req:Request, res:Response) => {
 
         if (!userFound)
             return res.status(404).json({ message: "Usuario no encontrado" });
+
+        if (userFound.block_for_admin) return res.status(404).json({ message: "El usuario esta bloqueado por administrador" });
         
         const quests = await quest.find({ user: userFound.id });
 
@@ -88,7 +90,12 @@ export const resetPassword = async (req:Request, res:Response) => {
         const token = String(req.headers['x-access-token']) || ''
         console.log(req.headers)
         const userFound = await user.findById(id);
+        
         if (!userFound) return res.status(404).json({ message: "Usuario no encontrado" });
+        
+        if (userFound.block_for_admin) {
+            return res.status(400).json({ message: "El usuario se encuentra bloqueado por administrador" });
+        }
 
         const decoded = jwt.verify(token, secret + userFound.password);
 
@@ -126,6 +133,9 @@ export const unblockedUser = async (req:Request, res:Response) => {
         const token = String(req.headers['x-access-token']) || ''
         const userFound = await user.findById(id);
         if (!userFound) return res.status(404).json({ message: "Usuario no encontrado" });
+        if (userFound.block_for_admin) {
+            return res.status(400).json({ message: "El usuario no puede desbloquearse, contacte con un administrador" });
+        }
         if(userFound.block_count < 3) return res.status(401).json({message:'El usuario no esta bloqueado'})
         const decoded:any = jwt.verify(token, secret + userFound.password);
 

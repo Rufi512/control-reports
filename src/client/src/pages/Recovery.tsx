@@ -84,11 +84,11 @@ const Recovery = () => {
 								htmlFor="user"
 								className="form-label fw-bold"
 							>
-								Cedula o usuario
+								Cedula o correo
 							</label>
 							<input
 								className="form-control"
-								placeholder="Introduzca su cedula o usuario"
+								placeholder="Introduzca su cedula o correo"
 								autoComplete="off"
 								{...register("user", {
 									required: true,
@@ -99,7 +99,7 @@ const Recovery = () => {
 								name="user"
 								render={({ message }) => (
 									<small className="text-danger">
-										Debes de escribir tu cedula o usuario
+										Debes de escribir tu cedula o correo
 									</small>
 								)}
 							/>
@@ -202,6 +202,7 @@ const Recovery = () => {
 									</small>
 								)}
 							/>
+							<br/>
 							<small>El captcha es sensible a la mayusculas y minusculas!</small>
 						</div>
 						<div className="d-flex align-items-center justify-content-between" style={{flexFlow:'wrap-reverse'}}>

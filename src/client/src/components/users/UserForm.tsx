@@ -2,7 +2,7 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { User } from "../../types/user";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faUser } from "@fortawesome/free-solid-svg-icons";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import { toast } from "react-toastify";
 import { UsersApi } from "../../Api";
@@ -45,6 +45,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 		formState: { errors },
 		setValue,
 		handleSubmit,
+		control,
 		reset,
 	} = useForm<FormInput>({ defaultValues: { ...user } });
 
@@ -84,6 +85,22 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 			if (confirm && userRead && request) {
 				isSubmit(true);
 				await UsersApi.deleteAvatar(userRead?._id || "");
+				isSubmit(false);
+				request(userRead?._id || "");
+			}
+		} catch (err) {
+			console.log(err);
+			isSubmit(false);
+		}
+	};
+
+	const handleBlockUser = async () => {
+		if (submit) return;
+		try {
+			const confirm = userRead?.block_for_admin ? window.confirm("Estas seguro de desbloquear al usuario?") : window.confirm("Estas seguro de bloquear al usuario?");
+			if (confirm && userRead && request) {
+				isSubmit(true);
+				userRead?.block_for_admin ?  await UsersApi.unBlockUser(userRead?._id || "") : await UsersApi.blockUser(userRead?._id || "") 
 				isSubmit(false);
 				request(userRead?._id || "");
 			}
@@ -346,41 +363,53 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 					""
 				)}
 				<div className="form-row row fields-container">
+
 					<div className="form-group col-md-6 fields-container">
 						<label htmlFor="ci">Cedula  <span className="text-danger fs-6">*</span></label>
-						<input
-							className="form-control"
-							placeholder="012345678"
-							autoComplete="off"
-							{...register("ci", {
-								pattern: /^[0-9]+$/i,
-								required: true,
-								maxLength: 12,
-							})}
-						/>
+						<Controller
+							name="ci"
+							control={control}
+							rules={{ required: true, pattern: /^[0-9]+$/i, minLength:7, maxLength:12 }}
+							render={({ field }) => {
+								
+								return (
+								  <input
+								  className="form-control"
+								  placeholder="0123456789"
+									{...field}
+									onChange={(e) => e.target.value.match(/^[0-9]+$/i) && e.target.value.length < 12 || e.target.value == '' ? field.onChange(e.target.value) : ''}
+								  />
+								)
+							  }}
+							/>
 						<ErrorMessage
 							errors={errors}
 							name="ci"
 							render={({ message }) => (
 								<small className="text-danger">
-									Debe contener solo numeros y no debe pasar
-									los 12 caracteres
+									Debe contener solo numeros, de 7 a 12 caracteres
 								</small>
 							)}
 						/>
 					</div>
+
 					<div className="form-group col-md-6 fields-container">
 						<label htmlFor="email">Email  <span className="text-danger fs-6">*</span></label>
-						<input
-							type="text"
-							className="form-control"
-							placeholder="Email"
-							autoComplete="off"
-							{...register("email", {
-								required: true,
-								pattern: /^\S+@\S+$/i,
-							})}
-						/>
+						<Controller
+							name="email"
+							control={control}
+							rules={{ required: true, pattern: /^\S+@\S+$/i }}
+							render={({ field }) => {
+								
+								return (
+								  <input
+								  className="form-control"
+								  placeholder="Email"
+									{...field}
+								  />
+								)
+							  }}
+							/>
 						<ErrorMessage
 							errors={errors}
 							name="email"
@@ -390,21 +419,32 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 								</small>
 							)}
 						/>
+						
 					</div>
+
 				</div>
+
 				<div className="form-row row fields-container">
 					<div className="form-group col-md-6">
 						<label>Nombre  <span className="text-danger fs-6">*</span></label>
-						<input
-							type="text"
-							className="form-control"
-							placeholder="Nombre"
-							autoComplete="off"
-							{...register("firstname", {
-								required: true,
-								pattern: /^[A-Za-z áéíóúñ'`]+$/i,
-							})}
-						/>
+
+						<Controller
+							name="firstname"
+							control={control}
+							rules={{ required: true, pattern: /^[A-Za-z áéíóúñ'`]+$/i, maxLength:40}}
+							render={({ field }) => {
+								
+								return (
+								  <input
+								  className="form-control"
+								  placeholder="Nombre"
+								  autoComplete="off"
+									{...field}
+									onChange={(e) => e.target.value.match(/^[A-Za-z áéíóúñ'`]+$/i) && e.target.value.length < 40 || e.target.value == '' ? field.onChange(e.target.value) : ''}
+								  />
+								)
+							  }}
+							/>
 						<ErrorMessage
 							errors={errors}
 							name="firstname"
@@ -416,18 +456,26 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 							)}
 						/>
 					</div>
+
 					<div className="form-group col-md-6">
 						<label>Apellido  <span className="text-danger fs-6">*</span></label>
-						<input
-							type="text"
-							className="form-control"
-							placeholder="Apellido"
-							autoComplete="off"
-							{...register("lastname", {
-								required: true,
-								pattern: /^[A-Za-z áéíóúñ'`]+$/i,
-							})}
-						/>
+						<Controller
+							name="lastname"
+							control={control}
+							rules={{ required: true, pattern: /^[A-Za-z áéíóúñ'`]+$/i, maxLength:40}}
+							render={({ field }) => {
+								
+								return (
+								  <input
+								  className="form-control"
+								  placeholder="Apellido"
+								  autoComplete="off"
+									{...field}
+									onChange={(e) => e.target.value.match(/^[A-Za-z áéíóúñ'`]+$/i) && e.target.value.length < 40 || e.target.value == '' ? field.onChange(e.target.value) : ''}
+								  />
+								)
+							  }}
+							/>
 						<ErrorMessage
 							errors={errors}
 							name="lastname"
@@ -439,6 +487,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 							)}
 						/>
 					</div>
+
 				</div>
 				<div className="form-row row fields-container">
 					<div className="form-group col-md-6">
@@ -462,16 +511,23 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 					</div>
 					<div className="form-group col-md-6">
 						<label htmlFor="position">Cargo  <span className="text-danger fs-6">*</span></label>
-						<input
-							type="text"
-							className="form-control"
-							placeholder="Cargo"
-							autoComplete="off"
-							{...register("position", {
-								required: true,
-								pattern: /^[A-Za-z0-9 áéíóúñ'`]+$/i,
-							})}
-						/>
+						<Controller
+							name="position"
+							control={control}
+							rules={{ required: true, pattern: /^[A-Za-z0-9 áéíóúñ'`]+$/i, maxLength:40}}
+							render={({ field }) => {
+								
+								return (
+								  <input
+								  className="form-control"
+								  placeholder="Cargo"
+								  autoComplete="off"
+									{...field}
+									onChange={(e) => e.target.value.match(/^[A-Za-z0-9 áéíóúñ'`]+$/i) && e.target.value.length < 40 || e.target.value == '' ? field.onChange(e.target.value) : ''}
+								  />
+								)
+							  }}
+							/>
 						<ErrorMessage
 							errors={errors}
 							name="position"
@@ -481,6 +537,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 								</small>
 							)}
 						/>
+
 					</div>
 				</div>
 
@@ -618,9 +675,25 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 				</div>
 				<hr />
 				<div
-					className="container-buttons row p-2 justify-content-end"
+					className="container-buttons row p-2 justify-content-end gap-3"
 					style={{ marginTop: "15px" }}
 				>
+					{edit ? <button
+						type="button"
+						className="btn btn-danger col-md-4"
+						disabled={submit}
+						onClick={(e)=>{handleBlockUser()}}
+					>
+
+						{submit ? (
+							<div className="spinner-border" role="status">
+								<span className="sr-only"></span>
+							</div>
+						) : (
+							userRead?.block_for_admin ? "Desloquear usuario" : "Bloquear usuario"
+						)}
+					</button> : ''}
+
 					<button
 						type="submit"
 						className="btn btn-primary col-md-4"

@@ -12,5 +12,6 @@ export interface User{
     updated_at?:date
     avatar?:string
     userId?:string
+    block_for_admin?:boolean
     _id?:string
 }

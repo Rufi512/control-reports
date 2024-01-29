@@ -6,7 +6,7 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { registerEquipment, updateEquipment } from "../../Api/EquipmentsApi";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 
 type Props = {
@@ -41,6 +41,7 @@ const EquipmentForm = ({
     formState: { errors },
     setValue,
     handleSubmit,
+    control,
     reset,
   } = useForm<FormInput>({ defaultValues: { ...equipment } });
 
@@ -102,98 +103,123 @@ const EquipmentForm = ({
       <div className="form-row row fields-container">
         <div className="form-group col-md-6">
           <label htmlFor="model">Modelo del equipo  <span className="text-danger fs-6">*</span></label>
-         <input
-              type="text"
-              className="form-control"
-              placeholder="Modelo T34..."
-              {...register("model", {
-                required: true,
-                maxLength:40,
-                pattern: /^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/i,
-              })}
-              autoComplete="off"
-            />
-            <ErrorMessage
-              errors={errors}
-              name="model"
-              render={({ message }) => (
-                <small className="text-danger">
-                  El campo es requerido y no debe pasar de los 40 caracteres
-                </small>
-              )}
-            />
+          <Controller
+							name="model"
+							control={control}
+							rules={{ required: true, pattern: /^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/i, maxLength:40}}
+							render={({ field }) => {
+								
+								return (
+								  <input
+								  className="form-control"
+                  placeholder="Modelo T34..."
+								  autoComplete="off"
+									{...field}
+									onChange={(e) => e.target.value.match(/^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/i) && e.target.value.length < 40 || e.target.value == '' ? field.onChange(e.target.value) : ''}
+								  />
+								)
+							  }}
+							/>
+						<ErrorMessage
+							errors={errors}
+							name="model"
+							render={({ message }) => (
+								<small className="text-danger">
+									El campo es requerido! y no debe pasar los 40 caracteres
+								</small>
+							)}
+						/>
+
         </div>
         <div className="form-group col-md-6">
           <label htmlFor="serial">Serial del equipo  <span className="text-danger fs-6">*</span></label>
-          <input
-              type="text"
-              className="form-control"
-              placeholder="Serial..."
-              {...register("serial", {
-                required: true,
-                maxLength:40,
-                pattern: /^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/i,
-              })}
-              autoComplete="off"
-            />
-            <ErrorMessage
-              errors={errors}
-              name="serial"
-              render={({ message }) => (
-                <small className="text-danger">
-                  El campo es requerido! no debe contener espacios y no debe pasar
-                  los 40 caracteres
-                </small>
-              )}
-            />
+          <Controller
+							name="serial"
+							control={control}
+							rules={{ required: true, pattern: /^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/i, maxLength:40}}
+							render={({ field }) => {
+								
+								return (
+								  <input
+								  className="form-control"
+                  placeholder="Serial..."
+								  autoComplete="off"
+									{...field}
+									onChange={(e) => e.target.value.match(/^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/i) && e.target.value.length < 40 || e.target.value == '' ? field.onChange(e.target.value) : ''}
+								  />
+								)
+							  }}
+							/>
+						<ErrorMessage
+							errors={errors}
+							name="serial"
+							render={({ message }) => (
+								<small className="text-danger">
+									El campo es requerido! y no debe pasar los 40 caracteres
+								</small>
+							)}
+						/>
+
         </div>
       </div>
       <div className="form-row row fields-container">
         <div className="form-group col-md-6">
           <label htmlFor="brand">Marca del equipo  <span className="text-danger fs-6">*</span></label>
-          <input
-              type="text"
-              className="form-control"
-              placeholder="Marca..."
-              {...register("brand", {
-                required: true,
-                maxLength:40,
-                pattern: /^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/i,
-              })}
-              autoComplete="off"
-            />
-            <ErrorMessage
-              errors={errors}
-              name="brand"
-              render={({ message }) => (
-                <small className="text-danger">
-                  El campo es requerido! y no debe pasar los 40 caracteres
-                </small>
-              )}
-            />
+          <Controller
+							name="brand"
+							control={control}
+							rules={{ required: true, pattern: /^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/i, maxLength:40}}
+							render={({ field }) => {
+								
+								return (
+								  <input
+								  className="form-control"
+                  placeholder="Marca..."
+								  autoComplete="off"
+									{...field}
+									onChange={(e) => e.target.value.match(/^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/i) && e.target.value.length < 40 || e.target.value == '' ? field.onChange(e.target.value) : ''}
+								  />
+								)
+							  }}
+							/>
+						<ErrorMessage
+							errors={errors}
+							name="brand"
+							render={({ message }) => (
+								<small className="text-danger">
+									El campo es requerido! y no debe pasar los 40 caracteres
+								</small>
+							)}
+						/>
         </div>
         <div className="form-group col-md-6">
           <label htmlFor="asset_number">Numero del bien  <span className="text-danger fs-6">*</span></label>
-          <input
-              type="text"
-              className="form-control"
-              placeholder="0000..."
-              {...register("asset_number", {
-                required: true,
-                maxLength:40,
-                pattern: /^[0-9]+$/i,
-              })}
-              autoComplete="off"
-            />
-            <ErrorMessage
-              errors={errors}
-              name="asset_number"
-              render={({ message }) => (
-                <small className="text-danger">
-                  El campo es requerido! debe contener solo numeros y no pasar de 40 caracteres
-                </small>
-              )}
-            />
+          <Controller
+							name="asset_number"
+							control={control}
+							rules={{ required: true, pattern: /^[0-9]+$/i, maxLength:40}}
+							render={({ field }) => {
+								
+								return (
+								  <input
+								  className="form-control"
+                  placeholder="0000.."
+								  autoComplete="off"
+									{...field}
+									onChange={(e) => e.target.value.match(/^[0-9]+$/i) && e.target.value.length < 40 || e.target.value == '' ? field.onChange(e.target.value) : ''}
+								  />
+								)
+							  }}
+							/>
+						<ErrorMessage
+							errors={errors}
+							name="asset_number"
+							render={({ message }) => (
+								<small className="text-danger">
+									El campo es requerido! debe contener solo numeros y no debe pasar los 40 caracteres
+								</small>
+							)}
+						/>
         </div>
       </div>
 

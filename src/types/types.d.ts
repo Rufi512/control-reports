@@ -50,6 +50,7 @@ export interface UserModel{
     updated_at:date
     avatar?:string
     userId?:string
+    block_for_admin:boolean
 }
 
 export interface headquarterModel{

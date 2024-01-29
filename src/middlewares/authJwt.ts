@@ -34,6 +34,9 @@ export const verifyToken = async (
 
     const rolFound = await role.findOne({ _id: { $in: userFound.rol } });
     if (!rolFound) return res.status(401).json({ message: "Sesion invalida" });
+
+    if (userFound.block_for_admin) return res.status(401).json({ message: "Usuario bloqueado por administrador" });
+
     req.rolUser = rolFound.name;
 
     return next();
@@ -62,6 +65,9 @@ export const verifyTokenValidate = async (
       return res
         .status(401)
         .json({ message: "Usuario verificado previamente" });
+
+    if (userFound.block_for_admin) return res.status(401).json({ message: "Usuario bloqueado por administrador" });
+
     const decoded: any = jwt.verify(String(token), secret + userFound.password + ACCESS_TOKEN_SECRET);
     //Buscamos el usuario que se refiere el token
 
@@ -166,6 +172,23 @@ export const blockUser = async (req: RequestUser, resetCount: boolean) => {
       "Usuario bloqueado por varios intento fallidos de iniciar sesion"
     );
 };
+
+
+//Verify if user is block for admin when user request 
+
+export const blockedForAdmin = async (req: RequestUser, res:Response, next: NextFunction) =>{
+  try{
+    const userFound = await user.findOne({
+      $or: [{ email: req.body.user }, { ci: req.body.user }],
+  });
+  if(!userFound) return res.status(404).json({message:'Usuario no encontrado'})
+  if(userFound.block_for_admin) return res.status(403).json({message:'Usuario bloqueado por administrador'})
+  return next()
+  }catch(err){
+    console.log(err)
+    return res.status(404).json({message:'Usuario no encontrado'})
+}
+}
 
 export const isUserOrAdmin = async (
   req: RequestUser,

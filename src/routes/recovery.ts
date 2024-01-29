@@ -1,10 +1,10 @@
 import {Router} from 'express'
 import { checkQuestions,getQuests,resetPassword,unblockedUser} from '../controllers/recovery_controller'
-import { verifyCaptcha } from '../middlewares/authJwt'
+import { blockedForAdmin, verifyCaptcha } from '../middlewares/authJwt'
 
 const router = Router()
 
-router.post('/questions',[verifyCaptcha],getQuests)
+router.post('/questions',[verifyCaptcha, blockedForAdmin],getQuests)
 
 router.post('/questions/test',getQuests)
 

@@ -148,6 +148,36 @@ export const editUser = async (id: string, body: any) => {
     }
 };
 
+export const blockUser = async (id: string) =>{
+    try{
+    const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
+    const res = await axios.put(USERS_API + `/block/${id}`,{},config);
+    if (res.status === 200) toast.success("Usuario bloqueado");
+    }catch(error){
+        const err = error as AxiosError;
+        const message_error: any = err.response?.data;
+        toast.error(
+            message_error?.message || "No se pudo bloquear el usuario"
+        );
+        return err.response;
+    }
+}
+
+export const unBlockUser = async (id: string) =>{
+    try{
+    const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
+    const res = await axios.put(USERS_API + `/unblock/${id}`,{},config);
+    if (res.status === 200) toast.success("Usuario Desbloqueado");
+    }catch(error){
+        const err = error as AxiosError;
+        const message_error: any = err.response?.data;
+        toast.error(
+            message_error?.message || "No se pudo desbloquear el usuario"
+        );
+        return err.response;
+    }
+}
+
 export const deleteAvatar = async (id: string) => {
     try {
         const config = { headers: {'x-access-token':Cookies.get('accessToken') } };

@@ -221,7 +221,8 @@ const UserDetail = () => {
                 </div>
                 <div className="mt-3">
                   <p className="label-rol fs-6">Ultima actualizacion</p>
-                  <p>{dateformat(userRead?.updated_at)}</p>
+                  <p className="text-center">{dateformat(userRead?.updated_at)}</p>
+                  <p className="text-center text-danger font-weight-bold mt-2" style={{fontWeight:600}}>{userRead?.block_for_admin ? 'Bloqueado por administrador' : ''}</p>
                 </div>
               </div>
             </div>

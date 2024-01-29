@@ -19,5 +19,11 @@
 }
 
 .container-dashboard .container-body-content a:hover{
-    transform:scale(1.1);
+    transform:scale(1.01);
+}
+
+@media(min-width:1024px){
+    .container-dashboard .container-body-content a:hover{
+        transform:scale(1.1);
+    }
 }

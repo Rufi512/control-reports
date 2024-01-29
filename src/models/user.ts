@@ -62,6 +62,10 @@ const userSchema = new Schema({
     required:true,
     default:0
   },
+  block_for_admin:{
+    type:Boolean,
+    default:false
+  },
   created_at:{
     type:Date,
     required:false,

@@ -263,6 +263,10 @@ export const validateUser = async (req: any, res: Response) => {
 
         if(!userFound) return res.status(404).json({message:'Usuario no encontrado'})
 
+        if (userFound.block_for_admin) {
+            return res.status(400).json({ message: "El usuario esta bloqueado por administrador" });
+        }
+
         const checkQuestions = await verifyQuestions(questions, answers);
 
         if (checkQuestions !== "") {
@@ -405,6 +409,64 @@ export const updateUser = async (req: any, res: Response) => {
         return res.status(500).json({ message: "Error fatal en el servidor" });
     }
 };
+
+export const blockUser = async (req:RequestUser, res: Response)=>{
+    try{
+        const userFound = await user.findById(req.params.id);
+        
+        if(!userFound) return res.status(404).json({message:'Usuario no encontrado'});
+        
+        if(userFound.id === req.userId){
+            return res.status(400).json({message:'No puedes hacer esta accion'})
+        }
+
+        await user.updateOne(
+            { _id: req.params.id || req.userId },
+            {
+                $set: {
+                    block_for_admin:true
+                },
+            }
+        );
+
+        await registerLog(req,`Bloqueo al usuario: ${userFound.firstname} ${userFound.lastname} - cedula: ${userFound.ci}`);
+        return res.status(200).json({message:'Usuario bloqueado'})
+
+    }catch(e){
+        console.log(e)
+        return res.status(404).json({message:'Usuario no encontrado'})
+    }
+}
+
+export const unBlockUser = async (req:RequestUser, res: Response)=>{
+    try{
+        const userFound = await user.findById(req.params.id);
+
+        if(!userFound) return res.status(404).json({message:'Usuario no encontrado'});
+        
+        if(userFound.id === req.userId){
+            return res.status(400).json({message:'No puedes hacer esta accion'})
+        }
+        
+
+        await user.updateOne(
+            { _id: req.params.id || req.userId },
+            {
+                $set: {
+                    block_for_admin:false
+                },
+            }
+        );
+
+        await registerLog(req,`Desbloqueo al usuario: ${userFound.firstname} ${userFound.lastname} - cedula: ${userFound.ci}`);
+
+        return res.status(200).json({message:'Usuario desbloqueado'})
+
+    }catch(e){
+        console.log(e)
+        return res.status(404).json({message:'Usuario no encontrado'})
+    }
+}
 
 export const deleteUser = async (req: RequestUser, res: Response) => {
     try {

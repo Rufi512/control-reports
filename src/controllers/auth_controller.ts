@@ -38,6 +38,10 @@ export const signIn = async (req: RequestUser, res: Response) => {
                 message: "El usuario esta bloqueado",
             });
 
+        if (userFound.block_for_admin) {
+                return res.status(400).json({ message: "El usuario esta bloqueado por administrador" });
+        }
+
         req.userId = userFound.id;
 
         //Comparamos contraseñas

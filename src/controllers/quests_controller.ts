@@ -88,7 +88,7 @@ export const deleteQuestionUser = async (req: any, res: Response) => {
 			return res
 				.status(404)
 				.json({ message: "No se ha podido encontrar la pregunta" });
-		if (!questionsRegistered || questionsRegistered.length <= 1)
+		if (!questionsRegistered || questionsRegistered.length <= 2)
 			return res
 				.status(404)
 				.json({ message: "No se pueden eliminar mas preguntas" });
