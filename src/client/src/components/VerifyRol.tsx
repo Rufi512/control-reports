@@ -1,15 +1,14 @@
 import { Navigate, Outlet } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
+import Cookies from "js-cookie";
 
 type Props = {
 	allowedRoles:string[]
 }
 
 const VerifyRol = ({ allowedRoles }:Props) => {
-	const auth = useAuth()
-	return  allowedRoles.includes(auth.rol) ? (
+	return  allowedRoles.includes(Cookies.get('rol') || '') ? (
     <Outlet />
-  ) : auth?.rol ? (
+  ) : Cookies.get('rol') ? (
     <Navigate to="/dashboard" replace />
   ) : (
     <Navigate to="/logout" replace/>

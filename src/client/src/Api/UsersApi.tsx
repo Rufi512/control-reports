@@ -2,13 +2,16 @@ import axios, { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { Quest } from "../types/quest";
 import Cookies from "js-cookie";
+import useAuth from "../hooks/useAuth";
+import customFetch from "./axios";
 const USERS_API = "/api/users";
 const QUESTS_API = "/api/quests"
 
 export const getUsers = async ({ page = 1, limit = 15, search = "" }) => {
+    
     try {
         const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
-        const res = await axios.get(
+        const res = await customFetch.get(
             USERS_API + `/list?page=${page}&limit=${limit}&search=${search}`,
             config
         );
@@ -48,9 +51,10 @@ export const getSelectsUsers = async (search = "") => {
 };
 
 export const registerUser = async (body: any) => {
+    
     try {
         const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
-        const res = await axios.post(USERS_API + `/register`, body,config);
+        const res = await customFetch.post(USERS_API + `/register`, body,config);
         if (res.status === 200) toast.success("Usuario registrado");
         return res;
     } catch (error) {
@@ -79,9 +83,10 @@ export const validateUser = async (id:string,token:string,body:FormData) =>{
 }
 
 export const getUser = async (id: string) => {
+    
     try {
         const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
-        const res = await axios.get(USERS_API + `/detail/${id}`,config);
+        const res = await customFetch.get(USERS_API + `/detail/${id}`,config);
         return res;
     } catch (error) {
         const err = error as AxiosError;
@@ -105,9 +110,10 @@ export const getQuests = async (id: string) => {
 };
 
 export const registerQuest = async (id: string,body:Quest[]) => {
+    
     try {
         const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
-        const res = await axios.post(QUESTS_API + `/register/${id}`, body,config);
+        const res = await customFetch.post(QUESTS_API + `/register/${id}`, body,config);
          if (res.status === 200) toast.success("Pregunta agregada");
         return res;
     } catch (error) {
@@ -119,9 +125,10 @@ export const registerQuest = async (id: string,body:Quest[]) => {
 };
 
 export const deleteQuest = async (id:string,user:string) =>{
+    
     try {
         const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
-        const res = await axios.post(QUESTS_API + `/delete/questions/${id}`,{},config);
+        const res = await customFetch.post(QUESTS_API + `/delete/questions/${id}`,{},config);
          if (res.status === 200) toast.success("Pregunta Eliminada");
         return res;
     } catch (error) {
@@ -133,9 +140,10 @@ export const deleteQuest = async (id:string,user:string) =>{
 }
 
 export const editUser = async (id: string, body: any) => {
+    
     try {
         const config = { headers: { "Content-Type": "multipart/form-data",'x-access-token':Cookies.get('accessToken') } };
-        const res = await axios.put(USERS_API + `/update/${id}`, body, config);
+        const res = await customFetch.put(USERS_API + `/update/${id}`, body, config);
         if (res.status === 200) toast.success("Usuario Modificado");
         return res;
     } catch (error) {
@@ -149,9 +157,10 @@ export const editUser = async (id: string, body: any) => {
 };
 
 export const blockUser = async (id: string) =>{
+    
     try{
     const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
-    const res = await axios.put(USERS_API + `/block/${id}`,{},config);
+    const res = await customFetch.put(USERS_API + `/block/${id}`,{},config);
     if (res.status === 200) toast.success("Usuario bloqueado");
     }catch(error){
         const err = error as AxiosError;
@@ -164,9 +173,10 @@ export const blockUser = async (id: string) =>{
 }
 
 export const unBlockUser = async (id: string) =>{
+    
     try{
     const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
-    const res = await axios.put(USERS_API + `/unblock/${id}`,{},config);
+    const res = await customFetch.put(USERS_API + `/unblock/${id}`,{},config);
     if (res.status === 200) toast.success("Usuario Desbloqueado");
     }catch(error){
         const err = error as AxiosError;
@@ -179,9 +189,10 @@ export const unBlockUser = async (id: string) =>{
 }
 
 export const deleteAvatar = async (id: string) => {
+    
     try {
         const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
-        const res = await axios.delete(
+        const res = await customFetch.delete(
             USERS_API + `/delete/profile/picture/${id}`,config
         );
         if (res.status === 200) toast.success("Foto de perfil eliminada!");
@@ -197,6 +208,7 @@ export const deleteAvatar = async (id: string) => {
 
 
 export const deleteUser = async (id: string) => {
+    
     const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
     try {
         const res = await axios.delete(

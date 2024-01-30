@@ -9,6 +9,7 @@ import logo from '../assets/images/mp.png'
 import '../assets/styles/pages/login.css'
 import { getCaptcha, loginUser } from "../Api/AuthApi";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -48,7 +49,6 @@ const Login = () => {
 
     try {
       const res = await loginUser({token:captchaUser.token,body:user});
-      let today = new Date()
       if(!res || res.status >= 400) return setIsSubmit(false);
       const first_login = res?.data.first_login
       const id_user = res?.data.user
@@ -59,13 +59,13 @@ const Login = () => {
       Cookies.set('rol',res?.data.user.rol.toLowerCase())
       Cookies.set('avatar',res?.data.user.avatar)
       Cookies.set('id_user',res?.data.user.id)
-      Cookies.set('timeExpire',String(today.setHours(today.getHours() + 8)))
+      Cookies.set('timeExpire',res?.data.expireToken)
       navigate(`/dashboard`)
       setIsSubmit(false);
     } catch (e) {
-
       setIsSubmit(false);
       console.log(e);
+      toast.error("Error al iniciar sesion")
     }
   };
 

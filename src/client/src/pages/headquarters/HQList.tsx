@@ -10,13 +10,12 @@ import ErrorAdvice from "../../components/ErrorAdvice";
 import { Headquarter } from "../../types/headquarter";
 import dateformat from "../../hooks/useDateFormat";
 import { getHeadquarters } from "../../Api/HQApi";
-import useAuth from "../../hooks/useAuth";
+import Cookies from "js-cookie";
 
 const HQList = () => {
   const ref = useRef(window);
   const [width, setWidth] = useState(window.innerWidth);
   const [searchBarParams] = useSearchParams();
-  const auth = useAuth()
   const [searchParams, setSearchParams] = useState({
     limit: 10 || Number(searchBarParams.get("limit")),
     page: 1 || Number(searchBarParams.get("page")),
@@ -83,7 +82,7 @@ const HQList = () => {
   }, [window]);
 
   useEffect(() => {
-    setNameRol(auth.rol)
+    setNameRol(Cookies.get("rol") || "")
 
   }, []);
 

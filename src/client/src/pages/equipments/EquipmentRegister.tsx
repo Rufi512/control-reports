@@ -1,5 +1,4 @@
 import React from 'react'
-import { Sidebar } from '../../components/Sidebar'
 import EquipmentForm from '../../components/equipments/EquipmentForm'
 
 const EquipmentRegister = () => {

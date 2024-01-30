@@ -17,7 +17,7 @@ i18n.dayNames = [
   "Miercoles",
   "Jueves",
   "Viernes",
-  "Saabado",
+  "Sabado",
 ];
 
 i18n.monthNames = [

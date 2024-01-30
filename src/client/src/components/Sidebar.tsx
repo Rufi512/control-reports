@@ -44,8 +44,9 @@ export const Sidebar = (props: Props) => {
 
     element.addEventListener("click", handleClickOutside);
 
+    setNameRol(auth?.rol || Cookies.get('rol') || '')
     // 👇️ remove the event listener when the component unmounts
-    setNameRol(auth.rol)
+
     return () => {
       element.removeEventListener("click", handleClickOutside);
     };

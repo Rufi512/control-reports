@@ -13,11 +13,9 @@ import { Equipment } from "../types/equipment";
 import { getResumen } from "../Api/LogsApi";
 import { Log } from "../types/log";
 import Cookies from "js-cookie";
-import useAuth from "../hooks/useAuth";
 import dateformat from "../hooks/useDateFormat";
 const Home = () => {
   const ref = useRef(window);
-  const auth = useAuth();
   const [width, setWidth] = useState(window.innerWidth);
 
   const handleResize = () => {

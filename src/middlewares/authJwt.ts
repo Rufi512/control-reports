@@ -134,7 +134,6 @@ export const verifyCaptcha = async (
 ) => {
   try {
     const token: string = String(req.headers["x-captcha-token"]) || "";
-    console.log(req.body, token);
     if (!req.body.captcha || req.body.captcha === "")
       return res.status(403).json({ message: "Complete el captcha" });
 

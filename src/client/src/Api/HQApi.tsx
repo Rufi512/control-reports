@@ -1,12 +1,15 @@
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
+import useAuth from "../hooks/useAuth";
+import customFetch from "./axios";
 
 const HQ_API = '/api/headquarter'
 
 export const getHeadquarters = async ({ page = 1, limit = 15, search = "" }) => {
+    
     try {
         const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
-        const res = await axios.get(
+        const res = await customFetch.get(
             HQ_API + `/list?page=${page}&limit=${limit}&search=${search}`,
             config
         );
@@ -19,9 +22,10 @@ export const getHeadquarters = async ({ page = 1, limit = 15, search = "" }) => 
 };
 
 export const getHeadquarter = async (id:string) => {
+    
     try {
         const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
-        const res = await axios.get(
+        const res = await customFetch.get(
             HQ_API + `/info/${id}`,
             config
         );
@@ -36,7 +40,7 @@ export const getHeadquarter = async (id:string) => {
 export const getSelectsHq = async (search = "") => {
     try {
         const config = { headers: {'x-access-token':Cookies.get('accessToken') } };
-        const res = await axios.get(
+        const res = await customFetch.get(
             HQ_API + `/list/select?search=${search}`,
             config
         );
@@ -51,7 +55,7 @@ export const getSelectsHq = async (search = "") => {
 export const registerHeadquarter = async (body:any) => {
     try {
         const config = {headers:{"x-access-token":Cookies.get('accessToken')}}
-        const res = await axios.post(HQ_API + `/register`, body,config);
+        const res = await customFetch.post(HQ_API + `/register`, body,config);
         return res
     } catch (error) {
         const err = error as AxiosError
@@ -63,7 +67,7 @@ export const registerHeadquarter = async (body:any) => {
 export const updateHeadquarter = async (id:string,body:any) =>{
     try {
         const config = {headers:{"x-access-token":Cookies.get('accessToken')}}
-        const res = await axios.put(HQ_API + `/update/${id}`, body,config);
+        const res = await customFetch.put(HQ_API + `/update/${id}`, body,config);
         return res
     } catch (error) {
         const err = error as AxiosError
@@ -75,7 +79,7 @@ export const updateHeadquarter = async (id:string,body:any) =>{
 export const deleteHeadquarter = async (id:string) =>{
     try {
         const config = {headers:{"x-access-token":Cookies.get('accessToken')}}
-        const res = await axios.delete(HQ_API + `/delete/${id}`,config);
+        const res = await customFetch.delete(HQ_API + `/delete/${id}`,config);
         return res
     } catch (error) {
         const err = error as AxiosError

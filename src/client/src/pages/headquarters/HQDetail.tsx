@@ -11,14 +11,13 @@ import Loader from "../../components/Loader";
 import { deleteHeadquarter, getHeadquarter } from "../../Api/HQApi";
 import HQForm from "../../components/headquarters/HQForm";
 import ReportList from "../reports/ReportList";
-import useAuth from "../../hooks/useAuth";
+import Cookies from "js-cookie";
 const HQDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [load, setLoad] = useState(true);
   const [edit, setEdit] = useState(false);
   const [errorRequest, setErrorRequest] = useState(false);
-  const auth = useAuth()
   const [nameRol,setNameRol] = useState("")
 
   const [headquarters, setHeadquarters] = useState<Headquarter>({
@@ -93,7 +92,7 @@ const HQDetail = () => {
   }, []);
 
   useEffect(() => {
-    setNameRol(auth.rol)
+    setNameRol(Cookies.get("rol") || '')
 
   }, []);
 
