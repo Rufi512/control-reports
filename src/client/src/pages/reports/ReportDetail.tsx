@@ -17,6 +17,7 @@ import { pdf } from "@react-pdf/renderer";
 import dateformat from "../../hooks/useDateFormat";
 import Loader from "../../components/Loader";
 import ErrorAdvice from "../../components/ErrorAdvice";
+import Cookies from "js-cookie";
 
 const ReportDetail = () => {
   const { id } = useParams();
@@ -180,7 +181,7 @@ const ReportDetail = () => {
   const exportPdf = () => {
     const generatePdfDocument = async () => {
       const blob = await pdf(
-        <ReportPdf data={report} equipments={equipmentsRead} />
+        <ReportPdf data={report} equipments={equipmentsRead} evidences={evidencesOnlyRead}/>
       ).toBlob();
       const fileURL = URL.createObjectURL(blob);
       window.open(fileURL);
@@ -238,15 +239,16 @@ const ReportDetail = () => {
               onClick={() => {
                 setPropertiesModal({
                   title: "Confirmacion de eliminacion",
-                  description: "Estas seguro de eliminar el equipo actual?",
+                  description: "Estas seguro de eliminar el reporte actual?",
                   active: true,
                   action_name: "delete_equipment",
                 });
               }}
             >
-              <FontAwesomeIcon icon={faTrash} /> <span>Eliminar Equipo</span>
+              <FontAwesomeIcon icon={faTrash} /> <span>Eliminar Reporte</span>
             </button>
-            <div
+            {
+              Cookies.get("rol") == 'admin' || Cookies.get("id_user") == report.user?._id ? <div
               className="form-check form-switch"
               style={{
                 width: "max-content",
@@ -271,7 +273,8 @@ const ReportDetail = () => {
               >
                 Editar reporte
               </label>
-            </div>
+            </div> : ''
+            }
           </div>
           <ReportForm
             edit={edit}
@@ -326,6 +329,9 @@ const ReportDetail = () => {
                       <th scope="col" style={{ border: "2px solid white" }}>
                         Modelo
                       </th>
+                      <th scope="col" style={{ border: "2px solid white" }}>
+                        Incorporado
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -337,6 +343,7 @@ const ReportDetail = () => {
                               <td>{elm.brand}</td>
                               <td>{elm.serial}</td>
                               <td>{elm.model}</td>
+                              <td>{elm.incorporated ? 'Si': 'No'}</td>
                             </tr>
                           );
                         })
@@ -365,6 +372,9 @@ const ReportDetail = () => {
                           </div>
                           <p className="mb-1 p-0">
                             Modelo y marca: {el.model} - {el.brand}
+                          </p>
+                          <p className="mb-1 p-0">
+                            Estado: El equipo {el.incorporated ? 'esta incorporado' : 'no esta incorporado'}
                           </p>
                           <div className="d-flex align-items-start justify-content-between">
                             <small>Serial: {el.serial}</small>

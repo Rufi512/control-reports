@@ -13,6 +13,7 @@ import ModalConfirmation from "../../components/ModalConfirmation";
 import Loader from "../../components/Loader";
 import ErrorAdvice from "../../components/ErrorAdvice";
 import dateformat from "../../hooks/useDateFormat";
+import Cookies from "js-cookie";
 
 const EquipmentDetail = () => {
 	const { id } = useParams();
@@ -29,6 +30,7 @@ const EquipmentDetail = () => {
 		brand: "",
 		updated_at: "",
 		created_at: "",
+		incorporated:false
 	});
 
 	const [propertiesModal, setPropertiesModal] = useState({
@@ -85,6 +87,8 @@ const EquipmentDetail = () => {
 				brand: res?.data.brand,
 				created_at: res?.data.created_at,
 				updated_at: res?.data.updated_at,
+				user:res?.data.user,
+				incorporated:res?.data.incorporated
 			});
 			setErrorRequest(false)
 			setEdit(false);
@@ -122,7 +126,7 @@ const EquipmentDetail = () => {
 						className="container-actions-buttons"
 						style={{ padding: "0 12px"}}
 					    >
-						<button
+						{Cookies.get('rol') == 'admin' ? (<button
 							className="btn btn-danger m-2"
 							style={{ display: edit ? "block" : "none" }}
 							onClick={() => {
@@ -135,8 +139,8 @@ const EquipmentDetail = () => {
 							}}
 						>
 							<FontAwesomeIcon icon={faTrash} /> <span>Eliminar Equipo</span>
-						</button>
-						<div
+						</button>) : ''}
+						{Cookies.get('rol') == 'admin' || equipment?.user?._id == Cookies.get('id_user') ? <div
 							className="form-check form-switch"
 							style={{ width: "max-content"}}
 						>
@@ -152,7 +156,7 @@ const EquipmentDetail = () => {
 							<label className="form-check-label" htmlFor="switch-edit">
 								Editar equipo
 							</label>
-						</div>
+						</div> : ''}
 					</div>
 
 					
@@ -175,7 +179,7 @@ const EquipmentDetail = () => {
 									</div>
 									<div className="form-group col-md-6">
 										<label htmlFor="serial">Serial del equipo</label>
-										<p className="text-uppercase">{equipment.serial}</p>
+										<p className="text-uppercase">{equipment.serial || 'N/A'}</p>
 									</div>
 								</div>
 								<div className="form-row row fields-container">
@@ -184,10 +188,32 @@ const EquipmentDetail = () => {
 										<p>{equipment.brand}</p>
 									</div>
 									<div className="form-group col-md-6">
-										<label htmlFor="asset_number">Numero del bien</label>
-										<p>{equipment.asset_number}</p>
+										<label htmlFor="asset_number">Numero de bien</label>
+										<p>{equipment.asset_number || 'No especificado'}</p>
 									</div>
 								</div>
+								
+								
+								<div className="form-row row fields-container">
+								{equipment.user ?<div className="form-group col-md-12">
+										<label htmlFor="asset_number">Registrado por</label>
+										<p>
+											
+												 {equipment.user?.firstname} {equipment.user?.lastname} - Cedula: {equipment.user?.ci} 
+												
+										</p>
+									</div>: ""}
+
+									<div className="form-row row fields-container p-0">
+										<div className="form-group col-md-12">
+											<label htmlFor="asset_number">Estado del equipo</label>
+											<p>
+												{equipment?.incorporated == true ? 'Equipo incorporado' : 'Equipo no incorporado'}
+											</p>
+										</div>
+									</div>
+									
+								</div> 
 								<div className="form-row row fields-container">
 									<div className="form-group col-md-6">
 										<label htmlFor="asset_number">Fecha de creacion</label>

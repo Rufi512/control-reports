@@ -22,6 +22,7 @@ export const signIn = async (req: RequestUser, res: Response) => {
             return res
                 .status(404)
                 .json({ message: "Llene los campos necesarios" });
+
         const userFound = await user.findOne({
             $or: [{ email: req.body.user }, { ci: req.body.user }],
         });
@@ -50,6 +51,11 @@ export const signIn = async (req: RequestUser, res: Response) => {
 
         req.userId = userFound.id;
 
+
+        const rolFind = await role.findOne({ _id: { $in: userFound.rol } });
+        
+        if(!rolFind) return res.status(404).json({ message: "Error al ingresar" });
+
         //Comparamos contraseñas
         const matchPassword = await user.comparePassword(
             req.body.password,
@@ -75,10 +81,8 @@ export const signIn = async (req: RequestUser, res: Response) => {
                 }
             );
 
-            
-
             return res.json({
-                user: userFound.id,
+                user: {id: userFound.id, rol:rolFind.name},
                 first_login: userFound.first_login,
                 accessToken:token,
             });
@@ -119,9 +123,6 @@ export const signIn = async (req: RequestUser, res: Response) => {
             expiresIn: "12m",
         });
 
-        const rolFind = await role.findOne({ _id: { $in: userFound.rol } });
-        if (!rolFind)
-            return res.status(404).json({ message: "Error al ingresar" });
 
         await verifySignup.registerLog(req || "", "Ingreso de sesión");
 

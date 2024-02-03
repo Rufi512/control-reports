@@ -4,6 +4,8 @@ import moment from "moment";
 import user from "../models/user";
 import equipment from "../models/equipment";
 import report from "../models/report";
+import { RequestUser } from "../types/types";
+import role from "../models/role";
 
 export const listLogs = async (req: Request, res: Response) => {
 	try {
@@ -131,7 +133,7 @@ export const resumeAdmin = async (req: Request, res: Response) => {
 	}
 };
 
-export const resumeUser = async (req: Request, res: Response) => {
+export const resumeUser = async (req: RequestUser, res: Response) => {
 	try {
 		let optionsPagination = {
 			lean: false,
@@ -143,12 +145,23 @@ export const resumeUser = async (req: Request, res: Response) => {
 				req.query && Number(req.query.page)
 					? Number(req.query.page)
 					: 1,
-			sort: { created_at: -1 } 
+			sort: { created_at: -1 } ,
+			
 		};
 
-		const listEquipments = await equipment.paginate({}, optionsPagination);
+		//Check if user is admin
+		let isAdmin = false
+		const userFound = await user.findById(req.userId);
+		if (!userFound)
+		  return res.status(401).json({ message: "No se encontro al usuario" });
+		const rol = await role.find({ _id: { $in: userFound.rol } });
+		if (rol[0].name === "admin") {
+			isAdmin = true
+		}
+		
+		const listEquipments = await equipment.paginate(!isAdmin ? {$and:[{user:req.userId}]} : {}, optionsPagination);
 
-		const listReports = await report.paginate({}, optionsPagination);
+		const listReports = await report.paginate(!isAdmin ? {$and:[{user:req.userId}]} : {}, optionsPagination);
 
 		return res.json({
 			equipments: listEquipments.docs,

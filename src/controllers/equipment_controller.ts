@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
 import equipment from "../models/equipment";
-import { IEquipment } from "../types/types";
+import { IEquipment, RequestUser } from "../types/types";
 import mongoose from "mongoose";
 import { verifyEquipment } from "../middlewares/verifyForms";
 import moment from "moment";
 import { registerLog } from "../middlewares/verifySignup";
+import user from "../models/user";
+import role from "../models/role";
 
 export const getEquipment = async (req: Request, res: Response) => {
   //Get the equipemnt from the id
@@ -12,7 +14,7 @@ export const getEquipment = async (req: Request, res: Response) => {
     const validId = mongoose.Types.ObjectId.isValid(req.params.id);
     if (!validId) return res.status(402).json("Identificador no valido");
     const id = req.params.id;
-    const equipmentFound = await equipment.findById(id);
+    const equipmentFound = await equipment.findById(id).populate({ path: 'user', select: { 'ci': 1, 'firstname': 1, 'lastname': 1} });
     if (!equipmentFound) {
       return res.status(404).json({
         status: 404,
@@ -36,6 +38,7 @@ export const registerEquipment = async (
       asset_number,
       model,
       serial,
+      incorporated,
       brand,
     } = req.body as unknown as IEquipment;
      
@@ -55,6 +58,8 @@ export const registerEquipment = async (
       model,
       serial,
       brand,
+      incorporated,
+      user:req.userId,
       created_at:new Date(),
       updated_at: new Date()
     });
@@ -77,6 +82,7 @@ export const updateEquipment = async (req: Request, res: Response) => {
       asset_number,
       model,
       serial,
+      incorporated,
       brand,
     } = req.body as unknown as IEquipment;
      
@@ -85,6 +91,7 @@ export const updateEquipment = async (req: Request, res: Response) => {
     if(validation !== '') return res.status(400).json({message:validation})
 
     const equipmentFound = await equipment.findById(req.params.id);
+    console.log(equipmentFound)
      //Validate the body and update fields from Equipment
     if (!equipmentFound) return res.status(404).json({ message: "No se encontro el equipo" });
 
@@ -105,6 +112,7 @@ export const updateEquipment = async (req: Request, res: Response) => {
           asset_number,
           model,
           serial,
+          incorporated,
           brand,
           updated_at:new Date(),
         },
@@ -122,7 +130,7 @@ export const updateEquipment = async (req: Request, res: Response) => {
   }
 };
 
-export const list = async (req:Request,res:Response) =>{
+export const list = async (req:RequestUser,res:Response) =>{
   try{
     const dateQuery = String(req.query.date) || "";
     let date;
@@ -139,9 +147,23 @@ export const list = async (req:Request,res:Response) =>{
       lean: false,
       limit: req.query && Number(req.query.limit) ? Number(req.query.limit) : 10,
       page: req.query && Number(req.query.page) ? Number(req.query.page) : 1,
-      sort:{created_at:-1}
+      sort:{created_at:-1},
+      populate: { path: 'user', select: { 'ci': 1, 'firstname': 1, 'lastname': 1} }
     };
-    console.log(String(`${dateQuery}`))
+    
+     // Check if user is administrador
+     const foundUser = await user.findById(req.userId)
+     let filterUser = req.userId
+     if(!foundUser) {
+       return res.status(404).json({message:'Error al filtrar'})
+     }
+     const rol = await role.find({ _id: { $in: foundUser.rol } });
+     
+     
+     if (rol[0].name === "admin") {
+       filterUser = String(req.query.user)
+     }
+
     const search = req.query.search || ''
 
     const equipments = await equipment.paginate({
@@ -150,8 +172,14 @@ export const list = async (req:Request,res:Response) =>{
           { model: new RegExp(String(search), "gi") },
           { serial: new RegExp(String(search), "gi") },
           { asset_number: new RegExp(String(search), "gi") },
+          
       ],
-      $and: [date ? { 'register_date.year': {$in: [Number(date[0])]}, 'register_date.month':{$in:[Number(date[1])]} } : {}],
+      $and: [date ? { 'register_date.year': {$in: [Number(date[0])]}, 
+      'register_date.month':{$in:[Number(date[1])]} } : {},
+       rol[0].name == "admin" && !req.query.user ? {} : rol[0].name == "admin" && req.query.user ? {user:filterUser} : {},
+       rol[0].name == "user" && req.userId == req.query.user ? {user:req.userId} : {}
+    
+    ],
   },
   optionsPagination);
 

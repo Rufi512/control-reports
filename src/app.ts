@@ -31,6 +31,7 @@ app.use('/api/logs',logs)
 app.use('/api/recovery',recovery)
 app.use('/api/headquarter',headquarter)
 //Store public documents
+app.use(express.static("public"));
 app.use('/public/contents/evidences',express.static(path.resolve('public/contents/evidences')))
 app.use('/public/users/avatar',express.static(path.resolve('public/users/avatar')))
 

@@ -51,8 +51,9 @@ const Login = () => {
       const res = await loginUser({token:captchaUser.token,body:user});
       if(!res || res.status >= 400) return setIsSubmit(false);
       const first_login = res?.data.first_login
-      const id_user = res?.data.user
+      const id_user = res?.data.user.id
       Cookies.set('accessToken',res?.data.accessToken)
+      Cookies.set('rol',res?.data.user.rol.toLowerCase())
       if(first_login) return navigate(`/welcome/${id_user}`)
       Cookies.set('refreshToken',res.data.refreshToken)
       Cookies.set('name',res?.data.user.name)
@@ -79,7 +80,7 @@ const Login = () => {
         className="container-sm d-flex align-items-center m-auto container-login"
         style={{ height: "100vh" }}
       >
-        <form className="form m-auto card p-3" style={{boxShadow: "0px 1px 14px 1px #818c9b4d"}} onSubmit={handleSubmit}>
+        <form autoComplete="off" className="form m-auto card p-3" style={{boxShadow: "0px 1px 14px 1px #818c9b4d"}} onSubmit={handleSubmit}>
           <div className="d-flex flex-column align-items-center mb-3 card-header">
           <img src={logo} alt="logo" className="mb-3" style={{width:'70px'}}/>
           <h3 className="text-center">Sistema de registro</h3>
@@ -103,9 +104,16 @@ const Login = () => {
               className="p-2"
               id="password"
               name="password"
-              autoComplete="off"
+              autoComplete="new-password"
               onChange={handleChanges}
               value={user.password}
+              onPaste={(e)=>{
+                e.preventDefault()
+                return false;
+              }} onCopy={(e)=>{
+                e.preventDefault()
+                return false;
+              }} 
               placeholder="Contraseña"
               style={{width:'100%',height:'40px',border:'none',outline:0}}
             />

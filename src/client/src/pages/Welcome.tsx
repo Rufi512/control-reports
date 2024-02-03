@@ -100,7 +100,7 @@ const Welcome = () => {
     const regexSpaces = new RegExp(/\s/g);
 
     setValidationPass({
-      lengthWords: password.length > 5,
+      lengthWords: password.length > 7,
       specials: regexSpecials.test(password),
       mayus: regexMayuscula.test(password),
       numbers: regexNumerico.test(password),
@@ -348,6 +348,7 @@ const Welcome = () => {
                 className="form-control"
                 placeholder="Posicion"
                 autoComplete="off"
+                readOnly={Cookies.get('rol') == 'admin' ? false : true}
                 {...register("position", {
                   required: true,
                   pattern: /^[A-Za-z0-9 áéíóúñ'`]+$/i,
@@ -442,7 +443,7 @@ const Welcome = () => {
                         : ""
                     }`}
                   >
-                    Contener mas de 5 caracteres
+                    Contener minimo 7 caracteres
                   </li>
                   <li
                     className={`list-group-item ${

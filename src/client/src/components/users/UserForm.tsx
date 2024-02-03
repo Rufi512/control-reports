@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { UsersApi } from "../../Api";
 import { Quest } from "../../types/quest";
 import { deleteQuest, registerQuest } from "../../Api/UsersApi";
+import Cookies from "js-cookie";
 type Props = {
 	create: boolean;
 	edit: boolean;
@@ -266,7 +267,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 		const regexSpaces = new RegExp(/\s/g);
 
 		setValidationPass({
-			lengthWords: password.length > 5,
+			lengthWords: password.length > 7,
 			specials: regexSpecials.test(password),
 			mayus: regexMayuscula.test(password),
 			numbers: regexNumerico.test(password),
@@ -522,6 +523,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 								  className="form-control"
 								  placeholder="Cargo"
 								  autoComplete="off"
+								  readOnly={Cookies.get('rol') == 'admin' ? false : true}
 									{...field}
 									onChange={(e) => e.target.value.match(/^[A-Za-z0-9 áéíóúñ'`]+$/i) && e.target.value.length < 40 || e.target.value == '' ? field.onChange(e.target.value) : ''}
 								  />
@@ -564,6 +566,13 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 							name="compare"
 							placeholder="Confirmar contraseña"
 							onInput={handleChangesPassword}
+							onPaste={(e)=>{
+								e.preventDefault()
+								return false;
+							  }} onCopy={(e)=>{
+								e.preventDefault()
+								return false;
+							  }} 
 							value={userPassword.compare || ""}
 							autoComplete="off"
 						/>
@@ -592,7 +601,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 											: ""
 									}`}
 								>
-									Contener mas de 5 caracteres
+									Contener minimo 7 caracteres
 								</li>
 								<li
 									className={`list-group-item ${
@@ -678,7 +687,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 					className="container-buttons row p-2 justify-content-end gap-3"
 					style={{ marginTop: "15px" }}
 				>
-					{edit ? <button
+					{edit && Cookies.get('rol') == 'admin' && Cookies.get('id_user') != user._id ? <button
 						type="button"
 						className="btn btn-danger col-md-4"
 						disabled={submit}

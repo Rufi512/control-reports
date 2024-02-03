@@ -33,7 +33,6 @@
     color: #242424;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
     max-width: 95%;
 }
 

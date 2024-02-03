@@ -5,6 +5,8 @@ import role from "../models/role";
 import { verifySignup } from "../middlewares";
 import { Request, Response, NextFunction } from "express";
 import { RequestUser } from "../types/types";
+import report from "../models/report";
+import equipment from "../models/equipment";
 dotenv.config();
 const secret = process.env.SECRET || "";
 const CAPTCHA_SECRET = process.env.CAPTCHA_SECRET || "";
@@ -244,3 +246,83 @@ export const isAdmin = async (
       .json({ message: "No tienes permisos para acceder a esta información" });
   }
 };
+
+
+
+export const checkReport = async(req: RequestUser, res: Response, next: NextFunction) =>{
+  try{
+
+    //Check if user is same to report
+
+    const reportFound = await report.findOne({ id: req.params.id });
+
+    if(!reportFound) return res.status(404).json({message:'Reporte no encontrado'})
+
+    //Check if user is admin
+    const userFound = await user.findById(req.userId);
+    if (!userFound)
+      return res.status(401).json({ message: "No se encontro al usuario" });
+    const rol = await role.find({ _id: { $in: userFound.rol } });
+    console.log(userFound)
+    if (rol[0].name === "admin") {
+      next();
+      return;
+    }
+
+    //Check if report in user is the same
+    
+    if(reportFound.user.toString() !== req.userId){
+      return res.status(401).json({message:'No tienes permisos para esta información'})
+    }
+
+    return next()
+
+    
+
+  }catch(err){
+    console.log(err);
+    return res
+      .status(401)
+      .json({ message: "No tienes permisos para esta información" });
+  }
+}
+
+
+export const checkEquipment = async(req: RequestUser, res: Response, next: NextFunction) =>{
+  try{
+
+    //Check if user is same to equipment
+
+    const equipmentFound = await equipment.findOne({ _id: req.params.id });
+
+    if(!equipmentFound) return res.status(404).json({message:'Equipo no encontrado'})
+
+    //Check if user is admin
+    const userFound = await user.findById(req.userId);
+    if (!userFound)
+      return res.status(401).json({ message: "No se encontro al usuario" });
+    const rol = await role.find({ _id: { $in: userFound.rol } });
+    console.log(userFound)
+    if (rol[0].name === "admin") {
+      next();
+      return;
+    }
+
+    //Check if equipment in user is the same
+    console.log(equipmentFound.user)
+    console.log(req.userId)
+    if(equipmentFound.user.toString() !== req.userId){
+      return res.status(401).json({message:'No tienes permisos para esta información'})
+    }
+
+    return next()
+
+    
+
+  }catch(err){
+    console.log(err);
+    return res
+      .status(401)
+      .json({ message: "No tienes permisos para esta información" });
+  }
+}

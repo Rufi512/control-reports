@@ -81,13 +81,14 @@ export const validateDescriptions = async (value: any) => {
 
 export const validateOnlyNumber = async (value: string) => {
     console.log(value);
+    if(!value || value == '') return ""
     if (
         !Number.isInteger(Number(value)) ||
         Number(value) < 0 ||
         value.length > 30 ||
         !/^[0-9]+$/.test(value)
     ) {
-        return `El campo numero del bien debe contener solo numeros y tener maximo 30 caracteres sin espacios!`;
+        return `El campo numero de bien debe contener solo numeros y tener maximo 30 caracteres sin espacios!`;
     }
     return "";
 };
@@ -98,7 +99,7 @@ export const validatePassword = async (password:string) =>{
      const regexSpecials = new RegExp(/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/)
      const regexMayuscula = new RegExp(/[A-Z]/)
      const regexNumerico = new RegExp(/[0-9]/)
-     if(password.length < 5) error = 'la contraseña debe tener minimo 5 caracteres' 
+     if(password.length < 7) error = 'la contraseña debe tener minimo 7 caracteres' 
      if(!regexSpecials.test(password)) error = 'La contraseña no contiene caracteres especiales'
      if(!regexMayuscula.test(password)) error = 'La contraseña no contiene caracteres en mayuscula'
      if(!regexNumerico.test(password)) error = 'La contraseña no contiene caracteres numericos'
@@ -262,12 +263,6 @@ export const verifyReport = async (data: ReportModel) => {
     if (!description || !register_date || !equipments) {
         error = "Complete los campos requeridos";
         return error;
-    }
-
-    const foundUser = user.findOne({_id:data.user})
-    if(!foundUser){
-        error = 'No se encontro al usuario a asignar'
-        return error
     }
 
     const foundHq = headquarter.findOne({_id:data.hq})

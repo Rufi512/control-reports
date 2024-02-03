@@ -3,16 +3,17 @@ import { Request, Response } from "express";
 import report from "../models/report";
 import fs from "fs";
 import { unlink } from "fs/promises";
-import { ReportModel } from "../types/types";
+import { ReportModel, RequestUser } from "../types/types";
 import mongoose from "mongoose";
 import equipment from "../models/equipment";
 import moment from "moment";
 import user from "../models/user";
 import { registerLog } from "../middlewares/verifySignup";
 import headquarter from "../models/headquarter";
+import role from "../models/role";
 
 
-export const list = async (req: Request, res: Response) => {
+export const list = async (req: RequestUser, res: Response) => {
   try{
     const dateQuery = String(req.query.date) || "";
     let date;
@@ -30,15 +31,35 @@ export const list = async (req: Request, res: Response) => {
       limit: req.query && Number(req.query.limit) ? Number(req.query.limit) : 10,
       page: req.query && Number(req.query.page) ? Number(req.query.page) : 1,
       sort:{created_at:-1},
-      populate: 'equipments'
+      populate: { path: 'user', select: { 'ci': 1, 'firstname': 1, 'lastname': 1} }
     };
-    console.log(req.query.hq)
+
+    // Check if user is administrador
+    const foundUser = await user.findById(req.userId)
+    let filterUser = req.userId
+    if(!foundUser) {
+      return res.status(404).json({message:'Error al filtrar'})
+    }
+    const rol = await role.find({ _id: { $in: foundUser.rol } });
+    
+    
+    if (rol[0].name === "admin") {
+      filterUser = String(req.query.user)
+    }
+
     const search = req.query.search || ''
     const reports = await report.paginate({
       $or: [
-          { record_type: new RegExp(String(search), "gi")}
+          { record_type: new RegExp(String(search), "gi")},
       ],
-      $and: [date ? { 'register_date.year': {$in: [Number(date[0])]}, 'register_date.month':{$in:[Number(date[1])]} } : {},  req.query.hq ? { hq: req.query.hq } : {}],
+      $and: [
+        date ? { 'register_date.year': {$in: [Number(date[0])]}, 
+        'register_date.month':{$in:[Number(date[1])]} } : {},  
+        req.query.hq ? { hq: req.query.hq } : {},
+        rol[0].name == "admin" && !req.query.user ? {} : rol[0].name == "admin" && req.query.user ? {user:filterUser} : {},
+        //rol[0].name == "user" ? {user:req.userId} : {}
+        rol[0].name == "user" && req.userId == req.query.user ? {user:req.userId} : {}
+      ],
   },
   optionsPagination);
   
@@ -79,13 +100,8 @@ export const registerReport = async (req: any, res: Response) => {
       equipments,
       evidences_description,
       note,
-      userId,
       hqId
     } = req.body as ReportModel;
-    
-    const foundUser = await user.findOne({_id:userId})
-
-    if(!foundUser) return res.status(404).json({message:'No se ha podido asignar al usuario'})
 
     const foundHq = await headquarter.findOne({_id:hqId})
 
@@ -144,7 +160,7 @@ export const registerReport = async (req: any, res: Response) => {
       note,
       created_at:new Date(),
       updated_at: new Date(),
-      user:userId,
+      user:req.userId,
       hq:hqId
     });
     await createReport.save();
@@ -166,7 +182,6 @@ export const updateReport = async (req: any, res: Response) => {
       evidences_description,
       evidences_description_old,
       note,
-      userId,
       hqId
     } = req.body as ReportModel;
 
@@ -175,9 +190,6 @@ export const updateReport = async (req: any, res: Response) => {
     if (!reportFound)
       return res.status(404).json({ message: "No se encontro el reporte" });
 
-    const foundUser = await user.findOne({_id:userId})
-
-    if(!foundUser) return res.status(404).json({message:'No se ha podido asignar al usuario'})
 
     const foundHq = await headquarter.findOne({_id:hqId})
 
@@ -259,7 +271,6 @@ export const updateReport = async (req: any, res: Response) => {
           }),
           updated_at: new Date(),
           evidences: evidencesUpdate,
-          user:userId,
           hq:hqId
         },
       }

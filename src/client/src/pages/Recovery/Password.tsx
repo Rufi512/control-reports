@@ -37,7 +37,7 @@ const Password = () => {
 		const regexSpaces = new RegExp(/\s/g);
 
 		setValidationPass({
-			lengthWords: password.length > 5,
+			lengthWords: password.length > 7,
 			specials: regexSpecials.test(password),
 			mayus: regexMayuscula.test(password),
 			numbers: regexNumerico.test(password),
@@ -113,7 +113,7 @@ const Password = () => {
 										: ""
 								}`}
 							>
-								Contener mas de 5 caracteres
+								Contener minimo 7 caracteres
 							</li>
 							<li
 								className={`list-group-item ${
@@ -195,6 +195,14 @@ const Password = () => {
 								onInput={handleChangesPassword}
 								value={userPassword.confirmPassword || ""}
 								autoComplete="off"
+								onPaste={(e)=>{
+									e.preventDefault()
+									return false;
+								  }} 
+								onCopy={(e)=>{
+									e.preventDefault()
+									return false;
+								  }} 
 							/>
 						</div>
 

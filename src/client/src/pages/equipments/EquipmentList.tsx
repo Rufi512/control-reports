@@ -9,6 +9,10 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import "../../assets/styles/pages/equipment.css";
 import Loader from "../../components/Loader";
 import ErrorAdvice from "../../components/ErrorAdvice";
+import { getSelectsUsers } from "../../Api/UsersApi";
+import { toast } from "react-toastify";
+import Cookies from "js-cookie";
+import AsyncSelect from "react-select/async";
 const EquipmentList = () => {
   const ref = useRef(window);
   const [width, setWidth] = useState(window.innerWidth);
@@ -18,6 +22,7 @@ const EquipmentList = () => {
     page: 1 || Number(searchBarParams.get("page")),
     search: "" || searchBarParams.get("search")?.toString(),
     searchForDate: searchBarParams.get("date") ? true : false,
+    user: "" || searchBarParams.get("user")?.toString(),
     date:
       searchBarParams.get("date")?.toString() ||
       `${new Date().getFullYear()}-${
@@ -30,6 +35,12 @@ const EquipmentList = () => {
     totalPages: 0,
     totalDocs: 0,
   });
+
+  const [userSelected, setUserSelected] = useState({
+    label: "Todos los usuarios",
+    value: "",
+  });
+
   const [equipments, setEquipments] = useState<Equipment[]>([]);
 
   const [isRequest, setIsRequest] = useState(true);
@@ -106,6 +117,33 @@ const EquipmentList = () => {
     }
   };
 
+
+  const requestUserSelect = async (search: string) => {
+    try {
+      const res = await getSelectsUsers(search || "");
+      if (res && res.status >= 400) {
+        toast.error("Error al requerir lista de usuarios");
+        return [];
+      }
+      const data = res?.data || { label: "", value: "" };
+      return [{ label: "Todos los usuarios", value: "" }, ...data] || [];
+    } catch (err) {
+      console.log(err);
+      return [];
+    }
+  };
+
+  const handleSelectUser = (data: any) => {
+    setUserSelected({ label: data.label, value: data.value });
+    setSearchParams({ ...searchParams, user: data.value });
+  };
+
+  const showMyItems = (e:ChangeEvent<HTMLInputElement>) =>{
+    const id = Cookies.get('id_user')
+    setSearchParams({ ...searchParams, user: e.target.checked ? id : '' })
+
+  }
+
   useEffect(() => {
     request();
     console.log("call");
@@ -119,7 +157,41 @@ const EquipmentList = () => {
         </h2>
         <hr />
       </div>
+
+      
       <div className="container-fluid container-body-content">
+      {Cookies.get("rol") == "admin" ? (
+              <>
+
+                <label style={{ fontWeight: "600", marginBottom:'4px' }}>Equipos de</label>
+
+                <AsyncSelect
+                  loadOptions={requestUserSelect}
+                  onChange={handleSelectUser}
+                  value={userSelected}
+                  defaultOptions
+                />
+                <br />
+
+              </>
+            ) : (
+              ""
+            )}
+
+        {
+          Cookies.get("rol") == 'user' ? (
+            <>
+
+            <div className="form-check form-switch">
+                  <input className="form-check-input" type="checkbox" id="switch-user" onChange={(e)=>showMyItems(e)}/>
+                  <label className="form-check-label" htmlFor="switch-user" >Mostrar mis equipos</label>
+                </div>
+            <br />
+
+          </>
+          ): ''
+        }
+
         <SearchBar
           searchParams={{
             limit: 10,
@@ -137,6 +209,9 @@ const EquipmentList = () => {
           totalDocs={requestParams.totalDocs}
           request={request}
         />
+
+      
+
         {isRequest ? (
           <div
             className="d-flex flex-column justify-content-center align-items-center"
@@ -175,6 +250,7 @@ const EquipmentList = () => {
                     <th scope="col">Marca</th>
                     <th scope="col">Modelo</th>
                     <th scope="col">Serial</th>
+                    <th scope="col">Registrado por:</th>
                     <th scope="col">Fecha de registro</th>
                   </tr>
                 </thead>
@@ -203,9 +279,14 @@ const EquipmentList = () => {
                               {el.serial.toUpperCase()}
                             </Link>
                           </td>
+                          {el.user ? <td>
+                            <Link to={`/equipment/detail/${el._id}`}>
+                              {el.user.firstname} {el.user.lastname}
+                            </Link>
+                          </td> : <td> <Link to={`/equipment/detail/${el._id}`}>No especificado</Link></td>}
                           {el.register_date ? (
                             <td>
-                              <Link to={`/equipment/detail/${el.id}`}>
+                              <Link to={`/equipment/detail/${el._id}`}>
                                 {el.register_date.day}/{el.register_date.month}/
                                 {el.register_date.year}
                               </Link>
@@ -233,7 +314,7 @@ const EquipmentList = () => {
                 </tbody>
               </table>
             ) : (
-              <div className="list-group">
+              <div className="list-group" style={{gap: '20px'}}>
                 {equipments.length > 0 ? (
                   equipments.map((el: Equipment, i: number) => {
                     return (
@@ -243,8 +324,8 @@ const EquipmentList = () => {
                         key={i}
                       >
                         <div className="d-flex w-100 justify-content-between">
-                          <h5 className="mb-1">
-                            {el.asset_number.toUpperCase()}
+                          <h5 className="mb-1" style={{fontSize:'16px'}}>
+                             <b>Numero de bien:</b> {el.asset_number.toUpperCase()}
                           </h5>
                           {el.register_date ? (
                             <small>
@@ -256,13 +337,18 @@ const EquipmentList = () => {
                           )}
                         </div>
                         <small>
-                          {el.brand.toUpperCase()} - {el.model.toUpperCase()}
+                        <b>Equipo:</b> {el.brand.toUpperCase()} - {el.model.toUpperCase()}
                         </small>
                         <br />
                         <small>
                           <span style={{ fontWeight: "600" }}>Serial:</span>
                           {el.serial.toUpperCase()}
                         </small>
+                        <br/>
+                        {el.user ? <small>
+                          <b>Registrado por:{" "}</b>
+                          {el.user?.firstname} {el.user?.lastname} 
+                        </small> : ''}
                       </Link>
                     );
                   })

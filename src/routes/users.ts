@@ -5,9 +5,9 @@ import { isAdmin, isUserOrAdmin, verifyToken, verifyTokenValidate } from "../mid
 
 const router = Router()
 
-router.get('/list',[verifyToken],getUsers)
+router.get('/list',[verifyToken,isAdmin],getUsers)
 
-router.get('/list/select',[verifyToken],listSelect)
+router.get('/list/select',[verifyToken, isAdmin],listSelect)
 
 router.get('/detail/:id',[verifyToken,isUserOrAdmin],infoUser)
 

@@ -4,11 +4,11 @@ import useAuth from "../hooks/useAuth"
 import customFetch from "./axios"
 const REPORTS_API = '/api/reports'
 
-export const getReports = async ({page = 1,limit = 15,search = '',searchForDate = false, hq='', date=`${new Date().getFullYear()}-${new Date().getUTCMonth() + 1 < 10 ? '0' : ''}${new Date().getUTCMonth() + 1 }`}) =>{
-    
+export const getReports = async ({page = 1,limit = 15,search = '',searchForDate = false, hq='', user='', date=`${new Date().getFullYear()}-${new Date().getUTCMonth() + 1 < 10 ? '0' : ''}${new Date().getUTCMonth() + 1 }`}) =>{
+    console.log(user)
     try {
         const config = {headers:{"x-access-token":Cookies.get('accessToken')}}
-        const res = await customFetch.get(REPORTS_API + `/list?page=${page}&limit=${limit}${searchForDate ? `&date=${date}` : '' }&search=${search}&hq=${hq}`,config)
+        const res = await customFetch.get(REPORTS_API + `/list?page=${page}&limit=${limit}${searchForDate ? `&date=${date}` : '' }&search=${search}&hq=${hq}${Cookies.get("rol") == 'admin' || Cookies.get("id_user") == user ? `&user=${user}` : ''}`,config)
         return res
     } catch (error) {
         const err = error as AxiosError

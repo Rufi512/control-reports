@@ -18,7 +18,7 @@ const equipmentSchema = new Schema({
   },
   asset_number:{
     type: String,
-    required:true,
+    required:false,
     maxLength: 40,
     unique:true
   },
@@ -33,14 +33,22 @@ const equipmentSchema = new Schema({
   },
   serial:{
     type: String,
-    required:true,
+    required:false,
     maxLength: 40,
     unique:true
+  },
+  user:{
+    ref:'user',
+    type:Schema.Types.ObjectId,
+    require:true
+  },
+  incorporated:{
+    type:Boolean
   },
   register_date:{
     type:Object,
     required:false,
-  default:{ day:new Date().getUTCDate(), month:new Date().getUTCMonth() + 1, year:new Date().getFullYear()}
+    default:{ day:new Date().getUTCDate(), month:new Date().getUTCMonth() + 1, year:new Date().getFullYear()}
   }, 
 },{
   versionKey:false

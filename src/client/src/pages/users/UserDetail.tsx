@@ -18,6 +18,7 @@ import { Quest } from "../../types/quest";
 import dateformat from "../../hooks/useDateFormat";
 import Loader from "../../components/Loader";
 import ErrorAdvice from "../../components/ErrorAdvice";
+import Cookies from "js-cookie";
 const UserDetail = () => {
   const navigate = useNavigate();
   const [userRead, setUserRead] = useState<User>();
@@ -107,7 +108,7 @@ const UserDetail = () => {
               className="container-actions-buttons"
               style={{ padding: "0 12px" }}
             >
-              <button
+             {Cookies.get('rol') == 'admin' || Cookies.get('id_user') != userRead?._id ? <button
                 className="btn btn-danger m-2"
                 style={{ display: edit ? "block" : "none" }}
                 onClick={() => {
@@ -120,7 +121,7 @@ const UserDetail = () => {
                 }}
               >
                 <FontAwesomeIcon icon={faTrash} /> <span>Eliminar Usuario</span>
-              </button>
+              </button>: ''} 
               <div
                 className="form-check form-switch"
                 style={{

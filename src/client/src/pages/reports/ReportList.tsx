@@ -12,11 +12,13 @@ import ErrorAdvice from "../../components/ErrorAdvice";
 import AsyncSelect from "react-select/async";
 import { getSelectsHq } from "../../Api/HQApi";
 import { toast } from "react-toastify";
+import { getSelectsUsers } from "../../Api/UsersApi";
+import Cookies from "js-cookie";
 
 type Props = {
   HqData?: boolean;
   HqId?: string;
-}
+};
 
 const ReportList = ({ HqData, HqId }: Props) => {
   const ref = useRef(window);
@@ -27,6 +29,7 @@ const ReportList = ({ HqData, HqId }: Props) => {
     page: 1 || Number(searchBarParams.get("page")),
     search: "" || searchBarParams.get("search")?.toString(),
     searchForDate: searchBarParams.get("date") ? true : false,
+    user: "" || searchBarParams.get("user")?.toString(),
     date:
       searchBarParams.get("date")?.toString() ||
       `${new Date().getFullYear()}-${
@@ -80,6 +83,11 @@ const ReportList = ({ HqData, HqId }: Props) => {
     value: "",
   });
 
+  const [userSelected, setUserSelected] = useState({
+    label: "Todos los usuarios",
+    value: "",
+  });
+
   useEffect(() => {
     const element = ref.current;
 
@@ -95,6 +103,7 @@ const ReportList = ({ HqData, HqId }: Props) => {
   const request = async () => {
     setIsRequest(true);
     try {
+      console.log(searchParams);
       const res = await reportsApi.getReports(searchParams);
       setIsRequest(false);
       if (!res) return setErrorRequest(true);
@@ -118,11 +127,11 @@ const ReportList = ({ HqData, HqId }: Props) => {
     try {
       const res = await getSelectsHq(search || "");
       if (res && res.status >= 400) {
-        toast.error("Error al requerir lista de equipos")
-        return []
-    };
-      const data = res?.data || {label:'',value:''};
-      return [{label:'Todas las sedes', value:''},...data] || [];
+        toast.error("Error al requerir lista de equipos");
+        return [];
+      }
+      const data = res?.data || { label: "", value: "" };
+      return [{ label: "Todas las sedes", value: "" }, ...data] || [];
     } catch (err) {
       console.log(err);
       return [];
@@ -132,6 +141,26 @@ const ReportList = ({ HqData, HqId }: Props) => {
   const handleSelectHq = (data: any) => {
     setSearchParams({ ...searchParams, hq: data.value });
     setHqSelected({ label: data.label, value: data.value });
+  };
+
+  const handleSelectUser = (data: any) => {
+    setUserSelected({ label: data.label, value: data.value });
+    setSearchParams({ ...searchParams, user: data.value });
+  };
+
+  const requestUserSelect = async (search: string) => {
+    try {
+      const res = await getSelectsUsers(search || "");
+      if (res && res.status >= 400) {
+        toast.error("Error al requerir lista de usuarios");
+        return [];
+      }
+      const data = res?.data || { label: "", value: "" };
+      return [{ label: "Todos los usuarios", value: "" }, ...data] || [];
+    } catch (err) {
+      console.log(err);
+      return [];
+    }
   };
 
   useEffect(() => {
@@ -157,16 +186,57 @@ const ReportList = ({ HqData, HqId }: Props) => {
       <div
         className={`${!HqData ? "container-fluid" : ""} container-body-content`}
       >
-      {!HqData ? <div className="form-group" style={{marginBottom:'15px'}}>
-          <label style={{fontWeight:'600'}}>Sede del reporte</label>
+        {!HqData ? (
+          <div className="form-group" style={{ marginBottom: "15px" }}>
+            <label style={{ fontWeight: "600" }}>Sede del reporte</label>
 
-          <AsyncSelect
-            loadOptions={requestHqSelect}
-            onChange={handleSelectHq}
-            value={hqSelected}
-            defaultOptions
-          />
-        </div> : ''}
+            <AsyncSelect
+              loadOptions={requestHqSelect}
+              onChange={handleSelectHq}
+              value={hqSelected}
+              defaultOptions
+            />
+           
+
+            <br />
+          </div>
+        ) : (
+          ""
+        )}
+
+      {
+        Cookies.get("rol") == "admin" ? (
+              <>
+
+                <label style={{ fontWeight: "600" }}>Reportes de</label>
+
+                <AsyncSelect
+                  loadOptions={requestUserSelect}
+                  onChange={handleSelectUser}
+                  value={userSelected}
+                  defaultOptions
+                />
+                <br />
+
+              </>
+            ) : (
+              ""
+            )}
+
+      {
+          Cookies.get("rol") == 'user' ? (
+            <>
+
+            <div className="form-check form-switch">
+                  <input className="form-check-input" type="checkbox" id="switch-user" onChange={(e)=>{setSearchParams({ ...searchParams, user: e.target.checked ? Cookies.get('id_user') : '' });}}/>
+                  <label className="form-check-label" htmlFor="switch-user" >Mostrar mis reportes</label>
+                </div>
+            <br />
+
+          </>
+          ): ''
+        }
+
         <SearchBar
           searchParams={{
             limit: 10,
@@ -226,6 +296,7 @@ const ReportList = ({ HqData, HqId }: Props) => {
                     <th scope="col">Tipo de registro</th>
                     <th scope="col">Fecha de registro</th>
                     <th scope="col">Equipos reportados</th>
+                    <th scope="col">Registrado por</th>
                     <th scope="col">Ultima modificacion</th>
                   </tr>
                 </thead>
@@ -248,6 +319,11 @@ const ReportList = ({ HqData, HqId }: Props) => {
                           <td>
                             <Link to={`/report/detail/${el.id}`}>
                               {el.equipments.length}
+                            </Link>
+                          </td>
+                          <td>
+                            <Link to={`/report/detail/${el.id}`}>
+                            {el.user?.firstname} {el.user?.lastname}
                             </Link>
                           </td>
                           <td>
@@ -275,7 +351,7 @@ const ReportList = ({ HqData, HqId }: Props) => {
                 </tbody>
               </table>
             ) : (
-              <div className="list-group">
+              <div className="list-group" style={{gap: '20px'}}>
                 {reports.length > 0 ? (
                   reports.map((el: Report, i: number) => {
                     return (
@@ -285,7 +361,7 @@ const ReportList = ({ HqData, HqId }: Props) => {
                         key={i}
                       >
                         <div className="d-flex w-100 justify-content-between">
-                          <h5 className="mb-1">
+                          <h5 className="mb-1" style={{fontSize:'16px'}}>
                             {el.record_type?.toUpperCase()}
                           </h5>
                           <small>
@@ -294,11 +370,16 @@ const ReportList = ({ HqData, HqId }: Props) => {
                           </small>
                         </div>
                         <small>
-                          Equipos registrados: {el.equipments.length}
+                          <b>Equipos registrados:</b> {el.equipments.length}
                         </small>
                         <br />
                         <small>
-                          Ultima actualizacion:{" "}
+                          <b>Registrado por:{" "}</b>
+                          {el.user?.firstname} {el.user?.lastname} - Cedula: {el.user?.ci}
+                        </small>
+                        <br />
+                        <small>
+                         <b> Ultima actualizacion:{" "}</b>
                           {dateformat(el.updated_at || "")}
                         </small>
                       </Link>

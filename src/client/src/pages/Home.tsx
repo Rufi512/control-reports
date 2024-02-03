@@ -236,7 +236,7 @@ const Home = () => {
 
           <hr />
           <div>
-            <h3>Reportes registrados recientemente</h3>
+            <h3>{Cookies.get('rol') == 'admin' ? 'Reportes': 'Mis reportes'} registrados recientemente</h3>
             {width > 1024 ? (
               <table className="table table-bordered table-equipments">
                 <thead>
@@ -327,7 +327,7 @@ const Home = () => {
           </div>
           <hr />
           <div>
-            <h3>Equipos registrado recientemente</h3>
+            <h3>{Cookies.get('rol') == 'admin' ? 'Equipos': 'Mis equipos'} registrado recientemente</h3>
             {width > 1024 ? (
               <table className="table table-bordered table-equipments">
                 <thead>

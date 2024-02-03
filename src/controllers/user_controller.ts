@@ -9,6 +9,8 @@ import { registerLog } from "../middlewares/verifySignup";
 import fs from "fs";
 import quest from "../models/quest";
 import { RequestUser } from "../types/types";
+import report from "../models/report";
+import equipment from "../models/equipment";
 dotenv.config();
 
 export const getUsers = async (req: Request, res: Response) => {
@@ -246,7 +248,6 @@ export const validateUser = async (req: any, res: Response) => {
             lastname,
             email,
             password,
-            position,
             questions,
             answers
         } = req.body;
@@ -278,6 +279,18 @@ export const validateUser = async (req: any, res: Response) => {
             if(req.file && req.file.path)fs.unlinkSync(req.file.path || "");
             return res.status(400).json({ message: checkRegister.message });
         }
+
+
+        //Check if user is admin to set position
+        let positionUser = userFound.position
+
+        const userAdmin = await user.findById(req.params.id);
+            if (!userAdmin) return res.status(401).json({ message: "No se encontro al usuario" });
+            const rol = await role.find({ _id: { $in: userAdmin.rol } });
+            console.log(userAdmin)
+            if (rol[0].name === "admin") {
+                positionUser = req.body.position
+            }
 
 
         const questionsUser = questions.map(async (el: string, i: number) => {
@@ -314,7 +327,7 @@ export const validateUser = async (req: any, res: Response) => {
                     lastname,
                     email,
                     password: await user.encryptPassword(password),
-                    position,
+                    position:positionUser,
                     first_login: false,
                     avatar: req.file?.path || userFound.avatar,
                     updated_at: new Date(),
@@ -364,6 +377,18 @@ export const updateUser = async (req: any, res: Response) => {
 
         const rolFind = await role.findOne({ name: { $in: req.body.rol } });
 
+
+        //Check if user is admin to set position
+        let positionUser = userFound.position
+
+        const userAdmin = await user.findById(req.userId);
+            if (!userAdmin) return res.status(401).json({ message: "No se encontro al usuario" });
+            const rol = await role.find({ _id: { $in: userAdmin.rol } });
+            console.log(userAdmin)
+            if (rol[0].name === "admin") {
+                positionUser = req.body.position
+            }
+
         // Check if email or ci is in used to other user
         const userFind = await user.findOne({
             $or: [{ email: req.body.email }, { ci: req.body.ci }],
@@ -381,6 +406,9 @@ export const updateUser = async (req: any, res: Response) => {
             }
         }
 
+        
+
+
         //Allow modification
             await user.updateOne(
                 { _id: req.params.id || req.userId },
@@ -393,7 +421,7 @@ export const updateUser = async (req: any, res: Response) => {
                         password: req.body.allowPassword ? await user.encryptPassword(req.body.password) : userFound.password,
                         rol: rolFind?._id || userFound.rol,
                         avatar:avatar || userFound.avatar,
-                        position:req.body.position
+                        position: positionUser || userFound.position
                     },
                 }
             );
@@ -474,9 +502,20 @@ export const deleteUser = async (req: RequestUser, res: Response) => {
         const userFound = await user.findById(req.params.id);
         const listUsers = await user.paginate({}, {});
         const userAdmin = listUsers.docs[0];
-        
+
         if (!userFound) return res.status(404).json({ message: "Usuario no encontrado" });
-        
+
+        const reportUser = await report.findOne({ user: userFound.id })
+        if(reportUser){
+            return res.status(400).json({message:'El usuario tiene reportes registrados en el sistema'})
+        }
+
+        const equipmentUser = await equipment.findOne({ user: userFound.id })
+        if(equipmentUser){
+            return res.status(400).json({message:'El usuario tiene reportes registrados en el sistema'})
+        }
+
+
         if (userAdmin.id === userFound.id)
             return res
                 .status(400)

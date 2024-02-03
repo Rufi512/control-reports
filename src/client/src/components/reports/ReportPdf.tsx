@@ -9,13 +9,14 @@ import {
 } from "@react-pdf/renderer";
 import logo from "../../assets/images/mp.png";
 import computer from "../../assets/images/computer.png";
-import { Report } from "../../types/report";
+import { Evidences, Report } from "../../types/report";
 import { parse } from "node-html-parser";
 import { Equipment } from "../../types/equipment";
 import Html from "react-pdf-html";
 
 type props = {
   data: Report;
+  evidences:Evidences[];
   equipments: Equipment[]
 };
 
@@ -24,7 +25,7 @@ import source2 from "../../assets/fonts/Open_Sans/static/OpenSans-Italic.ttf";
 import source3 from "../../assets/fonts/Open_Sans/static/OpenSans-Regular.ttf";
 
 
-const ReportPdf = ({ data, equipments }: props) => {
+const ReportPdf = ({ data, equipments, evidences }: props) => {
   Font.register({
     family: "OpenSans",
     fonts: [
@@ -62,7 +63,7 @@ const ReportPdf = ({ data, equipments }: props) => {
           <Image style={styles.logo} src={computer} />
         </View>
         <View style={styles.content}>
-          <Text style={styles.title}>Reporte tecnico</Text>
+          <Text style={styles.title}>{data.record_type_custom}</Text>
           <Html
             style={styles.description}
             stylesheet={stylesheet}
@@ -81,6 +82,7 @@ const ReportPdf = ({ data, equipments }: props) => {
               <View style={styles.tableCol}>
                 <Text style={styles.tableCellHeader}>N DE BIEN</Text>
               </View>
+ 
             </View>
             {equipments.map((el: Equipment, i: number) => {
               return (
@@ -92,11 +94,12 @@ const ReportPdf = ({ data, equipments }: props) => {
                     <Text style={styles.tableCell}>{el.model}</Text>
                   </View>
                   <View style={styles.tableCol}>
-                    <Text style={styles.tableCell}>{el.serial}</Text>
+                    <Text style={styles.tableCell}>{el.serial || 'No especificado'}</Text>
                   </View>
                   <View style={styles.tableCol}>
-                    <Text style={styles.tableCell}>{el.asset_number}</Text>
+                    <Text style={styles.tableCell}>{el.asset_number || 'No especificado'}</Text>
                   </View>
+
                 </View>
               );
             })}
@@ -107,11 +110,12 @@ const ReportPdf = ({ data, equipments }: props) => {
               stylesheet={stylesheet}
             >{`${noteHtml}`}</Html>
           </View>
-          <Text style={styles.date}>
+          
+        </View>
+        <View style={styles.footer} fixed>
+        <Text style={styles.date}>
             Santa Ana de Coro, a {data.register_date.day} día del mes de {months[Number(data.register_date.month) - 1]} del {data.register_date.year}
           </Text>
-        </View>
-        <View style={styles.footer}>
           <View style={styles.author}>
             <Text style={styles.authorData}>{data.user?.firstname} {data.user?.lastname}</Text>
             <Text style={styles.authorData}>{data.user?.position}</Text>
@@ -129,6 +133,52 @@ const ReportPdf = ({ data, equipments }: props) => {
           </View>
         </View>
       </Page>
+
+      
+      {evidences ? evidences.map((el,i)=>{
+        return(
+          <Page style={styles.body}>
+          <View style={styles.header} fixed>
+            <Image style={styles.logo} src={logo} />
+            <View style={styles.contentHead}>
+              <Text style={styles.head}>República Bolivariana de Venezuela</Text>
+              <Text style={styles.head}>Ministerio Público</Text>
+              <Text style={styles.head}>Informática Estado Falcón</Text>
+            </View>
+            <Image style={styles.logo} src={computer} />
+          </View>
+          <View style={styles.content}>
+            <Text style={styles.title}>{data.record_type_custom}</Text>
+            <Text style={styles.subtitle}>Evidencia {i+1}</Text>
+            <Image style={styles.evidence} src={"/" + el.url_file} />
+            <Text style={styles.description}>{el.description}</Text>
+          </View>
+          <View style={styles.footer} fixed>
+          <Text style={styles.date}>
+              Santa Ana de Coro, a {data.register_date.day} día del mes de {months[Number(data.register_date.month) - 1]} del {data.register_date.year}
+            </Text>
+            <View style={styles.author}>
+              <Text style={styles.authorData}>{data.user?.firstname} {data.user?.lastname}</Text>
+              <Text style={styles.authorData}>{data.user?.position}</Text>
+              <Text style={styles.authorData}>
+                EN LA CIRCUNSCRIPCIÓN JUDICIAL DEL ESTADO FALCÓN.
+              </Text>
+            </View>
+            <Text style={styles.direction}>
+              Avenida. Manaure, esquina Ruiz Pineda, Edificio Sede del Ministerio
+              Público, Nivel Mezanina. Coro Estado Falcón Teléfono/Fax:
+              (0268)-2530009.
+            </Text>
+            <View style={styles.footerLink}>
+              <Text style={styles.link}>http://www.ministeriopublico.gob.ve</Text>
+            </View>
+          </View>
+        </Page>
+        )
+      }) : ''}
+   
+
+
     </Document>
   );
 };
@@ -136,7 +186,7 @@ const ReportPdf = ({ data, equipments }: props) => {
 const styles = StyleSheet.create({
   body: {
     paddingTop: 35,
-    paddingBottom: 65,
+    paddingBottom: 205,
     paddingHorizontal: 30,
     fontFamily: "OpenSans",
   },
@@ -176,6 +226,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
+  subtitle: {
+    fontSize: 15,
+    fontWeight: 600,
+    color: "#000",
+    marginBottom: 10,
+  },
+
   description: {
     fontSize: 11,
     lineHeight: 1.35,
@@ -190,9 +247,14 @@ const styles = StyleSheet.create({
     fontFamily: "OpenSans",
   },
 
+  evidence:{
+    height:230,
+    marginBottom:30
+  },
+
   date: {
     marginTop: 55,
-    marginLeft: "auto",
+    marginBottom:30,
     fontSize: 12,
     textAlign: "right",
   },
@@ -215,7 +277,11 @@ const styles = StyleSheet.create({
     fontWeight: 600,
   },
   footer: {
-    marginTop: "auto",
+    position: 'absolute',
+    bottom: 30,
+    left: 20,
+    right: 20,
+    marginTop: "auto"
   },
   direction: {
     margin: "auto",
@@ -240,7 +306,8 @@ const styles = StyleSheet.create({
 
   table: {
     marginTop: 10,
-    width: "auto",
+    marginLeft:40,
+    marginRight:40,
     borderStyle: "solid",
     borderWidth: 1,
     borderRightWidth: 0,

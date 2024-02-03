@@ -14,6 +14,7 @@ export interface IEquipment{
     model:string,
     serial:string,
     brand:string,
+    incorporated:boolean
 }
 
 export interface ReportModel{

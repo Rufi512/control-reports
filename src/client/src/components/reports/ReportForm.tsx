@@ -42,7 +42,7 @@ export const ReportForm = ({
 
   const [report, setReport] = useState<ReportForm>({
     description: "",
-    record_type: "informe tecnico",
+    record_type: "Informe Tecnico",
     record_type_custom: "",
     equipments: [],
     note: "",
@@ -63,10 +63,6 @@ export const ReportForm = ({
   const [evidencesOld, setEvidencesOld] = useState<Evidences[]>([]);
 
   const [equipmentsSelected, setEquipmentsSelected] = useState<Equipment[]>([]);
-  const [userSelected, setUserSelected] = useState({
-    label: "Elegir usuario",
-    value: "",
-  });
 
   const [hqSelected, setHqSelected] = useState({
     label: "Elige la sede",
@@ -84,28 +80,20 @@ export const ReportForm = ({
 
   const handleChanges = (event: ChangeEvent<HTMLInputElement | any>) => {
     const { name, value } = event.target;
-    console.log(name, value);
     setReport({ ...report, [name]: value });
   };
 
   const handleChangeSelect2 = (data: any) => {
     const ids = data.map((el: any) => el.value);
-    console.log(ids);
     setReport({ ...report, equipments: ids });
     setEvidencesInSelect(data);
   };
 
-  const handleSelectUser = (data: any) => {
-    setUserSelected({ label: data.label, value: data.value });
-    setReport({ ...report, userId: data.value });
-    console.log(data.value);
-  };
 
   const handleSelectHq = (data: any) => {
     setHqSelected({label: data.label, value: data.value })
     setReport({ ...report, hqId: data.value });
 
-    console.log(data.value);
   };
 
   const removeEquipmentsSelected = (position: number) => {
@@ -142,7 +130,7 @@ export const ReportForm = ({
 
   //Update description from evidence registered
   const handleChangesExitsEvidences = (
-    event: ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLTextAreaElement>,
     position: number
   ) => {
     const { name, value } = event.target;
@@ -165,7 +153,7 @@ export const ReportForm = ({
       return setCustomSelect(true);
     }
     setCustomSelect(false);
-    setReport({ ...report, [name]: value });
+    setReport({ ...report, record_type_custom: "",[name]: value  });
   };
 
   const handleForm = async (continue_register: boolean) => {
@@ -173,10 +161,6 @@ export const ReportForm = ({
     try {
       isSubmit(true);
       let formData = new FormData();
-      if (!report.userId) {
-        isSubmit(false);
-        return toast.error("Debes de asignar un usuario");
-      }
 
       if (!report.hqId) {
         isSubmit(false);
@@ -225,7 +209,6 @@ export const ReportForm = ({
         }
       }
 
-      formData.append("userId", `${userSelected.value}`);
       formData.append("hqId", `${hqSelected.value}`);
       formData.delete("record_type_custom");
       formData.delete("register_date_format");
@@ -258,7 +241,6 @@ export const ReportForm = ({
         toast.success(result.data.message);
         setEvidences([]);
         setEvidencesInSelect([]);
-        setUserSelected({ label: "Elegir usuario", value: "" });
         setHqSelected({label: "Elige la sede", value: ""})
         setCustomSelect(false);
         if (request) return request(id || "");
@@ -267,7 +249,7 @@ export const ReportForm = ({
       if (continue_register) {
         setReport({
           description: "",
-          record_type: "informe tecnico",
+          record_type: "Informe Tecnico",
           record_type_custom: "",
           note: "",
           equipments: [],
@@ -296,7 +278,7 @@ export const ReportForm = ({
   useEffect(() => {
     setReport({
       description: report_detail?.description || "",
-      record_type: report_detail?.record_type || "informe tecnico",
+      record_type: report_detail?.record_type || "Informe Tecnico",
       record_type_custom: report_detail?.record_type_custom || "",
       note: report_detail?.note || "",
       equipments: [],
@@ -316,23 +298,14 @@ export const ReportForm = ({
     });
 
     if (report_detail) {
-      setCustomSelect(
-        (report_detail.record_type && report.record_type === "diagnostico") ||
-          report.record_type === "informe tecnico"
-          ? false
-          : true
-      );
+      setCustomSelect(true)
+      setCustomSelect(report.record_type === "Informe Tecnico" || report.record_type === "Diagnostico"  ? false : true);
     }
     setEquipmentsSelected(report_detail?.equipments || []);
     setReportDescription(report_detail?.description || "");
     setReportNote(report_detail?.note || "");
     setEvidencesOld(report_evidences || []);
-    setUserSelected({
-      label: report_detail?.user
-        ? `${report_detail.user?.ci} - ${report_detail.user?.firstname} - ${report_detail.user?.lastname} - ${report_detail.user?.position}`
-        : "Elige un usuario",
-      value: report_detail?.user?._id || "",
-    });
+
     setHqSelected({
       label: report_detail?.hq
         ? `${report_detail.hq?.name} - ${report_detail.hq?.state} - ${report_detail.hq?.city} - ${report_detail.hq?.municipality}`
@@ -360,17 +333,6 @@ export const ReportForm = ({
     }
   };
 
-  const requestUserSelect = async (search: string) => {
-    try {
-      const res = await getSelectsUsers(search || "");
-      if (res && res.status >= 400)
-        return toast.error("Error al requerir lista de equipos");
-      return res?.data || [];
-    } catch (err) {
-      console.log(err);
-      return;
-    }
-  };
 
   const requestHqSelect = async (search: string) => {
     try {
@@ -398,15 +360,14 @@ export const ReportForm = ({
             name="record_type"
             onChange={handleTypeReport}
             value={
-              (report.record_type && report.record_type === "diagnostico") ||
-              report.record_type === "informe tecnico" ||
-              report.record_type === ""
+              (report.record_type && report.record_type === "Diagnostico") ||
+              report.record_type === "Informe Tecnico" 
                 ? report.record_type
                 : "custom"
             }
           >
-            <option value="informe tecnico">Informe tecnico</option>
-            <option value="diagnostico">Diagnostico</option>
+            <option value="Informe Tecnico">Informe tecnico</option>
+            <option value="Diagnostico">Diagnostico</option>
             <option value="custom">Personalizado</option>
           </select>
           <input
@@ -561,21 +522,6 @@ export const ReportForm = ({
         />
       </div>
 
-      <div className="form-group fields-container">
-        <label>Usuario que reporta:</label>
-        <div className="form-group">
-          <AsyncSelect
-            components={animatedComponents}
-            loadOptions={requestUserSelect}
-            onChange={handleSelectUser}
-            value={userSelected}
-            defaultOptions
-          />
-          <small className="text-muted pt-3 mt-3">
-            Escribe en el campo para seleccionar usuario
-          </small>
-        </div>
-      </div>
 
       <div className="form-group fields-container">
         <label>Sede del reporte:</label>
@@ -610,7 +556,7 @@ export const ReportForm = ({
                     <label htmlFor="name">Evidencia {i + 1}</label>
                     <a
                       href={"/" + el.url_file}
-                      target="__blank"
+                      download={true}
                       style={{
                         display: "flex",
                         flexDirection: "column",
@@ -663,15 +609,15 @@ export const ReportForm = ({
                   <div className="form-group col-md-6 d-flex flex-column justify-content-between description-container">
                     <div>
                       <label htmlFor="model">Descripcion</label>
-                      <input
-                        type="text"
+                      <textarea
                         name="description"
+                        rows={7}
                         className="form-control"
                         placeholder="descripcion"
                         onChange={(e) => handleChangesExitsEvidences(e, i)}
                         value={el.description || ""}
                         autoComplete="off"
-                      />
+                      ></textarea>
                     </div>
                   </div>
                 </div>

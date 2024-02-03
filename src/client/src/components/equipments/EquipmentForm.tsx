@@ -33,6 +33,7 @@ const EquipmentForm = ({
     asset_number: "",
     description: "",
     brand: "",
+    incorporated:false
   });
 
   const [equipmentDescription, setEquipmentDescription] = useState("");
@@ -84,6 +85,7 @@ const EquipmentForm = ({
       asset_number: equipment_detail?.asset_number || "",
       description: equipment_detail?.description || "",
       brand: equipment_detail?.brand || "",
+      incorporated:equipment_detail?.incorporated || false
     });
     setEquipmentDescription(equipment_detail?.description || "");
     setValue("model", equipment_detail?.model || '');
@@ -91,6 +93,7 @@ const EquipmentForm = ({
     setValue("asset_number", equipment_detail?.asset_number || '');
     setValue("description", equipment_detail?.description || '');
     setValue("brand", equipment_detail?.brand || '');
+    setValue("incorporated", equipment_detail?.incorporated || false);
     setEquipmentDescription(equipment_detail?.description || '')
   }, [equipment_detail]);
 
@@ -132,11 +135,11 @@ const EquipmentForm = ({
 
         </div>
         <div className="form-group col-md-6">
-          <label htmlFor="serial">Serial del equipo  <span className="text-danger fs-6">*</span></label>
+          <label htmlFor="serial">Serial del equipo  <span className="text-danger fs-6"></span></label>
           <Controller
 							name="serial"
 							control={control}
-							rules={{ required: true, pattern: /^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/i, maxLength:40}}
+							rules={{ required: false, pattern: /^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/i, maxLength:40}}
 							render={({ field }) => {
 								
 								return (
@@ -155,7 +158,7 @@ const EquipmentForm = ({
 							name="serial"
 							render={({ message }) => (
 								<small className="text-danger">
-									El campo es requerido! y no debe pasar los 40 caracteres
+									No debe pasar los 40 caracteres
 								</small>
 							)}
 						/>
@@ -193,11 +196,11 @@ const EquipmentForm = ({
 						/>
         </div>
         <div className="form-group col-md-6">
-          <label htmlFor="asset_number">Numero del bien  <span className="text-danger fs-6">*</span></label>
+          <label htmlFor="asset_number">Numero de bien  <span className="text-danger fs-6"></span></label>
           <Controller
 							name="asset_number"
 							control={control}
-							rules={{ required: true, pattern: /^[0-9]+$/i, maxLength:40}}
+							rules={{ required: false, pattern: /^[0-9]+$/i, maxLength:40}}
 							render={({ field }) => {
 								
 								return (
@@ -216,10 +219,40 @@ const EquipmentForm = ({
 							name="asset_number"
 							render={({ message }) => (
 								<small className="text-danger">
-									El campo es requerido! debe contener solo numeros y no debe pasar los 40 caracteres
+									Debe contener solo numeros y no debe pasar los 40 caracteres
 								</small>
 							)}
 						/>
+        </div>
+      </div>
+
+      <div className="form-row row fields-container">
+        <div className="form-group col-md-12">
+          <label htmlFor="switch-inc">El equipo esta incorporado?  <span className="text-danger fs-6"></span></label>
+          <div
+							className="form-check form-switch"
+							style={{ width: "max-content"}}
+						>
+							<input
+								className="form-check-input"
+								type="checkbox"
+								id="switch-inc"
+								onChange={(e) => {
+                  console.log(e.target.checked)
+									if(e.target.checked){
+                    setEquipment({...equipment,incorporated: true})
+                    setValue("incorporated", true);
+                  }else{
+                    setEquipment({...equipment,incorporated: false})
+                    setValue("incorporated", false);
+                  }
+								}}
+								checked={equipment?.incorporated}
+							/>
+							<label className="form-check-label" htmlFor="switch-inc">
+								Incorporado
+							</label>
+						</div>
         </div>
       </div>
 

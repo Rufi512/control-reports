@@ -10,7 +10,6 @@ export const initialSetup = async () => {
     if (count <= 0) {
       await Promise.all([
         new roles({ name: "admin" }).save(),
-        new roles({ name: "moderator" }).save(),
         new roles({ name: "user" }).save(),
       ]);
       console.log("Roles creados");
