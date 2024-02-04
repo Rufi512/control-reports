@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import quest from "../models/quest";
 import user from "../models/user";
 import { QuestModel } from "../types/types";
+import role from "../models/role";
 
 type bodyForm ={
 	quests:[{question:string,answer:string}]
@@ -83,11 +84,25 @@ export const setQuestions = async (req: Request, res: Response) => {
 export const deleteQuestionUser = async (req: any, res: Response) => {
 	try {
 		const questionFound = await quest.findById(req.params.id);
-		const questionsRegistered = await quest.find({ user: req.userId});
 		if (!questionFound)
 			return res
 				.status(404)
 				.json({ message: "No se ha podido encontrar la pregunta" });
+
+		const questionsRegistered = await quest.find({ user: questionFound.user});
+		
+		const foundUser = await user.findById(req.userId)
+
+		if(!foundUser) return res.status(404).json({message:'No se encontro el usuario'})
+
+		const rol = await role.find({ _id: { $in: foundUser.rol } });
+
+			if (rol[0].name !== "admin" && foundUser.id !== questionFound.user.toString()) {
+				return res
+				.status(404)
+				.json({ message: "No puedes modificar las preguntas" });
+			}
+		
 		if (!questionsRegistered || questionsRegistered.length <= 2)
 			return res
 				.status(404)

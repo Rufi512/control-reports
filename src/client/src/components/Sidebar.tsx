@@ -211,6 +211,7 @@ export const Sidebar = (props: Props) => {
             <li onClick={() => setMobileSidebar(false)}>
               <Link
                 className="dropdown-item"
+                reloadDocument
                 to={`/user/detail/${Cookies.get("id_user")}`}
               >
                 Opciones
