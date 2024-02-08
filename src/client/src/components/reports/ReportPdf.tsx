@@ -154,21 +154,6 @@ const ReportPdf = ({ data, equipments, evidences }: props) => {
             <Text style={styles.description}>{el.description}</Text>
           </View>
           <View style={styles.footer} fixed>
-          <Text style={styles.date}>
-              Santa Ana de Coro, a {data.register_date.day} día del mes de {months[Number(data.register_date.month) - 1]} del {data.register_date.year}
-            </Text>
-            <View style={styles.author}>
-              <Text style={styles.authorData}>{data.user?.firstname} {data.user?.lastname}</Text>
-              <Text style={styles.authorData}>{data.user?.position}</Text>
-              <Text style={styles.authorData}>
-                EN LA CIRCUNSCRIPCIÓN JUDICIAL DEL ESTADO FALCÓN.
-              </Text>
-            </View>
-            <Text style={styles.direction}>
-              Avenida. Manaure, esquina Ruiz Pineda, Edificio Sede del Ministerio
-              Público, Nivel Mezanina. Coro Estado Falcón Teléfono/Fax:
-              (0268)-2530009.
-            </Text>
             <View style={styles.footerLink}>
               <Text style={styles.link}>http://www.ministeriopublico.gob.ve</Text>
             </View>
