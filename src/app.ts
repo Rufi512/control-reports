@@ -47,6 +47,10 @@ app.get("/public/users/avatar/*", (_req:Request, res:Response) => {
     res.sendStatus(404)
 });
 
+app.get("/public/contents/evidences/*", (_req:Request, res:Response) => {
+    res.sendStatus(404)
+});
+
 app.get("*", (_req:Request, res:Response) => {
     res.sendFile('index.html', { root: client });
 });

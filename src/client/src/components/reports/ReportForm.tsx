@@ -556,7 +556,7 @@ export const ReportForm = ({
                     <label htmlFor="name">Evidencia {i + 1}</label>
                     <a
                       href={"/" + el.url_file}
-                      download={true}
+                      target="_blank"
                       style={{
                         display: "flex",
                         flexDirection: "column",
