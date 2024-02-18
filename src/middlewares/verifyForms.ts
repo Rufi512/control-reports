@@ -28,8 +28,8 @@ export const validateDate = async (date: string) => {
 };
 
 export const validateFieldEquipment = async (field: string, value: string) => {
-    if (/^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/.test(value) || value.length > 40 || value == "" ) {
-    return "";
+    if (/^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/.test(value) && value.length < 40 || value == "" ) {
+        return "";
     }
     return `El campo ${field} es invalido: (debe tener 40 caracteres maximo)`;
 };
