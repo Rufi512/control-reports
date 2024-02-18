@@ -28,16 +28,16 @@ export const validateDate = async (date: string) => {
 };
 
 export const validateFieldEquipment = async (field: string, value: string) => {
-    if (!/^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/.test(value) || value.length > 30) {
-        return `El campo ${field} es invalido: (debe tener 30 caracteres maximo)`;
-    }
+    if (/^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/.test(value) || value.length > 40 || value == "" ) {
     return "";
+    }
+    return `El campo ${field} es invalido: (debe tener 40 caracteres maximo)`;
 };
 
 export const validateFieldReport = async (field: string, value: string) => {
     console.log(value)
-    if (!/^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/.test(value) || value.length > 30) {
-        return `El campo ${field} es invalido: (debe tener 30 caracteres maximo)`;
+    if (!/^[A-Za-z0-9 áéíóúñ'`.(),[{}-]+$/.test(value) || value.length > 40) {
+        return `El campo ${field} es invalido: (debe tener 40 caracteres maximo)`;
     }
     return "";
 };
