@@ -148,6 +148,7 @@ export const ReportForm = ({
 
   const handleTypeReport = (e: ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
+    console.log(name,value)
     if (value === "custom") {
       setReport({ ...report, [name]: "custom" });
       return setCustomSelect(true);
@@ -298,8 +299,9 @@ export const ReportForm = ({
     });
 
     if (report_detail) {
+      console.log(report_detail.record_type)
       setCustomSelect(true)
-      setCustomSelect(report.record_type === "Informe Tecnico" || report.record_type === "Diagnostico"  ? false : true);
+      setCustomSelect(report_detail.record_type === "Informe Tecnico" || report_detail.record_type === "Diagnostico"  ? false : true);
     }
     setEquipmentsSelected(report_detail?.equipments || []);
     setReportDescription(report_detail?.description || "");
