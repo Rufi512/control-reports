@@ -232,8 +232,6 @@ const Home = () => {
                 </div>
               </div>
             </Link>
-          <hr />
-
           </div>
 
           <div>
