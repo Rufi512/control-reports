@@ -94,7 +94,7 @@ const ReportPdf = ({ data, equipments, evidences }: props) => {
                     <Text style={styles.tableCell}>{el.model}</Text>
                   </View>
                   <View style={styles.tableCol}>
-                    <Text style={styles.tableCell}>{el.serial || 'No especificado'}</Text>
+                    <Text style={styles.tableCell}>{el.serial || 'N/A'}</Text>
                   </View>
                   <View style={styles.tableCol}>
                     <Text style={styles.tableCell}>{el.asset_number || 'No especificado'}</Text>

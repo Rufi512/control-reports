@@ -34,8 +34,7 @@ const equipmentSchema = new Schema({
   serial:{
     type: String,
     required:false,
-    maxLength: 40,
-    unique:true
+    maxLength: 40
   },
   user:{
     ref:'user',

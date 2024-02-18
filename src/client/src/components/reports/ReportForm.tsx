@@ -405,7 +405,7 @@ export const ReportForm = ({
               return (
                 <div className="list-group-item list-group-item-action flex-column align-items-start" key={i}>
                   <div className="d-flex w-100 justify-content-between flex-wrap-reverse">
-                    <h6 style={{marginBottom:'0px'}}>Nro de bien: <span className="fs-6">{el.asset_number}</span></h6>
+                    <h6 style={{marginBottom:'0px'}}>Nro de bien: <span className="fs-6">{el.asset_number || 'No especificado'}</span></h6>
                     <small>
                       {el.register_date?.day} / {el.register_date?.month} /{" "}
                       {el.register_date?.year}
@@ -415,7 +415,7 @@ export const ReportForm = ({
                     Modelo y marca: {el.model} - {el.brand}
                   </p>
                   <div className="d-flex align-items-start justify-content-between">
-                  <small>Serial: {el.serial}</small>
+                  <small>Serial: {el.serial || 'N/A'}</small>
                   <button
                     type="button"
                     className="btn btn-danger"

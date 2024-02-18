@@ -341,7 +341,7 @@ const ReportDetail = () => {
                             <tr key={i}>
                               <td>{elm.asset_number}</td>
                               <td>{elm.brand}</td>
-                              <td>{elm.serial}</td>
+                              <td>{elm.serial || 'N/A'}</td>
                               <td>{elm.model}</td>
                               <td>{elm.incorporated ? 'Si': 'No'}</td>
                             </tr>

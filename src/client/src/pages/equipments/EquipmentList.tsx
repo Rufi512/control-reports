@@ -276,7 +276,7 @@ const EquipmentList = () => {
                           </td>
                           <td>
                             <Link to={`/equipment/detail/${el._id}`}>
-                              {el.serial.toUpperCase()}
+                              {el.serial.toUpperCase() || 'N/A'}
                             </Link>
                           </td>
                           {el.user ? <td>
@@ -342,7 +342,7 @@ const EquipmentList = () => {
                         <br />
                         <small>
                           <span style={{ fontWeight: "600" }}>Serial:</span>
-                          {el.serial.toUpperCase()}
+                          {el.serial.toUpperCase() || 'N/A'}
                         </small>
                         <br/>
                         {el.user ? <small>

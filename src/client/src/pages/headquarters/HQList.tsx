@@ -178,7 +178,6 @@ const HQList = () => {
                     <th scope="col">Nombre</th>
                     <th scope="col">Estado</th>
                     <th scope="col">Ciudad</th>
-                    <th scope="col">Circuito</th>
                     <th scope="col">Fecha de registro</th>
                   </tr>
                 </thead>
@@ -199,9 +198,6 @@ const HQList = () => {
                             <Link to={`/hq/detail/${el._id}`}>
                               {el.city}
                             </Link>
-                          </td>
-                          <td>
-                            <Link to={`/hq/detail/${el._id}`}>{el.circuit_number || 'Sin identificar'}</Link>
                           </td>
                           <td>
                             <Link to={`/hq/detail/${el._id}`}>{dateformat(el.created_at || '')}</Link>
@@ -247,10 +243,6 @@ const HQList = () => {
                         <br/>
                         <small>
                           Ciudad:<span style={{ fontWeight: "600" }}>{el.city}</span>{" "}
-                        </small>
-                        <br/>
-                        <small>
-                          Numero de circuito:<span style={{ fontWeight: "600" }}>{el.circuit_number || 'Sin identificar'} </span>{" "}
                         </small>
                         <br/>
                         <small>
