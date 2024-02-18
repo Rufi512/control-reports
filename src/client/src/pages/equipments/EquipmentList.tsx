@@ -261,7 +261,7 @@ const EquipmentList = () => {
                         <tr key={i}>
                           <th scope="row">
                             <Link to={`/equipment/detail/${el._id}`}>
-                              {el.asset_number.toUpperCase()}
+                              {el.asset_number.toUpperCase() || 'No especificado'}
                             </Link>
                           </th>
                           <td>
@@ -325,7 +325,7 @@ const EquipmentList = () => {
                       >
                         <div className="d-flex w-100 justify-content-between">
                           <h5 className="mb-1" style={{fontSize:'16px'}}>
-                             <b>Numero de bien:</b> {el.asset_number.toUpperCase()}
+                             <b>Numero de bien:</b> {el.asset_number.toUpperCase() || 'No especificado'}
                           </h5>
                           {el.register_date ? (
                             <small>

@@ -19,8 +19,7 @@ const equipmentSchema = new Schema({
   asset_number:{
     type: String,
     required:false,
-    maxLength: 40,
-    unique:true
+    maxLength: 40  
   },
   model:{
     type: String,

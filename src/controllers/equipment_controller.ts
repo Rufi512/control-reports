@@ -47,9 +47,9 @@ export const registerEquipment = async (
      if(validation !== '') return res.status(400).json({message:validation})
 
     //find if assets_number and serial is registered
-    const findEquipment = await equipment.findOne({$or: [{serial: serial},{asset_number: asset_number}]})
+    const findEquipment = await equipment.findOne({$or: [{asset_number: asset_number}]})
 
-    if(findEquipment) return res.status(404).json({message:'El equipo ha sido registrado anteriormente'})
+    if(findEquipment && findEquipment.asset_number !== "") return res.status(404).json({message:'El numero de bien del equipo ha sido registrado anteriormente'})
 
     // Register equipment 
     const registerEquipment = new equipment({
@@ -85,6 +85,8 @@ export const updateEquipment = async (req: Request, res: Response) => {
       incorporated,
       brand,
     } = req.body as unknown as IEquipment;
+
+    console.log(req.body)
      
     const validation = await verifyEquipment(req.body)
      
@@ -100,7 +102,7 @@ export const updateEquipment = async (req: Request, res: Response) => {
 
     if(findEquipment){
       if(findEquipment.id !== req.params.id){
-        if(findEquipment.serial === serial || findEquipment.asset_number === asset_number) return res.status(404).json({message:'El equipo ha sido registrado anteriormente'})
+        if(findEquipment.asset_number === asset_number && asset_number !== "") return res.status(404).json({message:'El equipo ha sido registrado anteriormente'})
       }
   }
    
