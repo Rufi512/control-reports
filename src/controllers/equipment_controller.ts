@@ -96,7 +96,7 @@ export const updateEquipment = async (req: Request, res: Response) => {
     if (!equipmentFound) return res.status(404).json({ message: "No se encontro el equipo" });
 
     //find if assets_number and serial is registered
-    const findEquipment = await equipment.findOne({$or: [{serial: serial},{asset_number: asset_number}]})
+    const findEquipment = await equipment.findOne({$or: [{asset_number: asset_number}]})
 
     if(findEquipment){
       if(findEquipment.id !== req.params.id){
