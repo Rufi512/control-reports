@@ -232,9 +232,10 @@ const Home = () => {
                 </div>
               </div>
             </Link>
+          <hr />
+
           </div>
 
-          <hr />
           <div>
             <h3>{Cookies.get('rol') == 'admin' ? 'Reportes': 'Mis reportes'} registrados recientemente</h3>
             {width > 1024 ? (
@@ -324,8 +325,9 @@ const Home = () => {
                 )}
               </div>
             )}
+             <hr />
           </div>
-          <hr />
+          
           <div>
             <h3>{Cookies.get('rol') == 'admin' ? 'Equipos': 'Mis equipos'} registrado recientemente</h3>
             {width > 1024 ? (
@@ -346,7 +348,7 @@ const Home = () => {
                         <tr key={i}>
                           <th scope="row">
                             <Link to={`/equipment/detail/${el._id}`}>
-                              {el.asset_number.toUpperCase()}
+                              {el.asset_number.toUpperCase() || 'No especificado'}
                             </Link>
                           </th>
                           <td>
@@ -361,7 +363,7 @@ const Home = () => {
                           </td>
                           <td>
                             <Link to={`/equipment/detail/${el._id}`}>
-                              {el.serial.toUpperCase()}
+                              {el.serial.toUpperCase() || 'N/A'}
                             </Link>
                           </td>
                           {el.register_date ? (
@@ -405,7 +407,7 @@ const Home = () => {
                       >
                         <div className="d-flex w-100 justify-content-between">
                           <h5 className="mb-1">
-                            {el.asset_number.toUpperCase()}
+                            {el.asset_number.toUpperCase() || 'No especificado'}
                           </h5>
                           {el.register_date ? (
                             <small>
@@ -421,7 +423,7 @@ const Home = () => {
                         </small>
                         <small>
                           <span style={{ fontWeight: "600" }}>Serial:</span>
-                          {el.serial.toUpperCase()}
+                          {el.serial.toUpperCase() || 'N/A'}
                         </small>
                       </Link>
                     );
@@ -433,8 +435,9 @@ const Home = () => {
                 )}
               </div>
             )}
+             <hr />
           </div>
-          <hr />
+     
           {users.length > 0 && Cookies.get("rol") === "admin" ? (
             <div>
               <h3>Usuarios registrado recientemente</h3>
@@ -521,11 +524,12 @@ const Home = () => {
                   )}
                 </div>
               )}
+               <hr />
             </div>
           ) : (
             ""
           )}
-          <hr />
+        
           {logs.length > 0 && Cookies.get("rol") === "admin" ? (
             <div>
               <h3>Actividad registrada recientemente</h3>
@@ -610,11 +614,12 @@ const Home = () => {
                   )}
                 </div>
               )}
+          <hr />
+
             </div>
           ) : (
             ""
           )}
-          <hr />
         </>
       ) : (
         <div className="container-fluid d-flex flex-column justify-content-center align-items-center container-page evidences-detail">

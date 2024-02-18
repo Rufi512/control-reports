@@ -571,6 +571,9 @@ export const ReportForm = ({
                         <img
                           className="img img-thumbnail"
                           src={"/" + el.url_file || ""}
+                          onError={(e) => {
+                            e.currentTarget.src = imageDefault;
+                          }}
                           alt="prev"
                         />
                       ) : (

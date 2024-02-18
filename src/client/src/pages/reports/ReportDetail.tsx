@@ -233,6 +233,8 @@ const ReportDetail = () => {
             >
               <FontAwesomeIcon icon={faFilePdf} /> <span>Exportar a pdf</span>
             </button>
+            {
+              Cookies.get("rol") == 'admin' ?
             <button
               className="btn btn-danger"
               style={{ display: edit ? "block" : "none" }}
@@ -246,7 +248,9 @@ const ReportDetail = () => {
               }}
             >
               <FontAwesomeIcon icon={faTrash} /> <span>Eliminar Reporte</span>
-            </button>
+            </button> : ''
+          }
+
             {
               Cookies.get("rol") == 'admin' || Cookies.get("id_user") == report.user?._id ? <div
               className="form-check form-switch"
@@ -572,8 +576,7 @@ const ReportDetail = () => {
                                 {ev.description}
                               </p>
                             </div>
-
-                            <div className="container-buttons">
+{Cookies.get("rol") == 'admin' ? <div className="container-buttons">
                               <button
                                 type="button"
                                 className="btn btn-danger col-md-6"
@@ -591,7 +594,8 @@ const ReportDetail = () => {
                               >
                                 Borrar
                               </button>
-                            </div>
+                            </div> : ''}
+                            
                           </div>
                         </div>
                       </div>

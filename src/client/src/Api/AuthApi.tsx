@@ -56,21 +56,24 @@ export const refreshToken = async () =>{
         if(timerAlert) clearTimeout(timerAlert)
         if(timerClose) clearTimeout(timerClose)
         timerAlert = setTimeout(()=>{
-            toast.warn('Se cerrara sesion en unos instantes', {
-                position: "top-right",
-                toastId:'alertToken',
-                autoClose: 60000,
-                hideProgressBar: true,
-                closeOnClick: false,
-                closeButton: false,
-                pauseOnHover: false,
-                draggable: false,
-                });
-
-                timerClose = setTimeout(()=>{
-                    toast.error("Sesion expirada")
-                    window.location.href = '/logout'
-                },60000)
+        if(Cookies.get('accessToken')){
+                    toast.warn('Se cerrara sesion en unos instantes', {
+                        position: "top-right",
+                        toastId:'alertToken',
+                        autoClose: 60000,
+                        hideProgressBar: true,
+                        closeOnClick: false,
+                        closeButton: false,
+                        pauseOnHover: false,
+                        draggable: false,
+                        });
+        
+                        timerClose = setTimeout(()=>{
+                            toast.error("Sesion expirada")
+                            window.location.href = '/logout'
+                        },60000)
+            }
+           
 
             },540000) // 10 minutos
     
