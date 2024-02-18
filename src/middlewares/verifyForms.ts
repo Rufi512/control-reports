@@ -240,6 +240,7 @@ export const verifyEquipment = async (data: IEquipment) => {
         console.log(data)
         const value = data[key];
         if (key === "description") continue;
+        if(key === "incorporated") continue;
         if (key === "asset_number") {
             validation = await validateOnlyNumber(value);
         } else if(key === "model" || key === "brand") {
