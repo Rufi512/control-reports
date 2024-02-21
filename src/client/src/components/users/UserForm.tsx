@@ -432,7 +432,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 						<Controller
 							name="firstname"
 							control={control}
-							rules={{ required: true, pattern: /^[A-Za-z áéíóúñ'`]+$/i, maxLength:40}}
+							rules={{ required: true, pattern: /^[A-Za-z áéíóúñ'`.(),[{}-]+$/i, maxLength:40}}
 							render={({ field }) => {
 								
 								return (
@@ -441,7 +441,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 								  placeholder="Nombre"
 								  autoComplete="off"
 									{...field}
-									onChange={(e) => e.target.value.match(/^[A-Za-z áéíóúñ'`]+$/i) && e.target.value.length < 40 || e.target.value == '' ? field.onChange(e.target.value) : ''}
+									onChange={(e) => e.target.value.match(/^[A-Za-z áéíóúñ'`.(),[{}-]+$/i) && e.target.value.length < 40 || e.target.value == '' ? field.onChange(e.target.value) : ''}
 								  />
 								)
 							  }}
@@ -451,7 +451,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 							name="firstname"
 							render={({ message }) => (
 								<small className="text-danger">
-									Debe contener solo letras y no debe pasar
+									No debe contener numeros y no debe pasar
 									los 40 caracteres
 								</small>
 							)}
@@ -463,7 +463,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 						<Controller
 							name="lastname"
 							control={control}
-							rules={{ required: true, pattern: /^[A-Za-z áéíóúñ'`]+$/i, maxLength:40}}
+							rules={{ required: true, pattern: /^[A-Za-z áéíóúñ'`.(),[{}-]+$/i, maxLength:40}}
 							render={({ field }) => {
 								
 								return (
@@ -472,7 +472,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 								  placeholder="Apellido"
 								  autoComplete="off"
 									{...field}
-									onChange={(e) => e.target.value.match(/^[A-Za-z áéíóúñ'`]+$/i) && e.target.value.length < 40 || e.target.value == '' ? field.onChange(e.target.value) : ''}
+									onChange={(e) => e.target.value.match(/^[A-Za-z áéíóúñ'`.(),[{}-]+$/i) && e.target.value.length < 40 || e.target.value == '' ? field.onChange(e.target.value) : ''}
 								  />
 								)
 							  }}
@@ -482,7 +482,7 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 							name="lastname"
 							render={({ message }) => (
 								<small className="text-danger">
-									Debe contener solo letras y no debe pasar
+									No debe contener numeros y no debe pasar
 									los 40 caracteres
 								</small>
 							)}

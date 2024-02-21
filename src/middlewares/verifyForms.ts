@@ -123,7 +123,7 @@ export const verifyCreateUser = async (data: any, validatePassword:boolean , use
         return { message: "Cedula invalida" };
     }
 
-    if (!/^[A-Za-záéíóúñ'´ ]+$/.test(firstname)) {
+    if (!/^[A-Za-z áéíóúñ'`.(),[{}-]+$/.test(firstname)) {
         return { message: "Parámetros en Nombre inválidos" };
     }
 
@@ -131,7 +131,7 @@ export const verifyCreateUser = async (data: any, validatePassword:boolean , use
         return { message: "Nombres muy largos maximo 40 caracteres" };
     }
 
-    if (!/^[A-Za-záéíóúñ'´ ]+$/.test(lastname)) {
+    if (!/^[A-Za-z áéíóúñ'`.(),[{}-]+$/.test(lastname)) {
         return { message: "Parámetros en Apellido inválidos" };
     }
 
