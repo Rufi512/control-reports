@@ -2,9 +2,16 @@ import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import react from '@vitejs/plugin-react'
 
+//ckeditor config
+import { createRequire } from 'node:module';
+const require = createRequire( import.meta.url );
+import ckeditor5 from '@ckeditor/vite-plugin-ckeditor5';
+
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(),VitePWA({ 
+  plugins: [react(),
+    ckeditor5( { theme: require.resolve( '@ckeditor/ckeditor5-theme-lark' ) } ),
+    VitePWA({ 
       selfDestroying: true,
       registerType: 'autoUpdate',
       includeAssets: ['apple-touch-icon.png','masked-icon.svg'],

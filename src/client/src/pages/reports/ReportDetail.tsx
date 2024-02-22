@@ -6,8 +6,7 @@ import { reportsApi } from "../../Api";
 import ModalConfirmation from "../../components/ModalConfirmation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilePdf, faTrash, faFile } from "@fortawesome/free-solid-svg-icons";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+
 import { toast } from "react-toastify";
 import { Report } from "../../types/report";
 import { ReportForm } from "../../components/reports/ReportForm";
@@ -18,6 +17,7 @@ import dateformat from "../../hooks/useDateFormat";
 import Loader from "../../components/Loader";
 import ErrorAdvice from "../../components/ErrorAdvice";
 import Cookies from "js-cookie";
+import CkeditorForm from "../../components/CkeditorForm";
 
 const ReportDetail = () => {
   const { id } = useParams();
@@ -343,7 +343,7 @@ const ReportDetail = () => {
                       ? equipmentsRead.map((elm: Equipment, i: number) => {
                           return (
                             <tr key={i}>
-                              <td>{elm.asset_number}</td>
+                              <td>{elm.asset_number || 'No especificado'}</td>
                               <td>{elm.brand}</td>
                               <td>{elm.serial || 'N/A'}</td>
                               <td>{elm.model}</td>
@@ -366,7 +366,7 @@ const ReportDetail = () => {
                           <div className="d-flex w-100 justify-content-between flex-wrap-reverse">
                             <h6 style={{ marginBottom: "0px" }}>
                               Nro de bien:{" "}
-                              <span className="fs-6">{el.asset_number}</span>
+                              <span className="fs-6">{el.asset_number || 'No especificado'}</span>
                             </h6>
                             <small>
                               {el.register_date?.day} /{" "}
@@ -381,7 +381,7 @@ const ReportDetail = () => {
                             Estado: El equipo {el.incorporated ? 'esta incorporado' : 'no esta incorporado'}
                           </p>
                           <div className="d-flex align-items-start justify-content-between">
-                            <small>Serial: {el.serial}</small>
+                            <small>Serial: {el.serial || 'N/A'}</small>
                           </div>
                         </div>
                       );
@@ -399,59 +399,11 @@ const ReportDetail = () => {
               <label style={{ marginBottom: "10px" }}>
                 Descripcion del registro
               </label>
-              <CKEditor
-                editor={ClassicEditor}
-                disabled={true}
-                config={{
-                  toolbar: {
-                    items: [
-                      "heading",
-                      "blockQuote",
-                      "bold",
-                      "italic",
-                      "link",
-                      "|",
-                      "indent",
-                      "outdent",
-                      "|",
-                      "numberedList",
-                      "bulletedList",
-                      "|",
-                      "undo",
-                      "redo",
-                    ],
-                  },
-                }}
-                data={report.description}
-              />
+              <CkeditorForm previousData={report.description} action={()=>{}} disabledCk={true}/>
             </div>
             <div className="form-group fields-container">
               <label style={{ marginBottom: "10px" }}>Notas del registro</label>
-              <CKEditor
-                editor={ClassicEditor}
-                disabled={true}
-                config={{
-                  toolbar: {
-                    items: [
-                      "heading",
-                      "blockQuote",
-                      "bold",
-                      "italic",
-                      "link",
-                      "|",
-                      "indent",
-                      "outdent",
-                      "|",
-                      "numberedList",
-                      "bulletedList",
-                      "|",
-                      "undo",
-                      "redo",
-                    ],
-                  },
-                }}
-                data={report.note}
-              />
+              <CkeditorForm previousData={report.note} action={()=>{}} disabledCk={true}/>
             </div>
             <div className="form-row row fields-container">
               <div className="form-group col-md-12">

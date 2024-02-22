@@ -1,7 +1,6 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { Report, Evidences } from "../../types/report";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,6 +13,7 @@ import { Equipment } from "../../types/equipment";
 import { getSelectsUsers } from "../../Api/UsersApi";
 import imageDefault from "../../assets/images/notfound.png";
 import { getSelectsHq } from "../../Api/HQApi";
+import CkeditorForm from "../CkeditorForm";
 
 const animatedComponents = makeAnimated();
 
@@ -82,6 +82,14 @@ export const ReportForm = ({
     const { name, value } = event.target;
     setReport({ ...report, [name]: value });
   };
+
+  const setDataNoteCk = (data:any) =>{
+    setReportNote(data)
+  }
+
+  const setDataDescriptionCk = (data:any) =>{
+    setReportDescription(data)
+  }
 
   const handleChangeSelect2 = (data: any) => {
     const ids = data.map((el: any) => el.value);
@@ -454,74 +462,12 @@ export const ReportForm = ({
       </div>
       <div className="form-group fields-container">
         <label style={{ marginBottom: "10px" }}>Descripcion del registro  <span className="text-danger fs-6">*</span></label>
-        <CKEditor
-          editor={ClassicEditor}
-          config={{
-            toolbar: {
-              items: [
-                "heading",
-                "blockQuote",
-                "bold",
-                "italic",
-                "link",
-                "|",
-                "indent",
-                "outdent",
-                "|",
-                "numberedList",
-                "bulletedList",
-                "|",
-                "undo",
-                "redo",
-              ],
-            },
-          }}
-          data={reportDescription}
-          onReady={(editor) => {
-            // You can store the "editor" and use when it is needed.
-            console.log("Editor is ready to use!", editor);
-          }}
-          onChange={(event, editor) => {
-            const data = editor.getData();
-            setReportDescription(data);
-          }}
-        />
+        <CkeditorForm previousData={reportDescription} action={setDataDescriptionCk} disabledCk={false}/>
       </div>
 
       <div className="form-group fields-container">
         <label style={{ marginBottom: "10px" }}>Notas del registro</label>
-        <CKEditor
-          editor={ClassicEditor}
-          config={{
-            toolbar: {
-              items: [
-                "heading",
-                "blockQuote",
-                "bold",
-                "italic",
-                "link",
-                "|",
-                "indent",
-                "outdent",
-                "|",
-                "numberedList",
-                "bulletedList",
-                "|",
-                "undo",
-                "redo",
-              ],
-            },
-          }}
-          data={reportNote}
-          onReady={(editor) => {
-            // You can store the "editor" and use when it is needed.
-            console.log("Editor is ready to use!", editor);
-          }}
-          onChange={(event, editor) => {
-            const data = editor.getData();
-            setReportNote(data);
-          }}
-        />
+        <CkeditorForm previousData={reportNote} action={setDataNoteCk} disabledCk={false}/>
       </div>
 
 

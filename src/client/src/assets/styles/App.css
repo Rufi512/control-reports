@@ -26,6 +26,37 @@
     margin-top: 10px;
 }
 
+.line20px{
+    line-height: 20px !important;
+}
+
+.line25px{
+    line-height: 25px !important;
+}
+
+.line30px{
+    line-height: 30px !important;
+}
+
+.line35px{
+    line-height: 35px !important;
+}
+
+.textLeft{
+    text-align: left !important;
+}
+
+.textRight{
+    text-align: right !important;
+}
+.textCenter{
+    text-align: center !important;
+}
+.textJustify{
+    text-align: justify !important;
+}
+
+
 @media(min-width:1024px){
     .header-page{position: relative; overflow: unset;}
     

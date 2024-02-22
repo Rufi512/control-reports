@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+
 import { Equipment } from "../../types/equipment";
 import "../../assets/styles/components/forms.css";
 import { deleteEquipment, getEquipment } from "../../Api/EquipmentsApi";
@@ -14,6 +13,7 @@ import Loader from "../../components/Loader";
 import ErrorAdvice from "../../components/ErrorAdvice";
 import dateformat from "../../hooks/useDateFormat";
 import Cookies from "js-cookie";
+import CkeditorForm from "../../components/CkeditorForm";
 
 const EquipmentDetail = () => {
 	const { id } = useParams();
@@ -239,31 +239,7 @@ const EquipmentDetail = () => {
 									<label style={{ marginBottom: "10px" }}>
 										Descripcion del registro
 									</label>
-									<CKEditor
-										editor={ClassicEditor}
-										disabled={true}
-										config={{
-											toolbar: {
-												items: [
-													"heading",
-													"blockQuote",
-													"bold",
-													"italic",
-													"link",
-													"|",
-													"indent",
-													"outdent",
-													"|",
-													"numberedList",
-													"bulletedList",
-													"|",
-													"undo",
-													"redo",
-												],
-											},
-										}}
-										data={equipment.description}
-									/>
+									<CkeditorForm previousData={equipment.description} action={()=>{}} disabledCk={true}/>
 								</div>
 							</div>
 						</>

@@ -157,6 +157,8 @@ const UserForm = ({ edit, create, userRead, request, userQuest }: Props) => {
 				isSubmit(false);
 				if (res && res.status === 200 && request)
 					request(userRead?._id || "");
+			}else{
+				isSubmit(false);
 			}
 		} catch (err) {
 			console.log(err);

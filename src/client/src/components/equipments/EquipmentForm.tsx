@@ -1,13 +1,12 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Equipment } from "../../types/equipment";
 import "../../assets/styles/components/forms.css";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { registerEquipment, updateEquipment } from "../../Api/EquipmentsApi";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
+import CkeditorForm from "../CkeditorForm";
 
 type Props = {
   equipment_detail?: Equipment;
@@ -47,6 +46,10 @@ const EquipmentForm = ({
   } = useForm<FormInput>({ defaultValues: { ...equipment } });
 
   const [submit,isSubmit] = useState(false)
+
+  const setDataCk = (data:any) =>{
+    setEquipmentDescription(data)
+  }
 
   const onSubmit = async (data:Equipment) => {
     if(submit) return 
@@ -258,38 +261,10 @@ const EquipmentForm = ({
 
       <div className="form-group fields-container" style={{ marginTop: "5px" }}>
         <label style={{ marginBottom: "10px" }}>Descripcion del equipo</label>
-        <CKEditor
-          editor={ClassicEditor}
-          config={{
-            toolbar: {
-              items: [
-                "heading",
-                "blockQuote",
-                "bold",
-                "italic",
-                "link",
-                "|",
-                "indent",
-                "outdent",
-                "|",
-                "numberedList",
-                "bulletedList",
-                "|",
-                "undo",
-                "redo",
-              ],
-            },
-          }}
-          data={equipmentDescription}
-          onReady={(editor) => {
-            // You can store the "editor" and use when it is needed.
-            console.log("Editor is ready to use!", editor);
-          }}
-          onChange={(event, editor) => {
-            const data = editor.getData();
-            setEquipmentDescription(data);
-          }}
-        />
+          
+        <CkeditorForm action={setDataCk} previousData={equipmentDescription} disabledCk={false}/>
+
+
       </div>
 
       <hr />

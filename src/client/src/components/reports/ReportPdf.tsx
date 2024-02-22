@@ -35,9 +35,57 @@ const ReportPdf = ({ data, equipments, evidences }: props) => {
     ],
   });
 
-  const noteHtml = parse(data.note);
-  const descriptionHtml = parse(data.description);
 
+  const stylesBlock:any = {
+    'line20px':'line-height: 1px;',
+    'line25px':'line-height: 1.5px;',
+    'line30px':'line-height: 1.8px;',
+    'line35px':'line-height: 2.3px;',
+    'textCenter':'text-align: center;',
+    'textLeft':'text-align: left;',
+    'textRight':'text-align: right;',
+    'textJustify':'text-align: justify;'
+  }
+
+  function classToProperty(textoHTML:any) {
+    // Create a temporary element to store HTML text
+    var itemTemporal = document.createElement('div');
+    itemTemporal.innerHTML = textoHTML;
+  
+    // Get all HTML text elements
+    var elementsHtml = itemTemporal.getElementsByTagName('*');
+  
+    // Each all elements and transfer class properties to the "style" attribute.
+    for (var i = 0; i < elementsHtml.length; i++) {
+      var element = elementsHtml[i];
+      var classStyles = element.classList;
+      const stylesAssign = Array.from(classStyles)
+      // Obtain individual properties
+          var propiedades = '';
+          if(stylesAssign.length > 0){
+            stylesAssign.forEach((el)=>{
+              propiedades += stylesBlock[`${el}`]
+            })
+          }
+          
+
+        // Apply the properties to the element's "style" attribute
+        element.setAttribute('style', propiedades);
+    }
+  
+    // Get the modified HTML text
+    var htmlMod = itemTemporal.innerHTML;
+  
+    // // Return HTML text with transferred styles
+    return htmlMod;
+  }
+  
+
+  const descriptionReport = classToProperty(data.description);
+  const noteReport = classToProperty(data.note);
+
+  const noteHtml = parse(noteReport);
+  const descriptionHtml = parse(descriptionReport);
   const stylesheet = {
     p: {
       margin: 0,
@@ -46,6 +94,7 @@ const ReportPdf = ({ data, equipments, evidences }: props) => {
     i: {
       fontStyle: "italic",
     },
+    
   };
 
   const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
@@ -335,6 +384,22 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "grey",
   },
+
+  line20px:{
+    lineHeight: 20
+  },
+
+  line25px:{
+    lineHeight: 25
+  },
+
+  line30px:{
+    lineHeight: 30
+  },
+
+  line35px:{
+    lineHeight: 35
+}
 });
 
 export default ReportPdf;
