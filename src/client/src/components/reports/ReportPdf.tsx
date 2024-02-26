@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
   body: {
     paddingTop: 35,
     paddingBottom: 235,
-    paddingHorizontal: 45,
+    paddingHorizontal: 50,
     fontFamily: "Arial",
   },
   head: {
@@ -361,6 +361,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   tableRow: {
+    width:"100%",
     margin: "auto",
     flexDirection: "row",
   },
@@ -368,7 +369,7 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    width: "25%",
+    width: "29.8%",
     backgroundColor: "#d7d7d7",
     borderStyle: "solid",
     borderWidth: 1,
