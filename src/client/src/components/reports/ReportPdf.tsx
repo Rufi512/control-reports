@@ -20,18 +20,20 @@ type props = {
   equipments: Equipment[]
 };
 
-import source1 from "../../assets/fonts/Open_Sans/static/OpenSans-Bold.ttf";
-import source2 from "../../assets/fonts/Open_Sans/static/OpenSans-Italic.ttf";
-import source3 from "../../assets/fonts/Open_Sans/static/OpenSans-Regular.ttf";
+import source1 from "../../assets/fonts/Arial/Arial_Bold.ttf";
+import source2 from "../../assets/fonts/Arial/Arial_Bold_Italic.ttf";
+import source3 from "../../assets/fonts/Arial/Arial.ttf";
+import source4 from "../../assets/fonts/Arial/Arial_Italic.ttf"
 
 
 const ReportPdf = ({ data, equipments, evidences }: props) => {
   Font.register({
-    family: "OpenSans",
+    family: "Arial",
     fonts: [
       { src: source1, fontWeight: 600 }, // font-style: normal, font-weight: normal
-      { src: source2, fontStyle: "italic" },
-      { src: source3 },
+      { src: source4, fontStyle: "italic" },
+      { src: source3},
+      { src: source2, fontWeight:600, fontStyle:"italic"}
     ],
   });
 
@@ -220,9 +222,9 @@ const ReportPdf = ({ data, equipments, evidences }: props) => {
 const styles = StyleSheet.create({
   body: {
     paddingTop: 35,
-    paddingBottom: 205,
-    paddingHorizontal: 30,
-    fontFamily: "OpenSans",
+    paddingBottom: 235,
+    paddingHorizontal: 45,
+    fontFamily: "Arial",
   },
   head: {
     fontSize: 12,
@@ -251,6 +253,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    lineHeight:1.35
   },
 
   title: {
@@ -258,6 +261,8 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     color: "#000",
     marginBottom: 10,
+    lineHeight:1.35,
+    fontFamily: "Arial"
   },
 
   subtitle: {
@@ -265,11 +270,13 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     color: "#000",
     marginBottom: 10,
+    fontFamily: "Arial"
   },
 
   description: {
     fontSize: 11,
-    lineHeight: 1.35,
+    lineHeight: 1.65,
+    fontFamily: "Arial",
   },
 
   note: {
@@ -278,7 +285,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     lineHeight: 1.35,
     color: "black",
-    fontFamily: "OpenSans",
+    fontFamily: "Arial",
   },
 
   evidence:{
@@ -288,9 +295,10 @@ const styles = StyleSheet.create({
 
   date: {
     marginTop: 55,
-    marginBottom:30,
+    marginBottom:75,
     fontSize: 12,
     textAlign: "right",
+    fontFamily: "Arial"
   },
   author: {
     display: "flex",
@@ -304,18 +312,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: "center",
     color: "black",
+    fontFamily: "Arial",
   },
   authorData: {
     textAlign:'center',
     textTransform: "uppercase",
     fontWeight: 600,
+    fontFamily: "Arial",
   },
   footer: {
     position: 'absolute',
     bottom: 30,
-    left: 20,
-    right: 20,
-    marginTop: "auto"
+    left: 40,
+    right: 40,
+    marginTop: "auto",
+    fontFamily: "Arial",
   },
   direction: {
     margin: "auto",
@@ -330,6 +341,8 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#70a6d5",
     padding: "2px 0",
+    paddingRight:5,
+    fontFamily: "Arial",
   },
 
   link: {

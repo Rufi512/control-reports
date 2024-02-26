@@ -421,7 +421,8 @@ export const updateUser = async (req: any, res: Response) => {
                         password: req.body.allowPassword ? await user.encryptPassword(req.body.password) : userFound.password,
                         rol: rolFind?._id || userFound.rol,
                         avatar:avatar || userFound.avatar,
-                        position: positionUser || userFound.position
+                        position: positionUser || userFound.position,
+                        updated_at: new Date()
                     },
                 }
             );
